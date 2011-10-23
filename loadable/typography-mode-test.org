@@ -1,0 +1,22 @@
+* Quotes
+
+English computer quotes:
++ “primary”
++ ‘secondary’
+
+Russian computer quotes:
++ «ёлочки»
++ „лапки“
+
+Neutral computer quotes:
++ "primary"
++ 'secondary'
+
+* Dashes
+
+| Method  | Character |
+|---------+-----------|
+| English | –         |
+| Russian | —         |
+|---------+-----------|
+

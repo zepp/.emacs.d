@@ -1,0 +1,11 @@
+My Emacs configuration which I strive to keep /simple/ as much as possible:
++ [[https://github.com/jwiegley/use-package][use-package]] – to manage package configurations
++ [[https://orgmode.org/][Org Mode]] – to manage my personal tasks and write short notes for myself
++ [[https://magit.vc/][Magit]] – to work with git repositories
+
+There are few modules written by myself:
++ =typography-mode= – mode to insert various typographic characters
++ =pavel-search-aux= – auxiliary commands to search, replace and grep symbols
+
+Frankly speaking, I do not want to spend much time configuring Emacs but I have to since there are inconsistent keybindings and poor default settings. It is weird but engaging so I keep doing that.
+
