@@ -1,0 +1,16 @@
+/*~
+/loadable/
+/elpa/
+/eln-cache/
+/.cache/
+/server/
+/url/
+/transient/
+/auto-save-list/
+/org-persist/
+/custom.el
+/bookmarks
+/network-security.data
+/logview-cache.extmap
+/recentf
+/tramp
