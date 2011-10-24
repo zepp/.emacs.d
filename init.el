@@ -152,9 +152,7 @@
 (load-ext "zencolor" "zenburn-el")
 
 (when (not (string= system-type "windows-nt"))
-  (require 'dictem)
-  (setq dictem-default-database "russian"
-        dictem-use-existing-buffer t)
+  (load-ext "dictem" "dictem")
   (load-ext "nt" "newsticker-1.99")
   (load-ext "jabber" "emacs-jabber")
   (load-ext "wl" "wanderlust-2.15.9" "wl" "elmo" "utils")
@@ -183,5 +181,7 @@
 (add-to-list 'default-frame-alist '(font . "terminus-14"))
 
 (when (not (string= system-type "windows-nt"))
-  (newsticker-start-ticker)
-  (wl 1))
+  (when (functionp 'newsticker-start-ticker)
+    (newsticker-start-ticker))
+  (when (functionp 'wl)
+    (wl 1)))
