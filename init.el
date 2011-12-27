@@ -60,6 +60,7 @@
 
 ;; iswitchb
 (require 'iswitchb)
+(setq iswitchb-regexp t)
 (iswitchb-mode 1)
 
 ;;-------------------------------------------------------------------------------
