@@ -151,6 +151,7 @@
 (load-ext "gtags" "global")
 (load-ext "prefs" "prefs")
 (load-ext "zencolor" "zenburn-el")
+(load-ext "fs")
 
 (when (not (string= system-type "windows-nt"))
   (load-ext "dictem" "dictem")
@@ -161,8 +162,7 @@
   (load-ext "w3m" "w3m")
   (load-ext "erc" "erc")
   (load-ext "gdb")
-  (load-ext "mpc")
-  (load-ext "fs"))
+  (load-ext "mpc"))
 
 ;;-------------------------------------------------------------------------------
 
