@@ -1,6 +1,12 @@
 (if (string= system-type "windows-nt")
-    (setq
-     find-program "C:\\unix-utils\\usr\\local\\wbin\\find.exe")
+    (progn
+      (setq
+       ;; to do not confuse windows default find and right UNIX find
+       find-program "C:\\unix\\utils\\usr\\local\\wbin\\find.exe"
+       ;; do not want to add all the git stuff to the environment
+       vc-git-program "C:\\Program Files (x86)\\Git\\bin\\git.exe")
+      ;; unix utils
+      (add-to-list 'exec-path "C:\\unix\\utils\\usr\\local\\wbin"))
   (setq
    slime-lisp-implementations
    `((sbcl ("sbcl" "--core" ,(expand-file-name "sbcl.core-for-slime" my-emacs-var-dir))))
