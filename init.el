@@ -180,9 +180,8 @@
 
 ;;-------------------------------------------------------------------------------
 
-(add-to-list 'default-frame-alist '(font . "terminus-14"))
-
 (when (not (string= system-type "windows-nt"))
+  (add-to-list 'default-frame-alist '(font . "terminus-14"))
   (when (functionp 'newsticker-start-ticker)
     (newsticker-start-ticker))
   (when (functionp 'wl)
