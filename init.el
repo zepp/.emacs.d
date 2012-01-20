@@ -139,6 +139,7 @@
 (setq auto-mode-alist (acons ".*\\.bb$" 'shell-script-mode auto-mode-alist))
 (setq auto-mode-alist (acons "Makefile\\..*" 'makefile-mode auto-mode-alist))
 (setq auto-mode-alist (acons ".*\\.h\\.in$" 'c-mode auto-mode-alist))
+(setq auto-mode-alist (acons ".*\\.bat$" 'dos-mode auto-mode-alist))
 
 ;;-------------------------------------------------------------------------------
 
