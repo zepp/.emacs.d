@@ -153,9 +153,10 @@
 (load-ext "prefs" "prefs")
 (load-ext "zencolor" "zenburn-el")
 (load-ext "fs")
+(load-ext "grep")
 
 (if (string= system-type "windows-nt")
-    (load-ext "dsvn" "dsvn")
+    (load-ext "psvn" "psvn")
   (load-ext "dictem" "dictem")
   (load-ext "nt" "newsticker-1.99")
   (load-ext "jabber" "emacs-jabber")
