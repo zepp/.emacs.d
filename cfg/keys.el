@@ -6,6 +6,7 @@
 (global-set-key (kbd "M-c") 'next-buffer)
 (global-set-key (kbd "M-t") 'dabbrev-completion)
 (global-set-key (kbd "M-#") 'dictem-run-define)
+(global-set-key (kbd "C-c C-r") 'rgrep)
 
 ;;-------------------------------------------------------------------------------
 ;; related to global key redefinition so placed here
@@ -38,14 +39,10 @@
      (if (not (get-buffer wl-folder-buffer-name))
          (wl)
        (switch-to-buffer wl-folder-buffer-name))))
-;; web browser
-(define-key global-run-map (kbd "w") 'w3m)
 ;; rss/atom feed reader 
 (define-key global-run-map (kbd "n") 'newsticker-show-news)
 ;; agenda
 (define-key global-run-map (kbd "a") 'org-agenda)
-;; slime
-(define-key global-run-map (kbd "s") 'slime)
 ;; jabber
 (define-key global-run-map (kbd "j") 
   '(lambda ()
@@ -58,20 +55,7 @@
          ;;(jabber-switch-to-roster-buffer) does not work
          (switch-to-buffer jabber-roster-buffer)))))
 
-(define-key global-run-map (kbd "i") 
-  '(lambda ()
-     "Connect to ERC, or switch to last active buffer"
-     (interactive)
-     (if (get-buffer (format "%s:%i" erc-server erc-port))
-         (erc-track-switch-buffer 1) ;; yes: switch to last active
-       (progn
-         (require 'secrets)
-         (erc-tls :server erc-server :port erc-port :nick erc-nick
-                  :password erc-password :full-name erc-user-full-name)))))
-
 (define-key global-run-map (kbd "l") 'ielm)
-
-(define-key global-run-map (kbd "p") 'mpc)
 
 (global-set-key (kbd "C-x M-e") global-run-map)
 

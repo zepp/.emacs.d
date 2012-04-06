@@ -163,9 +163,7 @@
   (load-ext "wl" "wanderlust-2.15.9" "wl" "elmo" "utils")
   (load-ext "magit" "magit")
   (load-ext "w3m" "w3m")
-  (load-ext "erc" "erc")
-  (load-ext "gdb")
-  (load-ext "mpc"))
+  (load-ext "gdb"))
 
 ;;-------------------------------------------------------------------------------
 
