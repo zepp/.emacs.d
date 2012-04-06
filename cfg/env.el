@@ -1,12 +1,13 @@
 (if (string= system-type "windows-nt")
     (progn
+      (add-to-list 'exec-path "C:/unix/utils/usr/local/wbin")
       (setq
        ;; to do not confuse windows default find and right UNIX find
        find-program "C:\\unix\\utils\\usr\\local\\wbin\\find.exe"
+       ;; full name should be specified or one will not be found
+       xargs-program "C:\\unix\\utils\\usr\\local\\wbin\\xargs.exe"
        ;; do not want to add all the git stuff to the environment
-       vc-git-program "C:\\Program Files (x86)\\Git\\bin\\git.exe")
-      ;; unix utils
-      (add-to-list 'exec-path "C:\\unix\\utils\\usr\\local\\wbin"))
+       vc-git-program "C:\\Program Files (x86)\\Git\\bin\\git.exe"))
   (setq
    browse-url-browser-function 'browse-url-firefox
 
