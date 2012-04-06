@@ -8,14 +8,7 @@
       ;; unix utils
       (add-to-list 'exec-path "C:\\unix\\utils\\usr\\local\\wbin"))
   (setq
-   slime-lisp-implementations
-   `((sbcl ("sbcl" "--core" ,(expand-file-name "sbcl.core-for-slime" my-emacs-var-dir))))
-
-   ;; browse using conkeror
-   browse-url-generic-program "/usr/bin/conkeror"
-   ;;browse-url-browser-function 'browse-url-w3
-   browse-url-browser-function 'browse-url-generic
-   ;;browse-url-browser-function 'browse-url-firefox
+   browse-url-browser-function 'browse-url-firefox
 
    ;; disable internal decoder
    base64-internal-decoding-limit 0
