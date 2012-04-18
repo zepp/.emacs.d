@@ -29,6 +29,12 @@
              (define-key diff-mode-map (kbd "C-m") 'diff-goto-source)))
 
 ;;-------------------------------------------------------------------------------
+
+(add-hook 'sh-mode-hook
+	  #'(lambda ()
+	      (define-key sh-mode-map (kbd "C-c C-r") nil)))
+
+;;-------------------------------------------------------------------------------
 ;; global run map
 
 (define-prefix-command 'global-run-map)
