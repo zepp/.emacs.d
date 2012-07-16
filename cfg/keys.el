@@ -5,6 +5,7 @@
 (global-set-key (kbd "M-C") 'previous-buffer)
 (global-set-key (kbd "M-c") 'next-buffer)
 (global-set-key (kbd "M-t") 'dabbrev-completion)
+(global-set-key (kbd "C-t") 'nil)
 (global-set-key (kbd "M-#") 'dictem-run-define)
 (global-set-key (kbd "C-c C-r") 'rgrep)
 (global-set-key (kbd "C-x M-f") 'find-file-other-window)
