@@ -156,7 +156,7 @@
 (load-ext "grep")
 (load-ext "psvn" "psvn")
 
-(if (string= system-type "windows-nt")
+(when (not (string= system-type "windows-nt"))
   (load-ext "dictem" "dictem")
   (load-ext "nt" "newsticker-1.99")
   (load-ext "jabber" "emacs-jabber")
