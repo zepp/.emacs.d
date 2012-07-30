@@ -1,13 +1,14 @@
 ;;(setq max-lisp-eval-depth (* 1024 1024))
 
-(setq inhibit-startup-screen t)
 (transient-mark-mode 1)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 (toggle-scroll-bar -1)
 (column-number-mode 1)
 
-(setq x-select-enable-clipboard t)
+(setq inhibit-startup-screen t
+      x-select-enable-clipboard t
+      frame-title-format "%F")
 
 (put 'scroll-left 'disabled nil)
 (put 'upcase-region 'disabled nil)
