@@ -8,7 +8,8 @@
 
 (setq inhibit-startup-screen t
       x-select-enable-clipboard t
-      frame-title-format "%F")
+      frame-title-format "%F"
+      server-log t)
 
 (put 'scroll-left 'disabled nil)
 (put 'upcase-region 'disabled nil)
@@ -182,8 +183,19 @@
 ;;-------------------------------------------------------------------------------
 
 (when (not (string= system-type "windows-nt"))
+  (add-to-list 'default-frame-alist '(name . "emacs-client"))
   (add-to-list 'default-frame-alist '(font . "terminus-14"))
+  (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
   (when (functionp 'newsticker-start-ticker)
     (newsticker-start-ticker))
   (when (functionp 'wl)
     (wl 1)))
+
+;;-------------------------------------------------------------------------------
+
+(defmacro make-x-frame (name)
+  (let ((pred `(lambda (buf)
+		 (search ,name (buffer-name buf)))))
+    `(make-frame '((window-system . x)
+		   (name . ,(concat "emacs-" name))
+		   (buffer-predicate . ,pred)))))
