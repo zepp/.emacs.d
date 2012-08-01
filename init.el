@@ -162,7 +162,7 @@
   (load-ext "dictem" "dictem")
   (load-ext "nt" "newsticker-1.99")
   (load-ext "jabber" "emacs-jabber")
-  (load-ext "wl" "wanderlust-2.15.9" "wl" "elmo" "utils")
+  (load-ext "wl" "wl")
   (load-ext "magit" "magit")
   (load-ext "w3m" "w3m")
   (load-ext "gdb"))
@@ -171,6 +171,7 @@
 
 (load "my-utils")
 (load "buffer-recode")
+(load "wm")
 (ring-insert evm-coding-systems-list 'windows-1251)
 (ring-insert evm-coding-systems-list 'koi8-r)
 (global-set-key [f5] 'recode-buffer)
@@ -191,11 +192,3 @@
   (when (functionp 'wl)
     (wl 1)))
 
-;;-------------------------------------------------------------------------------
-
-(defmacro make-x-frame (name)
-  (let ((pred `(lambda (buf)
-		 (search ,name (buffer-name buf)))))
-    `(make-frame '((window-system . x)
-		   (name . ,(concat "emacs-" name))
-		   (buffer-predicate . ,pred)))))

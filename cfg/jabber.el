@@ -36,3 +36,11 @@
              (auto-fill-mode t)))
 
 (add-hook 'jabber-post-connect-hooks 'jabber-autoaway-start)
+
+(defun jabber-connect-with-secrets (&optional sec)
+  (interactive)
+  (if sec
+      (require sec)
+    (require 'secrets))
+  (jabber-connect-all)
+  (switch-to-buffer jabber-roster-buffer))

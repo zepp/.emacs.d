@@ -57,11 +57,7 @@
      (interactive)
      (if (get-buffer jabber-roster-buffer)
          (jabber-switch-to-roster-buffer)
-       (progn
-         (require 'secrets)
-         (jabber-connect-all)
-         ;;(jabber-switch-to-roster-buffer) does not work
-         (switch-to-buffer jabber-roster-buffer)))))
+       (jabber-connect-with-secrets))))
 
 (define-key global-run-map (kbd "l") 'ielm)
 
