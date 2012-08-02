@@ -13,8 +13,7 @@
 	 (progn
 	   (message "making new frame for %s" ,name)
 	   (select-frame-set-input-focus (make-frame '((window-system . x)
-						       (name . ,frm-name)
-						       (auto-raise . t))))
+						       (name . ,frm-name))))
 	   (funcall ,start-fun))))))
 
 (defun wm-raise-jabber()
