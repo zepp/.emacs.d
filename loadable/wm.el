@@ -1,5 +1,6 @@
-(defmacro wm-generic-raise(name start-fun &optional buf-or-fun)
-  (let* ((frm-name (concat "emacs-" name))
+(defmacro gen-run-raise(name run-fun &optional buf-or-fun)
+  (let* ((disp-evar (getenv "DISPLAY"))
+	 (frm-name (concat "emacs-" name))
 	 (frm-pred `(lambda (frame)
 		      (string= ,frm-name (frame-parameter frame 'name))))
 	 (frame-var-name (gensym)))
@@ -14,14 +15,14 @@
 	 (progn
 	   (message "making new frame for %s" ,name)
 	   (select-frame-set-input-focus (make-frame '((window-system . x)
+						       (display . ,disp-evar)
 						       (name . ,frm-name))))
-	   (funcall ,start-fun))))))
+	   (funcall ,run-fun))))))
 
 (defun wm-raise-jabber()
   (when (boundp 'jabber-roster-buffer)
-    (wm-generic-raise "jabber" #'jabber-connect-with-secrets)))
+    (gen-run-raise "jabber" #'jabber-connect-with-secrets)))
 
 (defun wm-raise-mail()
   (when (boundp 'wl-folder-buffer-name)
-    (wm-generic-raise "mail" #'wl)))
-
+    (gen-run-raise "mail" #'wl)))
