@@ -42,10 +42,15 @@
  wl-draft-reply-buffer-style 'full
  wl-draft-config-matchone t
  wl-draft-preview-attributes-buffer-lines 7
+ ;; Only save draft when I tell it to! (C-x C-s or C-c C-s):
+ wl-auto-save-drafts-interval nil
 
  wl-summary-auto-refile-skip-marks nil
  wl-summary-line-format "%W %D %M %h:%m %T%P %S %t%[%c %f% %] %s"
  wl-summary-width nil
+
+ ;; mark sent messages (folder carbon copy) as read.
+ wl-fcc-force-as-read t
 
  wl-generate-mailer-string-function 'wl-generate-user-agent-string-1)
 
