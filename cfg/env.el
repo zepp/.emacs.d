@@ -13,6 +13,10 @@
 
    ;; disable internal decoder
    base64-internal-decoding-limit 0
+   base64-internal-encoding-limit 0
+
+   quoted-printable-internal-encoding-limit 0
+   quoted-printable-internal-decoding-limit 0
 
    ;; using metamail
    ;; base64-external-encode '("mimencode")
