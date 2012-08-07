@@ -19,10 +19,14 @@
 						       (name . ,frm-name))))
 	   (funcall ,run-fun))))))
 
-(defun wm-raise-jabber()
+(defun wm-run-jabber()
   (when (boundp 'jabber-roster-buffer)
     (gen-run-raise "jabber" #'jabber-connect-with-secrets)))
 
-(defun wm-raise-mail()
+(defun wm-run-mail()
   (when (boundp 'wl-folder-buffer-name)
     (gen-run-raise "mail" #'wl)))
+
+(defun wm-run-mplayer()
+  (when (boundp 'mpc-status)
+    (gen-run-raise "mplayer" #'mpc)))
