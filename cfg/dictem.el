@@ -1,4 +1,4 @@
 (require 'dictem)
 
-(setq dictem-default-database "russian"
+(setq dictem-default-database "gcide"
       dictem-use-existing-buffer t)
