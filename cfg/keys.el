@@ -2,8 +2,7 @@
 ;; global keys definition
 
 (global-set-key (kbd "C-x M-o") #'(lambda () (interactive) (other-window -1)))
-(global-set-key (kbd "M-C") 'previous-buffer)
-(global-set-key (kbd "M-c") 'next-buffer)
+(global-set-key (kbd "C-x l") #'next-buffer)
 (global-set-key (kbd "M-t") 'dabbrev-completion)
 (global-set-key (kbd "C-t") 'nil)
 (global-set-key (kbd "M-#") 'dictem-run-define)
@@ -13,20 +12,9 @@
 ;;-------------------------------------------------------------------------------
 ;; related to global key redefinition so placed here
 
-;; (add-hook 'wl-summary-mode-hook
-;;           '(lambda()
-;;              ;; wl-summary-refile-prev-destination
-;;              (define-key wl-summary-mode-map (kbd "M-o") 'nil)))
-
-(add-hook 'wl-folder-mode-hook
-          '(lambda()
-             ;; wl-fldmgr-copy
-             (define-key wl-folder-mode-map (kbd "M-c") 'nil)))
-
 (add-hook 'diff-mode-hook
           '(lambda ()
              ;; diff-goto-source
-             ;;(define-key diff-mode-map (kbd "M-o") 'nil)
              (define-key diff-mode-map (kbd "C-m") 'diff-goto-source)))
 
 ;;-------------------------------------------------------------------------------
@@ -60,6 +48,8 @@
        (jabber-connect-with-secrets))))
 
 (define-key global-run-map (kbd "l") 'ielm)
+
+(define-key global-run-map (kbd "f") 'sunrise)
 
 (global-set-key (kbd "C-x M-e") global-run-map)
 
