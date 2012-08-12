@@ -25,7 +25,6 @@
 
  elmo-msgdb-directory (expand-file-name "elmo" my-emacs-var-dir)
  elmo-split-log-file (expand-file-name "elmo/split-log" my-emacs-var-dir)
- wl-icon-directory (expand-file-name "etc/icons" load-root)
  
  wl-folder-check-async 1
  wl-folder-use-frame nil
