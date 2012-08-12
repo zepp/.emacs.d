@@ -24,37 +24,26 @@
 (setq my-emacs-var-dir "~/.emacs.var"
       my-emacs-personal-cfg (expand-file-name "personal" user-emacs-directory))
 
-(defun load-ext (cfg &rest name-dirs)
+(defun load-ext (cfg &optional name)
 
   (defun do-load (cfg)
-    (load (format (expand-file-name "cfg/%s.el" user-emacs-directory) cfg))
-    (let ((path (expand-file-name (concat cfg ".el") my-emacs-personal-cfg)))
+    (load (expand-file-name (format "cfg/%s.el" cfg)
+			    user-emacs-directory))
+    (let ((path (expand-file-name (concat cfg ".el")
+				  my-emacs-personal-cfg)))
       (if (file-regular-p path)
           (load path)
         nil)))
 
-  (let ((name (first name-dirs))
-        (dirs (rest name-dirs)))
-    (if name
-        (let ((load-root (expand-file-name name "~/elisp")))
-          (if (find-if #'(lambda (path)
-                           (search name path))
-                       load-path)
-              (do-load cfg)
-            (let ((path-list
-                   (if dirs
-                       (mapcar #'(lambda (dir)
-                                   (expand-file-name dir load-root))
-                               dirs)
-                     (list load-root))))
-              (when (not (remove t
-                                 (mapcar 
-                                  #'(lambda (path)
-                                      (file-directory-p path))
-                                  path-list)))
-                (setq load-path (nconc path-list load-path))
-                (do-load cfg)))))
-      (do-load cfg))))
+  (if name
+      (if (find-if #'(lambda (path)
+		       (find-if #'(lambda (dir)
+				    (equal 0 (search name dir)))
+				(nreverse (split-string
+					   (directory-file-name path) "/"))))
+		   load-path)
+	  (do-load cfg))
+    (do-load cfg)))
 
 (setq auto-save-list-file-prefix (expand-file-name "auto-save/" my-emacs-var-dir))
 
@@ -145,22 +134,30 @@
 
 ;;-------------------------------------------------------------------------------
 
+(let ((elpa-root (expand-file-name "~/elisp/elpa")))
+  (when (file-directory-p elpa-root)
+    (add-to-list 'load-path elpa-root)
+    (setf package-user-dir elpa-root)
+    (require 'package)
+    (package-initialize)))
+
+;;-------------------------------------------------------------------------------
 ;; external packages or big configuration statements should be moved
 ;; to separate file
 (load-ext "cc")
 (load-ext "fonts")
 (load-ext "env")
-(load-ext "org" "org-7.4" "lisp")
+(load-ext "org")
 (load-ext "gtags" "global")
 (load-ext "prefs" "prefs")
-(load-ext "zencolor" "zenburn-el")
+(load-ext "zencolor" "zenburn")
 (load-ext "fs")
 (load-ext "grep")
 (load-ext "psvn" "psvn")
 
 (when (not (string= system-type "windows-nt"))
   (load-ext "dictem" "dictem")
-  (load-ext "nt" "newsticker-1.99")
+  (load-ext "nt" "newsticker")
   (load-ext "jabber" "emacs-jabber")
   (load-ext "wl" "wl")
   (load-ext "magit" "magit")
@@ -192,4 +189,3 @@
     (newsticker-start-ticker))
   (when (functionp 'wl)
     (wl 1)))
-
