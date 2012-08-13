@@ -155,6 +155,7 @@
 (load-ext "grep")
 (load-ext "psvn" "psvn")
 (load-ext "sr" "sunrise")
+(load-ext "iresize" "iresize")
 
 (when (not (string= system-type "windows-nt"))
   (load-ext "dictem" "dictem")

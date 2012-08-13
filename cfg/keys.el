@@ -8,6 +8,7 @@
 (global-set-key (kbd "M-#") 'dictem-run-define)
 (global-set-key (kbd "C-c C-r") 'rgrep)
 (global-set-key (kbd "C-x M-f") 'find-file-other-window)
+(global-set-key (kbd "C-x ^") 'iresize-mode)
 
 ;;-------------------------------------------------------------------------------
 ;; related to global key redefinition so placed here
