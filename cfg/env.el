@@ -1,13 +1,9 @@
 (if (string= system-type "windows-nt")
-    (progn
-      (add-to-list 'exec-path "C:/unix/utils/usr/local/wbin")
-      (setq
-       ;; to do not confuse windows default find and right UNIX find
-       find-program "C:\\unix\\utils\\usr\\local\\wbin\\find.exe"
-       ;; full name should be specified or one will not be found
-       xargs-program "C:\\unix\\utils\\usr\\local\\wbin\\xargs.exe"
-       ;; do not want to add all the git stuff to the environment
-       vc-git-program "C:\\Program Files (x86)\\Git\\bin\\git.exe"))
+    (let ((gwin32-path "C:/Program Files (x86)/Emacs/EmacsW32/gnuwin32/bin"))
+      (add-to-list 'exec-path gwin32-path)
+      (setenv "PATH" (concat 
+		      (convert-standard-filename gwin32-path)
+		      ";" (getenv "PATH"))))
   (setq
    browse-url-browser-function 'browse-url-firefox
 
