@@ -1,13 +1,7 @@
 (if (string= system-type "windows-nt")
     (progn
       (add-to-list 'exec-path "C:/Program Files (x86)/Emacs/EmacsW32/gnuwin32/bin")
-      (setenv "PATH" (apply #'concat
-			    (maplist #'(lambda (e)
-					 (let ((p (convert-standard-filename (car e))))
-					   (if (cdr e)
-					       (concat p ";")
-					     p)))
-				     exec-path))))
+      (setenv "PATH" (combine-and-quote-strings exec-path ";")))
   (setq
    browse-url-browser-function 'browse-url-firefox
 
