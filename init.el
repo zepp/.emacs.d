@@ -8,8 +8,7 @@
 
 (setq inhibit-startup-screen t
       x-select-enable-clipboard t
-      frame-title-format "%F"
-      server-log t)
+      frame-title-format "%F")
 
 (put 'scroll-left 'disabled nil)
 (put 'upcase-region 'disabled nil)
@@ -70,6 +69,7 @@
 (add-to-list 'desktop-modes-not-to-save 'Info-mode)
 (add-to-list 'desktop-modes-not-to-save 'info-lookup-mode)
 (add-to-list 'desktop-modes-not-to-save 'dired-mode)
+(add-to-list 'desktop-modes-not-to-save 'sr-mode)
 (setq 
  ;; emacs is launched in daemon mode from .profile so I have to place
  ;; this directive here to avoid hanging at window manager boot-up
@@ -144,6 +144,7 @@
 ;;-------------------------------------------------------------------------------
 ;; external packages or big configuration statements should be moved
 ;; to separate file
+(load-ext "server")
 (load-ext "cc")
 (load-ext "fonts")
 (load-ext "env")
