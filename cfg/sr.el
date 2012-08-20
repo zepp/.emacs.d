@@ -4,7 +4,7 @@
 (require 'dired-x)
 (require 'sunrise-commander)
 
-(setq sr-avfs-root "~/.avfs")
+(setq sr-avfs-root "~/.avfs/mount")
 
 (unless (string= system-type "windows-nt")
   (setq sr-attributes-display-mask '(nil nil nil nil t t t)))
