@@ -29,4 +29,4 @@
              (c-toggle-electric-state 1)
              (c-toggle-auto-newline -1)
              (c-toggle-hungry-state 1)
-	     (longlines-mode)))
+	     (visual-line-mode)))
