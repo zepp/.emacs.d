@@ -142,6 +142,13 @@
     (package-initialize)))
 
 ;;-------------------------------------------------------------------------------
+
+(require 'longlines)
+(setq longlines-show-hard-newlines nil
+      longlines-wrap-follows-window-size t)
+
+;;-------------------------------------------------------------------------------
+
 ;; external packages or big configuration statements should be moved
 ;; to separate file
 (load-ext "server")
