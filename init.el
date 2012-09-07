@@ -166,6 +166,7 @@
 (load-ext "iresize" "iresize")
 
 (when (not (string= system-type "windows-nt"))
+  (load-ext "mpc")
   (load-ext "dictem" "dictem")
   (load-ext "nt" "newsticker")
   (load-ext "jabber" "emacs-jabber")
