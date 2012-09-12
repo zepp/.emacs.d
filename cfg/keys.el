@@ -2,7 +2,8 @@
 ;; global keys definition
 
 (global-set-key (kbd "C-x M-o") #'(lambda () (interactive) (other-window -1)))
-(global-set-key (kbd "C-x l") #'next-buffer)
+(global-set-key (kbd "C-x p") #'previous-buffer)
+(global-set-key (kbd "C-x n") #'next-buffer)
 (global-set-key (kbd "M-t") 'dabbrev-completion)
 (global-set-key (kbd "C-t") 'nil)
 (global-set-key (kbd "M-#") 'dictem-run-define)
