@@ -17,6 +17,10 @@
     (get-buffer-window
      (get-buffer ,name) t)))
 
+(defun mpc-jump-to-artists () (interactive) (mpc-sel-window "*MPC Artists*"))
+(defun mpc-jump-to-albums () (interactive) (mpc-sel-window "*MPC Albums*"))
+(defun mpc-jump-to-songs () (interactive) (mpc-sel-window "*MPC-Songs*"))
+
 (define-key mpc-mode-map (kbd "s") #'mpc-songs-search)
 (define-key mpc-mode-map (kbd "y") #'mpc-playlist-add)
 (define-key mpc-mode-map (kbd "k") #'mpc-playlist-delete)
@@ -28,24 +32,17 @@
 (define-key mpc-mode-map (kbd "p") #'mpc-prev)
 (define-key mpc-mode-map (kbd "l") #'mpc-playlist)
 (define-key mpc-mode-map (kbd "M-p") #'mpc-play)
+(define-key mpc-mode-map (kbd "a") #'mpc-jump-to-albums)
+(define-key mpc-mode-map (kbd "A") #'mpc-jump-to-artists)
 
-(define-key mpc-mode-map (kbd "RET")
-  #'(lambda ()
-      (interactive)
-      (mpc-select)
-      (if (equal "*MPC Artists*" (buffer-name))
-	  (mpc-sel-window "*MPC Albums*")
-	(mpc-sel-window "*MPC-Songs*"))))
+(defadvice mpc-select (after change-window (&optional event) activate)
+  "changes the current window after the selection. \
+Artists ->Albums, Albums -> Songs"
+  (cond ((string= "*MPC Artists*" (buffer-name))
+	 (mpc-jump-to-albums))
+	((string= "*MPC Albums*" (buffer-name))
+	 (mpc-jump-to-songs))))
 
-(define-key mpc-mode-map (kbd "a")
-  #'(lambda ()
-      (interactive)
-      (mpc-sel-window "*MPC Albums*")))
-
-(define-key mpc-mode-map (kbd "A")
-  #'(lambda ()
-      (interactive)
-      (mpc-sel-window "*MPC Artists*")))
-
-(define-key mpc-songs-mode-map (kbd "RET") 
-  #'mpc-songs-jump-to)
+(defadvice mpc-playlist (after change-window (&optional event) activate)
+  "changes the current window to Songs"
+  (mpc-jump-to-songs))
