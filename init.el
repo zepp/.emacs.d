@@ -164,6 +164,7 @@
 (load-ext "psvn" "psvn")
 (load-ext "sr" "sunrise")
 (load-ext "iresize" "iresize")
+(load-ext "wn" "window-numbering")
 
 (when (not (string= system-type "windows-nt"))
   (load-ext "mpc")
