@@ -117,6 +117,28 @@
 
 ;;-------------------------------------------------------------------------------
 
+(require 'eshell)
+(defun eshell-jump ()
+  (interactive)
+  (if (eq major-mode 'dired-mode)
+      (let ((eshell-buffer-name (concat "eshell-" (buffer-name))))
+	(eshell))
+    (let* ((dir (directory-file-name
+		 (if buffer-file-name 
+		     (file-name-directory buffer-file-name)
+		   default-directory)))
+	   (eshell-buffer-name
+	    (concat "eshell-" 
+		    (car (last (split-string dir "/"))))))
+      (eshell))))
+
+;;-------------------------------------------------------------------------------
+
+(setq dired-bind-jump nil)
+(require 'dired-x)
+
+;;-------------------------------------------------------------------------------
+
 (let ((elpa-root (expand-file-name "~/elisp/elpa")))
   (when (file-directory-p elpa-root)
     (add-to-list 'load-path elpa-root)
