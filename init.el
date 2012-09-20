@@ -120,17 +120,18 @@
 (require 'eshell)
 (defun eshell-jump ()
   (interactive)
-  (if (eq major-mode 'dired-mode)
-      (let ((eshell-buffer-name (concat "eshell-" (buffer-name))))
-	(eshell))
-    (let* ((dir (directory-file-name
-		 (if buffer-file-name 
-		     (file-name-directory buffer-file-name)
-		   default-directory)))
-	   (eshell-buffer-name
-	    (concat "eshell-" 
-		    (car (last (split-string dir "/"))))))
-      (eshell))))
+  (let ((eshell-buffer-name 
+	 (if (eq major-mode 'dired-mode)
+	     (concat "eshell-" (buffer-name))
+	   (let* ((dir (directory-file-name
+			(if buffer-file-name 
+			    (file-name-directory buffer-file-name)
+			  default-directory))))
+	     (concat "eshell-" 
+		     (car (last (split-string dir "/"))))))))
+    (unless (get-buffer eshell-buffer-name)
+      (add-to-list 'same-window-buffer-names eshell-buffer-name))
+    (eshell)))
 
 ;;-------------------------------------------------------------------------------
 
