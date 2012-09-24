@@ -117,13 +117,13 @@
   (interactive)
   (let ((eshell-buffer-name 
 	 (if (eq major-mode 'dired-mode)
-	     (concat "eshell-" (buffer-name))
+	     (concat (buffer-name) ":eshell")
 	   (let* ((dir (directory-file-name
 			(if buffer-file-name 
 			    (file-name-directory buffer-file-name)
 			  default-directory))))
-	     (concat "eshell-" 
-		     (car (last (split-string dir "/"))))))))
+	     (concat (car (last (split-string dir "/"))) 
+		     ":eshell")))))
     (unless (get-buffer eshell-buffer-name)
       (add-to-list 'same-window-buffer-names eshell-buffer-name))
     (eshell)))
