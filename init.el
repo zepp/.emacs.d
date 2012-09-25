@@ -20,7 +20,7 @@
 
 (add-to-list 'load-path "~/.emacs.d/loadable/")
 
-(when (< emacs-minor-version 23)
+(when (< emacs-major-version 23)
   (setq user-emacs-directory "~/.emacs.d/"))
 
 (setq my-emacs-var-dir "~/.emacs.var"
