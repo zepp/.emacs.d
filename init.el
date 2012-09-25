@@ -20,6 +20,9 @@
 
 (add-to-list 'load-path "~/.emacs.d/loadable/")
 
+(when (< emacs-minor-version 23)
+  (setq user-emacs-directory "~/.emacs.d/"))
+
 (setq my-emacs-var-dir "~/.emacs.var"
       my-emacs-personal-cfg (expand-file-name "personal" user-emacs-directory))
 
@@ -214,7 +217,7 @@ vertically."
 (load-ext "wn" "window-numbering")
 
 (when (not (string= system-type "windows-nt"))
-  (load-ext "mpc")
+  (when (fboundp 'mpc) (load-ext "mpc"))
   (load-ext "dictem" "dictem")
   (load-ext "nt" "newsticker")
   (load-ext "jabber" "emacs-jabber")
