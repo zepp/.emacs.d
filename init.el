@@ -202,7 +202,7 @@ vertically."
 (load-ext "cc")
 (load-ext "fonts")
 (load-ext "env")
-(load-ext "org")
+(load-ext "org" "org")
 (load-ext "gtags" "global")
 (load-ext "prefs" "prefs")
 (load-ext "zencolor" "zenburn")
