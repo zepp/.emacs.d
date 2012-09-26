@@ -20,6 +20,7 @@
 (global-set-key (kbd "C-c s") #'split-window-horizontally)
 (global-set-key (kbd "C-c q") #'delete-other-windows)
 (global-set-key (kbd "C-c k") #'delete-window)
+(global-set-key (kbd "C-x M-3") #'server-edit)
 
 ;;-------------------------------------------------------------------------------
 ;; related to global key redefinition so placed here
