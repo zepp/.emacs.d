@@ -24,7 +24,8 @@
   (setq user-emacs-directory "~/.emacs.d/"))
 
 (setq my-emacs-var-dir "~/.emacs.var"
-      my-emacs-personal-cfg (expand-file-name "personal" user-emacs-directory))
+      my-emacs-personal-cfg (expand-file-name "personal" user-emacs-directory)
+      auto-save-list-file-prefix (expand-file-name "auto-save/" my-emacs-var-dir))
 
 (defun load-ext (cfg &optional name)
 
@@ -46,8 +47,6 @@
 		   load-path)
 	  (do-load cfg))
     (do-load cfg)))
-
-(setq auto-save-list-file-prefix (expand-file-name "auto-save/" my-emacs-var-dir))
 
 ;;-------------------------------------------------------------------------------
 
@@ -153,40 +152,6 @@ vertically."
   (let ((split-height-threshold 0)
 	(split-width-threshold nil))
     ad-do-it))
-
-(defun find-dired-omit-ignored (dir args)
-  (interactive (list 
-		(read-file-name "Run find in directory: " nil "" t)
-		(read-string "Looking for file: " "-name ")))
-  (find-dired dir
-	      (concat
-	       (and grep-find-ignored-directories
-		    (concat (shell-quote-argument "(")
-			    ;; we should use shell-quote-argument here
-			    " -path "
-			    (mapconcat
-			     #'(lambda (ignore)
-				 (cond ((stringp ignore)
-					(shell-quote-argument
-					 (concat "*/" ignore)))
-				       ((consp ignore)
-					(and (funcall (car ignore) dir)
-					     (shell-quote-argument
-					      (concat "*/"
-						      (cdr ignore)))))))
-			     grep-find-ignored-directories
-			     " -o -path ")
-			    " "
-			    (shell-quote-argument ")")
-			    " -prune -o "))
-	       args)))
-
-(add-hook 'dired-mode-hook 
-	  #'(lambda ()
-	      (define-key dired-mode-map
-		(kbd "C-c C-f") #'find-dired)
-	      (define-key dired-mode-map
-		(kbd "C-c M-f") #'find-dired-omit-ignored)))
 
 ;;-------------------------------------------------------------------------------
 
