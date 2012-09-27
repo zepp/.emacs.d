@@ -102,7 +102,8 @@
 (add-hook 'cperl-mode-hook
           (lambda ()
             (cperl-set-style "C++")
-            (define-key cperl-mode-map (kbd "C-h f") 'cperl-perldoc)))
+            (define-key cperl-mode-map (kbd "C-h f") 'cperl-perldoc)
+	    (define-key cperl-mode-map [remap completion-at-point] 'dabbrev-completion)))
 
 ;;-------------------------------------------------------------------------------
 

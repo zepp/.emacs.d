@@ -2,8 +2,7 @@
 ;; global keys definition
 
 (global-set-key (kbd "M-#") 'dictem-run-define)
-(global-set-key (kbd "M-t") 'dabbrev-completion)
-(global-set-key (kbd "M-c") 'completion-at-point)
+(global-set-key (kbd "M-t") #'complete-symbol)
 (global-set-key (kbd "C-t") 'nil)
 (global-set-key (kbd "C-x ^") 'iresize-mode)
 (global-set-key (kbd "C-x M-o") #'(lambda () (interactive) (other-window -1)))
