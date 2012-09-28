@@ -1,26 +1,26 @@
 ;;-------------------------------------------------------------------------------
 ;; global keys definition
 
-(global-set-key (kbd "M-#") 'dictem-run-define)
+(global-set-key (kbd "M-C-3") 'dictem-run-define)
+(global-set-key (kbd "M-C-4") 'ispell-word)
 (global-set-key (kbd "M-t") #'complete-symbol)
 (global-set-key (kbd "C-t") 'nil)
-(global-set-key (kbd "C-x ^") 'iresize-mode)
-(global-set-key (kbd "C-x M-o") #'(lambda () (interactive) (other-window -1)))
 (global-set-key (kbd "C-x p") #'previous-buffer)
 (global-set-key (kbd "C-x n") #'next-buffer)
-(global-set-key (kbd "C-x M-f") #'find-file-other-window)
-(global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
 (global-set-key (kbd "C-x d") #'dired-jump)
 (global-set-key (kbd "C-x j") #'eshell-jump)
 (global-set-key (kbd "C-x C-d") #'dired)
+(global-set-key (kbd "C-x M-3") #'server-edit)
 (global-set-key (kbd "C-x M-d") #'dired-other-window)
+(global-set-key (kbd "C-x M-f") #'find-file-other-window)
+(global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
 (global-set-key (kbd "C-c C-g") #'rgrep)
 (global-set-key (kbd "C-c C-f") #'find-dired)
 (global-set-key (kbd "C-c M-s") #'split-window-vertically)
 (global-set-key (kbd "C-c s") #'split-window-horizontally)
 (global-set-key (kbd "C-c q") #'delete-other-windows)
 (global-set-key (kbd "C-c k") #'delete-window)
-(global-set-key (kbd "C-x M-3") #'server-edit)
+(global-set-key (kbd "C-c r") #'iresize-mode)
 
 ;;-------------------------------------------------------------------------------
 ;; related to global key redefinition so placed here
@@ -29,12 +29,6 @@
           '(lambda ()
              ;; diff-goto-source
              (define-key diff-mode-map (kbd "C-m") 'diff-goto-source)))
-
-;;-------------------------------------------------------------------------------
-
-(add-hook 'sh-mode-hook
-	  #'(lambda ()
-	      (define-key sh-mode-map (kbd "C-c C-r") nil)))
 
 ;;-------------------------------------------------------------------------------
 ;; global run map

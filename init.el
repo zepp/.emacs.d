@@ -50,6 +50,11 @@
 
 ;;-------------------------------------------------------------------------------
 
+(require 'lisp-mode)
+(define-key lisp-mode-shared-map (kbd "M-t") 'lisp-complete-symbol)
+
+;;-------------------------------------------------------------------------------
+
 ;; iswitchb
 (require 'iswitchb)
 (setq iswitchb-regexp t)
