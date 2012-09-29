@@ -32,8 +32,8 @@
 (define-key mpc-mode-map (kbd "p") #'mpc-prev)
 (define-key mpc-mode-map (kbd "l") #'mpc-playlist)
 (define-key mpc-mode-map (kbd "M-p") #'mpc-play)
-(define-key mpc-mode-map (kbd "a") #'mpc-jump-to-albums)
-(define-key mpc-mode-map (kbd "A") #'mpc-jump-to-artists)
+(define-key mpc-mode-map (kbd "M-a") #'mpc-jump-to-albums)
+(define-key mpc-mode-map (kbd "a") #'mpc-jump-to-artists)
 
 (defadvice mpc-select (after change-window (&optional event) activate)
   "changes the current window after the selection. \
