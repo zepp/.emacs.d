@@ -108,7 +108,7 @@
           (lambda ()
             (cperl-set-style "C++")
             (define-key cperl-mode-map (kbd "C-h f") 'cperl-perldoc)
-	    (define-key cperl-mode-map [remap completion-at-point] 'dabbrev-completion)))
+	    (define-key cperl-mode-map [remap complete-symbol] 'dabbrev-completion)))
 
 ;;-------------------------------------------------------------------------------
 

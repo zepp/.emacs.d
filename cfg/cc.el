@@ -24,7 +24,7 @@
 
 (add-hook 'c-mode-common-hook
           '(lambda()
-	     (define-key c-mode-base-map [remap completion-at-point] 'dabbrev-completion)
+	     (define-key c-mode-base-map [remap complete-symbol] 'dabbrev-completion)
              (auto-fill-mode t)
              ;;(c-toggle-auto-hungry-state 1)
              (c-toggle-electric-state 1)
