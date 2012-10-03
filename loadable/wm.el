@@ -33,3 +33,7 @@
 (defun wm-run-mplayer()
   (when (boundp 'mpc-status)
     (gen-run-raise "mplayer" #'mpc)))
+
+(defun wm-run-agenda()
+  (when (boundp 'org-agenda-files)
+    (gen-run-raise "agenda" #'org-agenda)))
