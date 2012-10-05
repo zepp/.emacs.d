@@ -1,19 +1,23 @@
 ;;-------------------------------------------------------------------------------
 ;; global keys definition
 
-(global-set-key (kbd "M-C-3") 'dictem-run-define)
-(global-set-key (kbd "M-C-4") 'ispell-word)
-(global-set-key (kbd "M-t") #'complete-symbol)
+(global-set-key (kbd "C-<") #'beginning-of-buffer)
+(global-set-key (kbd "C->") #'end-of-buffer)
+(global-set-key (kbd "C-#") #'dictem-run-define)
+(global-set-key (kbd "C-$") #'ispell-word)
+(global-set-key (kbd "C-%") #'query-replace)
 (global-set-key (kbd "C-t") 'nil)
+(global-set-key (kbd "M-t") #'complete-symbol)
+
 (global-set-key (kbd "C-x p") #'previous-buffer)
 (global-set-key (kbd "C-x n") #'next-buffer)
 (global-set-key (kbd "C-x d") #'dired-jump)
 (global-set-key (kbd "C-x j") #'eshell-jump)
 (global-set-key (kbd "C-x C-d") #'dired)
-(global-set-key (kbd "C-x M-3") #'server-edit)
 (global-set-key (kbd "C-x M-d") #'dired-other-window)
 (global-set-key (kbd "C-x M-f") #'find-file-other-window)
 (global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
+
 (global-set-key (kbd "C-c C-g") #'rgrep)
 (global-set-key (kbd "C-c C-f") #'find-dired)
 (global-set-key (kbd "C-c M-s") #'split-window-vertically)
