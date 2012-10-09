@@ -17,6 +17,12 @@
 (global-set-key (kbd "C-x M-d") #'dired-other-window)
 (global-set-key (kbd "C-x M-f") #'find-file-other-window)
 (global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
+(global-set-key (kbd "C-x C-n")
+		#'(lambda (newname)
+		    (interactive
+		     (list (read-string "Rename current buffer to: "
+					(buffer-name (current-buffer)))))
+		    (rename-buffer newname)))
 
 (global-set-key (kbd "C-c C-g") #'rgrep)
 (global-set-key (kbd "C-c C-f") #'find-dired)
