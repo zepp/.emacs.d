@@ -39,13 +39,17 @@
         nil)))
 
   (if name
-      (if (find-if #'(lambda (path)
-		       (find-if #'(lambda (dir)
-				    (equal 0 (search name dir)))
-				(nreverse (split-string
-					   (directory-file-name path) "/"))))
-		   load-path)
-	  (do-load cfg))
+      (if (symbolp name)
+	  (if (fboundp name)
+	      (do-load cfg))
+	(if (find-if #'(lambda (path)
+			 (find-if #'(lambda (dir)
+				      (equal 0 (search name dir)))
+				  (nreverse (split-string
+					     (directory-file-name path) "/"))))
+		     load-path)
+	    (do-load cfg)))
+    
     (do-load cfg)))
 
 ;;-------------------------------------------------------------------------------
@@ -182,14 +186,13 @@ vertically."
 (load-ext "zencolor" "zenburn")
 (load-ext "fs")
 (load-ext "grep")
-(when (boundp 'svn-psvn-revision)
-  (load-ext "psvn"))
+(load-ext "psvn" 'svn-status)
 (load-ext "sr" "sunrise")
 (load-ext "iresize" "iresize")
 (load-ext "wn" "window-numbering")
 
 (when (not (string= system-type "windows-nt"))
-  (when (fboundp 'mpc) (load-ext "mpc"))
+  (load-ext "mpc" 'mpc)
   (load-ext "dictem" "dictem")
   (load-ext "nt" "newsticker")
   (load-ext "jabber" "emacs-jabber")
@@ -219,7 +222,5 @@ vertically."
   (add-to-list 'default-frame-alist '(name . "emacs-client"))
   (add-to-list 'default-frame-alist '(font . "terminus-14"))
   (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
-  (when (functionp 'newsticker-start-ticker)
-    (newsticker-start-ticker))
   (when (functionp 'wl)
     (wl 1)))
