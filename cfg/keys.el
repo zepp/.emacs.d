@@ -52,6 +52,12 @@
              (define-key diff-mode-map (kbd "C-m") 'diff-goto-source)))
 
 ;;-------------------------------------------------------------------------------
+
+(add-hook 'eshell-mode-hook
+          '(lambda ()
+             (define-key eshell-mode-map (kbd "C-c M-s") nil)))
+
+;;-------------------------------------------------------------------------------
 ;; global run map
 
 (define-prefix-command 'global-run-map)
