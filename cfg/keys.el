@@ -1,13 +1,10 @@
 ;;-------------------------------------------------------------------------------
 ;; global keys definition
 
-(global-set-key (kbd "C-<") #'beginning-of-buffer)
-(global-set-key (kbd "C->") #'end-of-buffer)
-(global-set-key (kbd "C-#") #'dictem-run-define)
-(global-set-key (kbd "C-$") #'ispell-word)
-(global-set-key (kbd "C-*") #'ispell-region)
-(global-set-key (kbd "C-%") #'query-replace)
 (global-set-key (kbd "C-t") 'nil)
+
+(global-set-key (kbd "M-#") #'dictem-run-define)
+(global-set-key (kbd "M-*") #'ispell-region)
 (global-set-key (kbd "M-t") #'complete-symbol)
 
 (global-set-key (kbd "C-x p") #'previous-buffer)
