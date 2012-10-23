@@ -30,6 +30,19 @@
 (global-set-key (kbd "C-c k") #'delete-window)
 (global-set-key (kbd "C-c r") #'iresize-mode)
 
+
+;;-------------------------------------------------------------------------------
+
+(global-set-key (kbd "<XF86Open>") #'find-file)
+(global-set-key (kbd "<XF86Save>") #'save-buffer)
+(global-set-key (kbd "<XF86Close>") #'kill-buffer)
+(global-set-key (kbd "<XF86New>") #'new-frame)
+
+;; these keys are partly implemented in MS Natural Ergonomic Keyboard
+;; in F Lock mode
+(global-set-key (kbd "<SunOpen>") #'find-file)
+(global-set-key (kbd "<SunClose>") #'kill-buffer)
+
 ;;-------------------------------------------------------------------------------
 ;; related to global key redefinition so placed here
 
