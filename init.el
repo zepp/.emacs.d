@@ -138,7 +138,7 @@
 		     ":shell")))))
     (unless (get-buffer new-shell-buf-name)
       (add-to-list 'same-window-buffer-names new-shell-buf-name))
-    (shell)))
+    (shell new-shell-buf-name )))
 
 ;;-------------------------------------------------------------------------------
 
