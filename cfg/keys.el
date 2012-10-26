@@ -58,6 +58,12 @@
              (define-key eshell-mode-map (kbd "C-c M-s") nil)))
 
 ;;-------------------------------------------------------------------------------
+
+(add-hook 'shell-mode-hook
+          '(lambda ()
+             (define-key shell-mode-map (kbd "C-c M-s") nil)))
+
+;;-------------------------------------------------------------------------------
 ;; global run map
 
 (define-prefix-command 'global-run-map)
