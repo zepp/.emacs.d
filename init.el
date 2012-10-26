@@ -8,7 +8,8 @@
 
 (setq inhibit-startup-screen t
       x-select-enable-clipboard t
-      frame-title-format "%F")
+      frame-title-format "%F"
+      default-input-method 'russian-computer)
 
 (put 'scroll-left 'disabled nil)
 (put 'upcase-region 'disabled nil)
