@@ -19,7 +19,7 @@
 (require 'warnings)
 (add-to-list 'warning-suppress-types '(undo discard-info))
 
-(add-to-list 'load-path "~/.emacs.d/loadable/")
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/loadable/"))
 
 (when (< emacs-major-version 23)
   (setq user-emacs-directory "~/.emacs.d/"))
@@ -52,6 +52,17 @@
 	    (do-load cfg)))
     
     (do-load cfg)))
+
+(let ((opt-site-lisp (expand-file-name "~/opt/share/emacs/site-lisp")))
+  (when (file-directory-p opt-site-lisp)
+    (add-to-list 'load-path opt-site-lisp)
+    (dolist (entry (delete nil
+			   (mapcar #'(lambda (entry)
+				       (unless (or (string= entry ".") (string= entry ".."))
+					 (expand-file-name entry opt-site-lisp)))
+				   (directory-files opt-site-lisp nil nil t))))
+      (when (file-directory-p entry)
+	(add-to-list 'load-path entry)))))
 
 ;;-------------------------------------------------------------------------------
 
