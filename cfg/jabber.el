@@ -4,7 +4,7 @@
 (jabber-mode-line-mode -1)
 
 (setq
- jabber-activity-banned '("juick@juick\.com" "jubo@nologin\.ru" "psto@psto\.net")
+ jabber-activity-banned '("juick@juick\.com" "jubo@nologin\.ru" "psto@psto\.net" "bnw\.im")
  jabber-auto-reconnect t
  jabber-chat-delayed-time-format "%H:%M"
  jabber-default-status nil
