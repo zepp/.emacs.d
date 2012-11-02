@@ -22,12 +22,12 @@
 (setq c-default-style
       '((other . "pavels-template")))
 
+(mapcar
+ #'(lambda (h)
+     (add-hook 'c-mode-common-hook h))
+ '(auto-fill-mode c-toggle-hungry-state visual-line-mode))
+
 (add-hook 'c-mode-common-hook
           '(lambda()
 	     (define-key c-mode-base-map [remap complete-symbol] 'dabbrev-completion)
-             (auto-fill-mode t)
-             ;;(c-toggle-auto-hungry-state 1)
-             (c-toggle-electric-state 1)
-             (c-toggle-auto-newline -1)
-             (c-toggle-hungry-state 1)
-	     (visual-line-mode)))
+	     (c-toggle-auto-newline -1)) t)

@@ -30,10 +30,10 @@
  jabber-alert-message-hooks '(jabber-message-scroll)
  jabber-autoaway-method 'jabber-xprintidle-get-idle-time)
 
-(add-hook 'jabber-chat-mode-hook
-          '(lambda()
-             (flyspell-mode t)
-             (auto-fill-mode t)))
+(mapcar
+ #'(lambda (h)
+     (add-hook 'jabber-chat-mode-hook h))
+ '(flyspell-mode auto-fill-mode))
 
 (add-hook 'jabber-post-connect-hooks 'jabber-autoaway-start)
 
