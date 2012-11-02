@@ -44,6 +44,11 @@
  ;; Only save draft when I tell it to! (C-x C-s or C-c C-s):
  wl-auto-save-drafts-interval nil
 
+ signature-file-prefix (expand-file-name "~/.emacs.d/personal/wl")
+ signature-delete-blank-lines-at-eof t
+ signature-insert-at-eof t
+ signature-separator ""
+
  wl-summary-auto-refile-skip-marks nil
  wl-summary-line-format "%W %D %M %h:%m %T%P %S %t%[%c %f% %] %s"
  wl-summary-width nil
@@ -53,11 +58,16 @@
 
  wl-generate-mailer-string-function 'wl-generate-user-agent-string-1)
 
+(mapcar
+ #'(lambda (h)
+     (add-hook 'wl-mail-setup-hook h))
+ '(wl-draft-config-exec flyspell-mode auto-fill-mode))
+
 (add-hook 'wl-mail-setup-hook
           '(lambda()
-             (wl-draft-config-exec)
-             (flyspell-mode t)
-             (auto-fill-mode t)))
+	     (save-excursion
+	       (end-of-buffer)
+	       (wl-draft-insert-signature))) t)
 
 ;; semi + flim
 (setq
@@ -69,3 +79,13 @@
 
 (setq wl-folders-file (expand-file-name "wl/folders" my-emacs-personal-cfg)
       wl-address-file (expand-file-name "wl/addresses" my-emacs-personal-cfg))
+
+(add-hook 'wl-folder-mode-hook
+	  #'(lambda ()
+	      (define-key wl-folder-mode-map (kbd "M-n") #'wl-folder-next-unread)
+	      (define-key wl-folder-mode-map (kbd "M-p") #'wl-folder-prev-unread)))
+
+(add-hook 'wl-summary-mode-hook
+	  #'(lambda ()
+	      (define-key wl-summary-mode-map (kbd "M-n") #'wl-summary-down)
+	      (define-key wl-summary-mode-map (kbd "M-p") #'wl-summary-up)))
