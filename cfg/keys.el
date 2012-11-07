@@ -29,7 +29,8 @@
 (global-set-key (kbd "C-c q") #'delete-other-windows)
 (global-set-key (kbd "C-c k") #'delete-window)
 (global-set-key (kbd "C-c r") #'iresize-mode)
-
+(global-set-key (kbd "C-c b") #'browse-url)
+(global-set-key (kbd "C-c M-b") #'w3m-browse-url)
 
 ;;-------------------------------------------------------------------------------
 

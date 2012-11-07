@@ -3,7 +3,8 @@
       (add-to-list 'exec-path "C:/Program Files (x86)/Emacs/EmacsW32/gnuwin32/bin")
       (setenv "PATH" (combine-and-quote-strings exec-path ";")))
   (setq
-   browse-url-browser-function 'browse-url-firefox
+   browse-url-browser-function 'browse-url-generic
+   browse-url-generic-program "conkeror"
 
    ;; disable internal decoder
    base64-internal-decoding-limit 0
