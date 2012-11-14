@@ -29,5 +29,4 @@
 
 (add-hook 'c-mode-common-hook
           '(lambda()
-	     (define-key c-mode-base-map [remap complete-symbol] 'dabbrev-completion)
 	     (c-toggle-auto-newline -1)) t)

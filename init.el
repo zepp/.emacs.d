@@ -122,9 +122,7 @@
 
 (add-hook 'cperl-mode-hook
           (lambda ()
-            (cperl-set-style "C++")
-            (define-key cperl-mode-map (kbd "C-h f") 'cperl-perldoc)
-	    (define-key cperl-mode-map [remap complete-symbol] 'dabbrev-completion)))
+            (cperl-set-style "C++")))
 
 ;;-------------------------------------------------------------------------------
 
@@ -202,6 +200,7 @@ vertically."
 (load-ext "sr" "sunrise")
 (load-ext "iresize" "iresize")
 (load-ext "wn" "window-numbering")
+(load-ext "ac" "auto-complete")
 
 (when (not (string= system-type "windows-nt"))
   (load-ext "mpc" 'mpc)
