@@ -83,9 +83,15 @@
 (add-hook 'wl-folder-mode-hook
 	  #'(lambda ()
 	      (define-key wl-folder-mode-map (kbd "M-n") #'wl-folder-next-unread)
-	      (define-key wl-folder-mode-map (kbd "M-p") #'wl-folder-prev-unread)))
+	      (define-key wl-folder-mode-map (kbd "M-p") #'wl-folder-prev-unread)
+	      (define-key wl-folder-mode-map (kbd "M-g") #'wl-folder-goto-folder-sticky)
+	      (define-key wl-folder-mode-map (kbd "M-j") #'wl-folder-jump-folder)))
 
 (add-hook 'wl-summary-mode-hook
 	  #'(lambda ()
 	      (define-key wl-summary-mode-map (kbd "M-n") #'wl-summary-down)
-	      (define-key wl-summary-mode-map (kbd "M-p") #'wl-summary-up)))
+	      (define-key wl-summary-mode-map (kbd "M-p") #'wl-summary-up)
+	      (define-key wl-summary-mode-map (kbd "\\") #'wl-thread-open-close)
+	      (define-key wl-summary-mode-map (kbd "M-d") #'wl-summary-delete)
+	      (define-key wl-summary-mode-map (kbd "M-a")
+		#'wl-summary-reply-with-citation)))
