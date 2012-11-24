@@ -3,6 +3,7 @@
 
 (autoload 'wl "wl" "wanderlust" t)
 (autoload 'wl-draft "wl" "Write draft with Wanderlust." t)
+(autoload 'wl-user-agent-compose "wl-draft" nil t)
 
 ;; ssl.el
 (setq
@@ -44,7 +45,7 @@
  ;; Only save draft when I tell it to! (C-x C-s or C-c C-s):
  wl-auto-save-drafts-interval nil
 
- signature-file-prefix (expand-file-name "~/.emacs.d/personal/wl")
+ signature-file-prefix (expand-file-name "~/.emacs.d/personal/wl/")
  signature-delete-blank-lines-at-eof t
  signature-insert-at-eof t
  signature-separator ""
@@ -95,3 +96,14 @@
 	      (define-key wl-summary-mode-map (kbd "M-d") #'wl-summary-delete)
 	      (define-key wl-summary-mode-map (kbd "M-a")
 		#'wl-summary-reply-with-citation)))
+
+
+(if (boundp 'mail-user-agent)
+    (setq mail-user-agent 'wl-user-agent))
+(if (fboundp 'define-mail-user-agent)
+    (define-mail-user-agent
+      'wl-user-agent
+      'wl-user-agent-compose
+      'wl-draft-send
+      'wl-draft-kill
+      'mail-send-hook))
