@@ -24,3 +24,5 @@
    '(newsticker-obsolete-item-face ((t (:family "terminus" :weight bold :strike-through t))))
    '(newsticker-old-item-face ((t (:family "terminus" :foreground "orange3" :weight bold))))
    '(newsticker-treeview-face ((t (:family "terminus" :foreground "misty rose" :bold nil))))))
+
+(add-to-list 'default-frame-alist '(font . "terminus-14"))
