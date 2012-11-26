@@ -107,3 +107,14 @@
       'wl-draft-send
       'wl-draft-kill
       'mail-send-hook))
+
+(defun wl-summary-zepp-get-short-name (str)
+  (let ((pet-name (elmo-get-hash-val
+		   (downcase
+		    (wl-address-header-extract-address str)) 
+		   wl-address-petname-hash)))
+    (cond
+     ((and pet-name (> (length pet-name) 0)) pet-name)
+     ((string-match "\\(.*[^ \t]\\)[ \t]*<[^>]*>" str)
+      (wl-match-string 1 str))
+     (t str))))
