@@ -97,6 +97,9 @@
 	      (define-key wl-summary-mode-map (kbd "M-a")
 		#'wl-summary-reply-with-citation)))
 
+(add-hook 'wl-draft-mode-hook
+	  #'(lambda ()
+	      (define-key wl-draft-mode-map (kbd "C-c C-b") #'mail-text)))
 
 (if (boundp 'mail-user-agent)
     (setq mail-user-agent 'wl-user-agent))

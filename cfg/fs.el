@@ -2,6 +2,13 @@
 (require 'ispell)
 
 (setq
+
+ ispell-highlight-face 'flyspell-incorrect
+ ispell-have-new-look t
+ ispell-enable-tex-parser t
+ flyspell-delay 1
+ flyspell-always-use-popup t
+
  ispell-program-name "aspell"
 
  ; my dictionary-alist, using for redefinition Russian dictionary
@@ -54,9 +61,4 @@
   (flyspell-buffer)
   (message "English dictionary - Spell Checking completed."))
 
-(setq ispell-highlight-face (quote flyspell-incorrect))
-(setq ispell-have-new-look t)
-(setq ispell-enable-tex-parser t)
-(setq flyspell-delay 1)
-(setq flyspell-always-use-popup t)
-
+(define-key flyspell-mode-map (kbd "M-t") #'flyspell-auto-correct-word)
