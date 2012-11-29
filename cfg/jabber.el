@@ -44,3 +44,14 @@
     (require 'secrets))
   (jabber-connect-all)
   (switch-to-buffer jabber-roster-buffer))
+
+(add-hook 'jabber-roster-mode-hook
+	  #'(lambda ()
+	      (define-key jabber-roster-mode-map (kbd "C-j") #'jabber-compose)
+	      (define-key jabber-roster-mode-map (kbd "C-c C-l") 
+		#'jabber-activity-switch-to)))
+
+(add-hook 'jabber-chat-mode-hook
+	  #'(lambda ()
+	      (define-key jabber-chat-mode-map (kbd "C-c C-l") 
+		#'jabber-activity-switch-to)))

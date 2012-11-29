@@ -7,6 +7,7 @@
 (global-set-key (kbd "M-*") #'ispell-region)
 (global-set-key (kbd "M-t") #'complete-symbol)
 
+;; buffer related shortcuts start from C-x 
 (global-set-key (kbd "C-x p") #'previous-buffer)
 (global-set-key (kbd "C-x n") #'next-buffer)
 (global-set-key (kbd "C-x d") #'dired-jump)
@@ -22,6 +23,7 @@
 					(buffer-name (current-buffer)))))
 		    (rename-buffer newname)))
 
+;; general commands start from C-c
 (global-set-key (kbd "C-c C-g") #'rgrep)
 (global-set-key (kbd "C-c C-f") #'find-dired)
 (global-set-key (kbd "C-c M-s") #'split-window-vertically)
@@ -30,6 +32,7 @@
 (global-set-key (kbd "C-c k") #'delete-window)
 (global-set-key (kbd "C-c r") #'iresize-mode)
 (global-set-key (kbd "C-c b") #'browse-url)
+(global-set-key (kbd "C-c o") #'other-window)
 (global-set-key (kbd "C-c M-b") #'w3m-browse-url)
 
 ;;-------------------------------------------------------------------------------

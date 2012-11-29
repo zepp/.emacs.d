@@ -11,5 +11,6 @@
 (define-key gtags-mode-map (kbd "M-.") #'gtags-find-tag)
 (define-key gtags-mode-map (kbd "C-M-,") #'gtags-find-rtag)
 (define-key gtags-mode-map (kbd "M-^") #'gtags-pop-stack)
+(define-key gtags-select-mode-map (kbd "M-^") #'gtags-pop-stack)
 
 (add-hook 'c-mode-common-hook #'gtags-mode)
