@@ -42,6 +42,7 @@
  wl-draft-reply-buffer-style 'full
  wl-draft-config-matchone t
  wl-draft-preview-attributes-buffer-lines 7
+ wl-draft-always-delete-myself t
  ;; Only save draft when I tell it to! (C-x C-s or C-c C-s):
  wl-auto-save-drafts-interval nil
 
@@ -111,6 +112,8 @@
 		#'wl-summary-delete-region)
 	      (define-key wl-summary-mode-map (kbd "t M-d")
 		#'wl-thread-delete)))
+
+(add-hook 'wl-summary-mode-hook #'wl-summary-toggle-disp-msg)
 
 (add-hook 'wl-draft-mode-hook
 	  #'(lambda ()
