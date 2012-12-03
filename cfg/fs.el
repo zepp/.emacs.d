@@ -62,3 +62,4 @@
   (message "English dictionary - Spell Checking completed."))
 
 (define-key flyspell-mode-map (kbd "M-t") #'flyspell-auto-correct-word)
+(define-key flyspell-mode-map (kbd "C-c i") #'ispell-change-dictionary)
