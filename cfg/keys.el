@@ -1,6 +1,10 @@
 ;;-------------------------------------------------------------------------------
 ;; global keys definition
 
+;; to make a cursor navigation a little bit easy
+(global-set-key (kbd "M-n") #'next-line)
+(global-set-key (kbd "M-p") #'previous-line)
+
 (global-set-key (kbd "C-t") 'nil)
 
 (global-set-key (kbd "M-#") #'dictem-run-define)
@@ -66,36 +70,6 @@
 (add-hook 'shell-mode-hook
           '(lambda ()
              (define-key shell-mode-map (kbd "C-c M-s") nil)))
-
-;;-------------------------------------------------------------------------------
-;; global run map
-
-(define-prefix-command 'global-run-map)
-(define-key global-run-map (kbd "c") 'calculator)
-;; generic mailer
-(define-key global-run-map (kbd "m")
-  '(lambda ()
-     (interactive)
-     (if (not (get-buffer wl-folder-buffer-name))
-         (wl)
-       (switch-to-buffer wl-folder-buffer-name))))
-;; rss/atom feed reader 
-(define-key global-run-map (kbd "n") 'newsticker-show-news)
-;; agenda
-(define-key global-run-map (kbd "a") 'org-agenda)
-;; jabber
-(define-key global-run-map (kbd "j") 
-  '(lambda ()
-     (interactive)
-     (if (get-buffer jabber-roster-buffer)
-         (jabber-switch-to-roster-buffer)
-       (jabber-connect-with-secrets))))
-
-(define-key global-run-map (kbd "l") 'ielm)
-
-(define-key global-run-map (kbd "f") 'sunrise)
-
-(global-set-key (kbd "C-x M-e") global-run-map)
 
 ;;-------------------------------------------------------------------------------
 ;; platform specific
