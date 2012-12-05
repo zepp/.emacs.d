@@ -4,7 +4,6 @@
 (jabber-mode-line-mode -1)
 
 (setq
- jabber-activity-banned '("juick@juick\.com" "jubo@nologin\.ru" "psto@psto\.net" "bnw\.im")
  jabber-auto-reconnect t
  jabber-chat-delayed-time-format "%H:%M"
  jabber-default-status nil
@@ -47,9 +46,20 @@
 
 (add-hook 'jabber-roster-mode-hook
 	  #'(lambda ()
-	      (define-key jabber-roster-mode-map (kbd "C-j") #'jabber-compose)
+	      (define-key jabber-roster-mode-map (kbd "C-j")
+		#'jabber-compose)
 	      (define-key jabber-roster-mode-map (kbd "C-c C-l") 
-		#'jabber-activity-switch-to)))
+		#'jabber-activity-switch-to)
+	      (define-key jabber-roster-mode-map (kbd "M-n") 
+		#'jabber-go-to-next-jid)
+	      (define-key jabber-roster-mode-map (kbd "M-p") 
+		#'jabber-go-to-previous-jid)
+	      (define-key jabber-roster-mode-map (kbd "j") 
+		#'jabber-roster-ret-action-at-point)
+	      (define-key jabber-roster-mode-map (kbd "M-j") 
+		#'jabber-compose)
+	      (define-key jabber-roster-mode-map (kbd "C-j") 
+		#'jabber-groupchat-join)))
 
 (add-hook 'jabber-chat-mode-hook
 	  #'(lambda ()
