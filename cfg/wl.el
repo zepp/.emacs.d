@@ -91,25 +91,38 @@
 
 (add-hook 'wl-summary-mode-hook
 	  #'(lambda ()
-	      (define-key wl-summary-mode-map (kbd "M-g") #'wl-folder-goto-folder-sticky)
-	      (define-key wl-summary-mode-map (kbd "c") #'wl-summary-mark-as-read)
-	      (define-key wl-summary-mode-map (kbd "\\") #'wl-thread-open-close)
-	      (define-key wl-summary-mode-map (kbd "C-s") #'wl-summary-pick)
-	      (define-key wl-summary-mode-map (kbd "C-e") #'wl-summary-expire)
-	      (define-key wl-summary-mode-map (kbd "C-r") #'wl-summary-sort)
-	      (define-key wl-summary-mode-map (kbd "M-c") #'wl-summary-mark-as-read-all)
-	      (define-key wl-summary-mode-map (kbd "M-u") #'wl-summary-unmark-all)
+	      ;; useful jumps
 	      (define-key wl-summary-mode-map (kbd "M-n") #'wl-summary-down)
 	      (define-key wl-summary-mode-map (kbd "M-p") #'wl-summary-up)
+	      ;; I don't like the shortcuts starting from capital letter
+	      (define-key wl-summary-mode-map (kbd "M-g") #'wl-folder-goto-folder-sticky)
+	      (define-key wl-summary-mode-map (kbd "M-a") #'wl-summary-reply-with-citation)
 	      (define-key wl-summary-mode-map (kbd "M-d") #'wl-summary-delete)
-	      (define-key wl-summary-mode-map (kbd "M-a")
-		#'wl-summary-reply-with-citation)
+	      (define-key wl-summary-mode-map (kbd "M-u") #'wl-summary-unmark-all)
+	      ;; it's handy then press '/'
+	      (define-key wl-summary-mode-map (kbd "\\") #'wl-thread-open-close)
+	      ;; frequently used functions should be accessible 
 	      (define-key wl-summary-mode-map (kbd "s") #'wl-summary-sync-update)
-	      (define-key wl-summary-mode-map (kbd "M-s") #'wl-summary-sync)
-	      (define-key wl-summary-mode-map (kbd "r c")
+	      (define-key wl-summary-mode-map (kbd "M-s") #'wl-summary-pick)
+
+	      ;; let's make the complex shortcuts a little bit easy to
+	      ;; complete
+	      (define-key wl-summary-mode-map (kbd "m r")
+		#'wl-summary-target-mark-mark-as-read)
+	      (define-key wl-summary-mode-map (kbd "m m")
+		#'wl-summary-target-mark-all)
+	      (define-key wl-summary-mode-map (kbd "m a")
+		#'wl-summary-target-mark-reply-with-citation)
+	      ;; region commands
+	      (define-key wl-summary-mode-map (kbd "r r") 
 		#'wl-summary-mark-as-read-region)
+	      (define-key wl-summary-mode-map (kbd "r m") 
+		#'wl-summary-target-mark-region)
 	      (define-key wl-summary-mode-map (kbd "r M-d")
 		#'wl-summary-delete-region)
+	      ;; thread command
+	      (define-key wl-summary-mode-map (kbd "t r")
+		#'wl-thread-mark-as-read)
 	      (define-key wl-summary-mode-map (kbd "t M-d")
 		#'wl-thread-delete)))
 
