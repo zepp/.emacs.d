@@ -10,6 +10,7 @@
 (global-set-key (kbd "M-#") #'dictem-run-define)
 (global-set-key (kbd "M-*") #'ispell-region)
 (global-set-key (kbd "M-t") #'complete-symbol)
+(global-set-key (kbd "M-z") #'undo)
 
 ;; buffer related shortcuts start from C-x 
 (global-set-key (kbd "C-x p") #'previous-buffer)
