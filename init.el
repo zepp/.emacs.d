@@ -186,6 +186,14 @@ vertically."
 (define-key dired-mode-map (kbd "M-j") #'dired-goto-file)
 (define-key dired-mode-map (kbd "r") #'revert-buffer)
 
+;;-------------------------------------------------------------------------------n
+
+(add-hook 'Info-mode-hook
+	  #'(lambda ()
+	      (define-key Info-mode-map (kbd "j") #'Info-follow-nearest-node)
+	      (define-key Info-mode-map (kbd "M-n") nil))
+	  t)
+
 ;;-------------------------------------------------------------------------------
 
 (let ((elpa-root (expand-file-name "~/elisp/elpa")))
