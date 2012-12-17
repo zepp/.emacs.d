@@ -52,7 +52,7 @@
  signature-separator ""
 
  wl-summary-auto-refile-skip-marks nil
- wl-summary-line-format "%W %D %M %h:%m %T%P %S %t%[%c %f% %] %s"
+ wl-summary-line-format "%W %D %M %h:%m %T%P %4S %t%[%c %f% %] %s"
  wl-summary-width nil
 
  ;; mark sent messages (folder carbon copy) as read.
@@ -113,6 +113,8 @@
 		#'wl-summary-target-mark-all)
 	      (define-key wl-summary-mode-map (kbd "m a")
 		#'wl-summary-target-mark-reply-with-citation)
+	      (define-key wl-summary-mode-map (kbd "m M-d")
+		#'wl-summary-target-mark-delete)
 	      ;; region commands
 	      (define-key wl-summary-mode-map (kbd "r r") 
 		#'wl-summary-mark-as-read-region)
