@@ -12,9 +12,29 @@
 (global-set-key (kbd "M-t") #'complete-symbol)
 (global-set-key (kbd "M-z") #'undo)
 
+(defun swap-buffers (&optional last)
+  "Swaps the current and a last buffers"
+  (interactive)
+  (let ((buf (current-buffer))
+	(frame (selected-frame)))
+    (switch-to-buffer
+     (if last
+	 (progn
+	   (other-buffer buf t frame)
+	   (bury-buffer buf))
+       (last-buffer buf t frame)))))
+
 ;; buffer related shortcuts start from C-x 
 (global-set-key (kbd "C-x p") #'previous-buffer)
 (global-set-key (kbd "C-x n") #'next-buffer)
+(global-set-key (kbd "C-x l")
+		(lexical-let ((swap-last t))
+		  #'(lambda ()
+		      "that's a wrapper around the `swap-buffers'
+function to keep a state variable"
+		      (interactive)
+		      (swap-buffers swap-last)
+		      (setq swap-last (not swap-last)))))
 (global-set-key (kbd "C-x d") #'dired-jump)
 (global-set-key (kbd "C-x j") #'shell-jump)
 (global-set-key (kbd "C-x C-d") #'dired)
