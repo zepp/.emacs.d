@@ -5,6 +5,7 @@
 (global-set-key (kbd "M-n") #'next-line)
 (global-set-key (kbd "M-p") #'previous-line)
 
+;; reserved by the StumpWM
 (global-set-key (kbd "C-t") 'nil)
 
 (global-set-key (kbd "M-#") #'dictem-run-define)
@@ -51,12 +52,13 @@ function to keep a state variable"
 ;; general commands start from C-c
 (global-set-key (kbd "C-c C-g") #'rgrep)
 (global-set-key (kbd "C-c C-f") #'find-dired)
-(global-set-key (kbd "C-c M-s") #'split-window-vertically)
+(global-set-key (kbd "C-c w") #'browse-url)
+;; window management in StumpWM style :)
 (global-set-key (kbd "C-c s") #'split-window-horizontally)
+(global-set-key (kbd "C-c M-s") #'split-window-vertically)
 (global-set-key (kbd "C-c q") #'delete-other-windows)
 (global-set-key (kbd "C-c k") #'delete-window)
 (global-set-key (kbd "C-c r") #'iresize-mode)
-(global-set-key (kbd "C-c w") #'browse-url)
 (global-set-key (kbd "C-c o") #'other-window)
 
 ;;-------------------------------------------------------------------------------
