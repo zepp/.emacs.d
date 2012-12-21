@@ -37,7 +37,7 @@ function to keep a state variable"
 		      (swap-buffers swap-last)
 		      (setq swap-last (not swap-last)))))
 (global-set-key (kbd "C-x d") #'dired-jump)
-(global-set-key (kbd "C-x j") #'shell-jump)
+(global-set-key (kbd "C-x c") #'shell-jump)
 (global-set-key (kbd "C-x C-d") #'dired)
 (global-set-key (kbd "C-x M-d") #'dired-other-window)
 (global-set-key (kbd "C-x M-f") #'find-file-other-window)
