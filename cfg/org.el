@@ -5,7 +5,8 @@
 
 (setq
  org-mobile-directory "~/dropbox/mobile-org"
- org-agenda-window-setup 'current-window)
+ org-agenda-window-setup 'current-window
+ org-id-locations-file (expand-file-name ".org-id-locations" my-emacs-var-dir))
 
 (add-hook 'org-mode-hook
 	  #'(lambda () 
