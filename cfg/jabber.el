@@ -63,5 +63,7 @@
 
 (add-hook 'jabber-chat-mode-hook
 	  #'(lambda ()
+	      (define-key jabber-chat-mode-map (kbd "M-RET")
+		#'newline)
 	      (define-key jabber-chat-mode-map (kbd "C-c C-l") 
 		#'jabber-activity-switch-to)))
