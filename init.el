@@ -196,6 +196,10 @@ vertically."
 
 ;;-------------------------------------------------------------------------------
 
+(add-to-list 'same-window-buffer-names "*vc-diff*")
+
+;;-------------------------------------------------------------------------------
+
 (let ((elpa-root (expand-file-name "~/elisp/elpa")))
   (when (file-directory-p elpa-root)
     (add-to-list 'load-path elpa-root)
