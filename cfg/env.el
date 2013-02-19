@@ -3,9 +3,6 @@
       (add-to-list 'exec-path "C:/Program Files (x86)/Emacs/EmacsW32/gnuwin32/bin")
       (setenv "PATH" (combine-and-quote-strings exec-path ";")))
   (setq
-   browse-url-browser-function 'browse-url-generic
-   browse-url-generic-program "conkeror"
-
    ;; disable internal decoder
    base64-internal-decoding-limit 0
    base64-internal-encoding-limit 0
@@ -24,3 +21,10 @@
    base64-external-decode '("uudecode" "-m")
    quoted-printable-external-encoder '("uuencode")
    quoted-printable-external-decoder '("uudecode")))
+
+(if (string= (getenv "DESKTOP_SESSION") "stumpwm")
+    (setq
+     browse-url-browser-function 'browse-url-generic
+     browse-url-generic-program "conkeror")
+  (setq
+   browse-url-browser-function 'browse-url-firefox))
