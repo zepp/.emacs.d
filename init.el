@@ -255,8 +255,8 @@ vertically."
 ;;-------------------------------------------------------------------------------
 
 (when (not (string= system-type "windows-nt"))
-  (add-to-list 'initial-frame-alist '(name . "emacs-initial"))
-  (add-to-list 'default-frame-alist '(name . "emacs-client"))
+  (add-to-list 'initial-frame-alist '(name . "emacs"))
+  (add-to-list 'default-frame-alist '(name . "emacs"))
   (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
   (when (functionp 'wl)
     (wl 1)))

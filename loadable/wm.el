@@ -1,5 +1,5 @@
 (defmacro gen-run-raise(name run-fun &optional buf-or-fun)
-  (let* ((frm-name (concat "emacs-" name))
+  (let* ((frm-name name)
 	 (frame-var-name (gensym))
 	 (do-a-frame `(progn
 			(message "making new frame for %s" ,name)
@@ -26,13 +26,13 @@
   (when (boundp 'jabber-roster-buffer)
     (gen-run-raise "jabber" #'jabber-connect-with-secrets)))
 
-(defun wm-run-mail()
+(defun wm-run-wl()
   (when (boundp 'wl-folder-buffer-name)
-    (gen-run-raise "mail" #'wl)))
+    (gen-run-raise "wl" #'wl)))
 
-(defun wm-run-mplayer()
+(defun wm-run-mpc()
   (when (boundp 'mpc-status)
-    (gen-run-raise "mplayer" #'mpc)))
+    (gen-run-raise "mpc" #'mpc)))
 
 (defun wm-run-agenda()
   (when (boundp 'org-agenda-files)
