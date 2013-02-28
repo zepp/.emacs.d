@@ -74,7 +74,8 @@
 
 ;; iswitchb
 (require 'iswitchb)
-(setq iswitchb-regexp t)
+(setq iswitchb-regexp t
+      iswitchb-default-method 'samewindow)
 (iswitchb-mode 1)
 
 ;;-------------------------------------------------------------------------------
