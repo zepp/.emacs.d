@@ -180,12 +180,7 @@ vertically."
 (define-key dired-mode-map (kbd "c") #'dired-do-copy)
 (define-key dired-mode-map (kbd "d") #'dired-do-delete)
 (define-key dired-mode-map (kbd "M-d") #'dired-flag-file-deletion)
-(define-key dired-mode-map (kbd "g") #'dired-do-redisplay)
-(define-key dired-mode-map (kbd "l") #'dired-do-relsymlink)
-(define-key dired-mode-map (kbd "M-l") #'dired-do-hardlink)
-(define-key dired-mode-map (kbd "j") #'dired-find-file)
-(define-key dired-mode-map (kbd "M-j") #'dired-goto-file)
-(define-key dired-mode-map (kbd "r") #'revert-buffer)
+(define-key dired-mode-map (kbd "M-e") #'dired-find-file-other-window)
 
 ;;-------------------------------------------------------------------------------n
 
