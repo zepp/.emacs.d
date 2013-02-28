@@ -154,7 +154,8 @@
 
 ;;-------------------------------------------------------------------------------
 
-(setq dired-bind-jump nil)
+(setq dired-bind-jump nil
+      dired-deletion-confirmer #'y-or-n-p)
 (require 'dired-x)
 
 (defadvice dired-do-shell-command
