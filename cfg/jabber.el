@@ -46,8 +46,6 @@
 
 (add-hook 'jabber-roster-mode-hook
 	  #'(lambda ()
-	      (define-key jabber-roster-mode-map (kbd "C-j")
-		#'jabber-compose)
 	      (define-key jabber-roster-mode-map (kbd "C-c C-l") 
 		#'jabber-activity-switch-to)
 	      (define-key jabber-roster-mode-map (kbd "M-n") 
