@@ -55,7 +55,7 @@ function to keep a state variable"
 (global-set-key (kbd "C-c w") #'browse-url)
 ;; window management in StumpWM style :)
 (global-set-key (kbd "C-c s") #'split-window-horizontally)
-(global-set-key (kbd "C-c M-s") #'split-window-vertically)
+(global-set-key (kbd "C-c v") #'split-window-vertically)
 (global-set-key (kbd "C-c q") #'delete-other-windows)
 (global-set-key (kbd "C-c k") #'delete-window)
 (global-set-key (kbd "C-c r") #'iresize-mode)
@@ -95,8 +95,3 @@ function to keep a state variable"
           '(lambda ()
              (define-key shell-mode-map (kbd "C-c M-s") nil)))
 
-;;-------------------------------------------------------------------------------
-;; platform specific
-
-(when (string= system-type "windows-nt")
-  (global-set-key (kbd "<apps>") 'execute-extended-command))
