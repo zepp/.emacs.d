@@ -6,10 +6,12 @@
 
 (require 'gtags)
 
-(define-key gtags-mode-map (kbd "C-c v") #'gtags-visit-rootdir)
-(define-key gtags-mode-map (kbd "M-r") #'gtags-find-rtag)
+(define-key gtags-mode-map (kbd "C-c C-v") #'gtags-visit-rootdir)
+(define-key gtags-mode-map (kbd "C-c C-r") #'gtags-find-rtag)
+;; isearch word & highlighting, I don't use both
 (define-key gtags-mode-map (kbd "M-s") #'gtags-find-symbol)
 (define-key gtags-mode-map (kbd "M-^") #'gtags-pop-stack)
+;; indent new comment, ahh this one was useful
 (define-key gtags-mode-map (kbd "M-j") #'gtags-find-tag-from-here)
 (define-key gtags-mode-map (kbd "M-J") #'gtags-find-tag)
 (define-key gtags-select-mode-map (kbd "M-^") #'gtags-pop-stack)
