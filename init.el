@@ -180,8 +180,8 @@ vertically."
 (define-key dired-mode-map (kbd "M-p") #'dired-previous-line)
 (define-key dired-mode-map (kbd "c") #'dired-do-copy)
 (define-key dired-mode-map (kbd "d") #'dired-do-delete)
+(define-key dired-mode-map (kbd "r") #'dired-do-rename)
 (define-key dired-mode-map (kbd "M-d") #'dired-flag-file-deletion)
-(define-key dired-mode-map (kbd "M-e") #'dired-find-file-other-window)
 
 ;;-------------------------------------------------------------------------------n
 
