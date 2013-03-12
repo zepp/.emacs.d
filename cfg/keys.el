@@ -51,7 +51,6 @@ function to keep a state variable"
 
 ;; general commands start from C-c
 (global-set-key (kbd "C-c C-g") #'rgrep)
-(global-set-key (kbd "C-c C-f") #'find-dired)
 (global-set-key (kbd "C-c w") #'browse-url)
 ;; window management in StumpWM style :)
 (global-set-key (kbd "C-c s") #'split-window-horizontally)
