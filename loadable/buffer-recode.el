@@ -50,3 +50,5 @@ nothing."
     (set-buffer-multibyte t)
     (recode-buffer-dangerous (aref (cddr evm-coding-systems-list)
                                    (car evm-coding-systems-list)))))
+
+(provide 'buffer-recode)
