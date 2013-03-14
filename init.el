@@ -46,7 +46,8 @@ should be pushed to git repo")
     (let ((path (expand-file-name (format "%s.el" cfg)
 				  my-emacs-personal-cfg)))
       (when (file-regular-p path)
-	(load path))))
+	(load path)))
+    t)
 
   (if name
       (if (symbolp name)
@@ -225,22 +226,22 @@ vertically."
 
 ;;-------------------------------------------------------------------------------
 
-;; external packages or big configuration statements should be moved
-;; to separate file
 (load-ext "wm")
 (load-ext "utils")
 (load-ext "cc")
 (load-ext "fonts")
 (load-ext "env")
+
 (load-ext "org" "org")
-(load-ext "gtags" "global")
-(load-ext "prefs" "prefs")
 (load-ext "zencolor" "zenburn")
-(load-ext "fs")
-(load-ext "psvn" 'svn-status)
 (load-ext "iresize" "iresize")
-(load-ext "wn" "window-numbering")
 (load-ext "ac" "auto-complete")
+
+(load-ext "wn" 'window-numbering-mode)
+(load-ext "gtags" 'gtags-mode)
+(load-ext "fs" 'flyspell-mode)
+(load-ext "ispell" 'ispell-word)
+(load-ext "psvn" 'svn-status)
 
 (unless (string= system-type "windows-nt")
   (load-ext "mpc" 'mpc)
