@@ -5,13 +5,8 @@
 (global-set-key (kbd "M-n") #'next-line)
 (global-set-key (kbd "M-p") #'previous-line)
 
-;; reserved by the StumpWM
-(global-set-key (kbd "C-t") 'nil)
-
 (global-set-key (kbd "M-#") #'dictem-run-define)
 (global-set-key (kbd "M-*") #'ispell-region)
-(global-set-key (kbd "M-t") #'complete-symbol)
-(global-set-key (kbd "M-z") #'undo)
 
 (defun swap-buffers (&optional last)
   "Swaps the current and a last buffers"

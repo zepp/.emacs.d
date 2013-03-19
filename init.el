@@ -86,11 +86,7 @@ should be pushed to git repo")
 (add-to-list 'auto-mode-alist '("Makefile\\..*" . makefile-mode))
 (add-to-list 'auto-mode-alist '(".*\\.h\\.in$" . c-mode))
 (add-to-list 'auto-mode-alist '(".*\\.bat$" . dos-mode))
-
-;;-------------------------------------------------------------------------------
-
-(require 'lisp-mode)
-(define-key lisp-mode-shared-map (kbd "M-t") 'lisp-complete-symbol)
+(add-to-list 'auto-mode-alist '("svn-.*\\.tmp$" . text-mode))
 
 ;;-------------------------------------------------------------------------------
 

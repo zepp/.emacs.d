@@ -1,5 +1,6 @@
 (if (string= system-type "windows-nt")
     (progn
+      (w32-register-hot-key [M-tab])
       (add-to-list 'exec-path "C:/Program Files (x86)/Emacs/EmacsW32/gnuwin32/bin")
       (setenv "PATH" (combine-and-quote-strings exec-path ";")))
   (setq
