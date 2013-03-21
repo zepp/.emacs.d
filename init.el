@@ -38,6 +38,25 @@ should be pushed to git repo")
 
 ;;-------------------------------------------------------------------------------
 
+(defvar ignored-buffer-list 
+  '("*Completions" "*Quail Completions*")
+"list of the buffer names or regular expressions to be ignored by
+various buffer management routines")
+
+(add-to-list 'ignored-buffer-list "*magit-edit-log*")
+
+(defun suitable-buffer-p (buffer)
+  "predicate to check the buffer exclusion from the `ignored-buffer-list'"
+  (if (find-if #'(lambda (entry)
+		   (string-match entry (buffer-name buffer)))
+	       ignored-buffer-list)
+      nil
+    t))
+
+(add-to-list 'default-frame-alist `(buffer-predicate . ,#'suitable-buffer-p))
+
+;;-------------------------------------------------------------------------------
+
 (defun load-ext (cfg &optional name)
 
   (defun do-load (cfg)
@@ -95,6 +114,10 @@ should be pushed to git repo")
 (setq iswitchb-regexp t
       iswitchb-default-method 'samewindow)
 (iswitchb-mode 1)
+
+(mapcar #'(lambda (entry)
+	    (add-to-list 'iswitchb-buffer-ignore entry))
+	ignored-buffer-list)
 
 ;;-------------------------------------------------------------------------------
 
