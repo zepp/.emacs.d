@@ -193,6 +193,8 @@ vertically."
 (define-key dired-mode-map (kbd "r") #'dired-do-rename)
 (define-key dired-mode-map (kbd "M-d") #'dired-flag-file-deletion)
 
+(put 'dired-find-alternate-file 'disabled nil)
+
 ;;-------------------------------------------------------------------------------n
 (require 'info)
 
