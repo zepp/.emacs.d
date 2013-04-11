@@ -218,6 +218,11 @@ vertically."
 
 (put 'dired-find-alternate-file 'disabled nil)
 
+;; -l is mandatory
+;; -G omit the group name
+;; -h human-readable size
+(setq dired-listing-switches "-alGh")
+
 ;;-------------------------------------------------------------------------------n
 (require 'info)
 
