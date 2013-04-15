@@ -7,11 +7,13 @@
 (toggle-scroll-bar -1)
 (column-number-mode 1)
 
-(setq inhibit-startup-screen t
-      x-select-enable-clipboard t
-      frame-title-format "%F"
-      default-input-method 'russian-computer
-      lpr-command "xpp")
+(setq
+ visible-bell t
+ inhibit-startup-screen t
+ x-select-enable-clipboard t
+ frame-title-format "%F"
+ default-input-method 'russian-computer
+ lpr-command "xpp")
 
 (put 'scroll-left 'disabled nil)
 (put 'upcase-region 'disabled nil)
