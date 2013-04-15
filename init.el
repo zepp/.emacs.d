@@ -272,6 +272,7 @@ vertically."
 (load-ext "fs" 'flyspell-mode)
 (load-ext "ispell" 'ispell-word)
 (load-ext "psvn" 'svn-status)
+(load-ext "root-win" 'split-root-window)
 
 (unless (string= system-type "windows-nt")
   (load-ext "mpc" 'mpc)
