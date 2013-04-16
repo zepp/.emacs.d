@@ -65,3 +65,12 @@
 		#'newline)
 	      (define-key jabber-chat-mode-map (kbd "C-c C-l") 
 		#'jabber-activity-switch-to)))
+
+(defadvice jabber-chat-with
+  (around split-fashion (jc jid &optional other-window) 
+	  activate)
+  "Controls the fashion of window splitting. Splits window
+vertically."
+  (let ((split-height-threshold 0)
+	(split-width-threshold nil))
+    ad-do-it))
