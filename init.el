@@ -240,6 +240,8 @@ vertically."
 (remove-hook 'find-file-hook
 	     #'vc-find-file-hook)
 
+(add-hook 'log-edit-mode-hook #'flyspell-mode)
+
 ;;-------------------------------------------------------------------------------
 (require 'grep)
 
