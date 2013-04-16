@@ -167,6 +167,8 @@ various buffer management routines")
 
 (add-hook 'cperl-mode-hook
           (lambda ()
+	    (local-set-key (kbd "C-h f") 'cperl-perldoc)
+	    (setq indent-tabs-mode nil)
             (cperl-set-style "C++")))
 
 ;;-------------------------------------------------------------------------------
