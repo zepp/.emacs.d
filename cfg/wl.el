@@ -63,7 +63,7 @@
 (mapcar
  #'(lambda (h)
      (add-hook 'wl-mail-setup-hook h))
- '(wl-draft-config-exec flyspell-mode auto-fill-mode))
+ '(wl-draft-config-exec auto-fill-mode))
 
 (add-hook 'wl-mail-setup-hook
           '(lambda()

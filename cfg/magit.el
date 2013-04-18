@@ -2,4 +2,3 @@
 
 (require 'magit)
 
-(add-hook 'magit-log-edit-mode-hook #'flyspell-mode)
