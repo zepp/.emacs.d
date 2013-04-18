@@ -10,3 +10,5 @@
 	  #'(lambda ()
 	      (when flyspell-mode
 		(flyspell-buffer))))
+
+(add-hook 'text-mode-hook #'flyspell-mode)
