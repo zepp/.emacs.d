@@ -60,10 +60,7 @@
 
  wl-generate-mailer-string-function 'wl-generate-user-agent-string-1)
 
-(mapcar
- #'(lambda (h)
-     (add-hook 'wl-mail-setup-hook h))
- '(wl-draft-config-exec auto-fill-mode))
+(add-hook 'wl-mail-setup-hook 'wl-draft-config-exec)
 
 (add-hook 'wl-mail-setup-hook
           '(lambda()

@@ -108,6 +108,8 @@ various buffer management routines")
 (add-to-list 'auto-mode-alist '(".*\\.bat$" . dos-mode))
 (add-to-list 'auto-mode-alist '("svn-.*\\.tmp$" . text-mode))
 
+(add-hook 'text-mode-hook 'auto-fill-mode)
+
 ;;-------------------------------------------------------------------------------
 
 ;; iswitchb
