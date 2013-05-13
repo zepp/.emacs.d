@@ -94,11 +94,11 @@ various buffer management routines")
 
 (let ((opt-site-lisp (expand-file-name "~/opt/share/emacs/site-lisp")))
   (when (file-directory-p opt-site-lisp)
-    ;; will add directory itself to path
+    (add-to-list 'load-path opt-site-lisp)
     (dolist (entry (directory-files opt-site-lisp t nil t))
-      (when (and (string-prefix-p opt-site-lisp entry)
-		 (file-directory-p entry))
-	(add-to-list 'load-path (expand-file-name entry))))))
+      (when (and (file-directory-p entry)
+                 (equal 'nil (string-match "/\\.\\.?$" entry)))
+        (add-to-list 'load-path (expand-file-name entry))))))
 
 ;;-------------------------------------------------------------------------------
 
