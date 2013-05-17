@@ -59,7 +59,7 @@ various buffer management routines")
 (defun load-ext (cfg &optional name)
 
   (defun do-load (cfg)
-    (load (expand-file-name (format "cfg/%s.el" cfg)
+    (load (expand-file-name (format "conf.d/%s.el" cfg)
 			    user-emacs-directory))
     (let ((path (expand-file-name (format "%s.el" cfg)
 				  local-conf-dir)))
