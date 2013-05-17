@@ -24,9 +24,6 @@
  elmo-pop3-default-authenticate-type 'user
  elmo-pop3-debug t
 
- elmo-msgdb-directory (expand-file-name "elmo" my-emacs-var-dir)
- elmo-split-log-file (expand-file-name "elmo/split-log" my-emacs-var-dir)
- 
  wl-folder-check-async 1
  wl-folder-use-frame nil
  wl-folder-buffer-name "wl-folders"
@@ -76,8 +73,8 @@
  ;; process quoted headers (email from, to and etc.)
  mime-header-accept-quoted-encoded-words t)
 
-(setq wl-folders-file (expand-file-name "wl/folders" my-emacs-personal-cfg)
-      wl-address-file (expand-file-name "wl/addresses" my-emacs-personal-cfg))
+(setq wl-folders-file (expand-file-name "wl/folders" local-conf-dir)
+      wl-address-file (expand-file-name "wl/addresses" local-conf-dir))
 
 (add-hook 'wl-folder-mode-hook
 	  #'(lambda ()

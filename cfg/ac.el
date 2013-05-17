@@ -4,13 +4,13 @@
 (define-key ac-mode-map (kbd "C-c h") #'ac-last-quick-help)
 
 (setq global-auto-complete-mode t
+      ac-dictionary-directories (expand-file-name "ac" local-conf-dir)
       ac-use-quick-help nil
-      ac-comphist-file (expand-file-name "ac/comphist.dat" my-emacs-var-dir)
+      ac-comphist-file (expand-file-name "ac/comphist.dat" local-conf-dir)
       ac-expand-on-auto-complete t
       ac-fuzzy-enable nil
       ac-auto-show-menu nil
-      ac-auto-start 3
-      ac-dictionary-directories (expand-file-name "ac/dict" my-emacs-var-dir))
+      ac-auto-start 3)
 
 (ac-set-trigger-key "TAB")
 

@@ -8,7 +8,6 @@
  jabber-chat-delayed-time-format "%H:%M"
  jabber-default-status nil
  jabber-use-global-history nil
- jabber-history-dir (expand-file-name "jabber" my-emacs-var-dir)
  jabber-history-enable-rotation t
  jabber-history-enabled t
  jabber-history-size-limit 128
