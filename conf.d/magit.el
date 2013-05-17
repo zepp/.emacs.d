@@ -1,4 +1,1 @@
-(autoload 'magit-status "magit" nil t)
-
-(require 'magit)
-
+(add-to-list 'ignored-buffer-list "*magit-edit-log*")

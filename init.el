@@ -6,6 +6,10 @@
   "directory to keep host specific configuration files those
 should not be pushed to git repo")
 
+;; old emacs versions 
+(unless (boundp 'user-emacs-directory)
+  (setq user-emacs-directory "~/.emacs.d/"))
+
 (transient-mark-mode 1)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
@@ -33,7 +37,27 @@ should not be pushed to git repo")
 
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/loadable/"))
 
-(require 'config-hacks)
+;;-------------------------------------------------------------------------------
+
+(defun load-conf (conf &optional sym-or-path)
+
+  (defun do-load (conf)
+    (load (expand-file-name (format "conf.d/%s.el" conf)
+                            user-emacs-directory))
+    (load (expand-file-name (format "%s.el" conf)
+                            local-conf-dir) t))
+
+  (if sym-or-path
+      (if (symbolp sym-or-path)
+          (when (fboundp sym-or-path)
+            (do-load conf))
+        (let ((rexp (concat "/" (regexp-quote sym-or-path))))
+          (when (find-if #'(lambda (path)
+                             (string-match rexp path))
+                         load-path)
+            (do-load conf))))
+    
+    (do-load conf)))
 
 ;;-------------------------------------------------------------------------------
 
@@ -41,8 +65,6 @@ should not be pushed to git repo")
   '("*Completions" "*Quail Completions*")
 "list of the buffer names or regular expressions to be ignored by
 various buffer management routines")
-
-(add-to-list 'ignored-buffer-list "*magit-edit-log*")
 
 (defun suitable-buffer-p (buffer)
   "predicate to check the buffer exclusion from the `ignored-buffer-list'"
@@ -53,31 +75,6 @@ various buffer management routines")
     t))
 
 (add-to-list 'default-frame-alist `(buffer-predicate . ,#'suitable-buffer-p))
-
-;;-------------------------------------------------------------------------------
-
-(defun load-ext (cfg &optional name)
-
-  (defun do-load (cfg)
-    (load (expand-file-name (format "conf.d/%s.el" cfg)
-                            user-emacs-directory))
-    (let ((path (expand-file-name (format "%s.el" cfg)
-                                  local-conf-dir)))
-      (when (file-regular-p path)
-        (load path)))
-    t)
-
-  (if name
-      (if (symbolp name)
-          (when (fboundp name)
-            (do-load cfg))
-        (let ((rexp (format "/%s" name)))
-          (when (find-if #'(lambda (path)
-                             (string-match rexp path))
-                         load-path)
-            (do-load cfg))))
-    
-    (do-load cfg)))
 
 ;;-------------------------------------------------------------------------------
 
@@ -267,33 +264,33 @@ vertically."
 
 ;;-------------------------------------------------------------------------------
 
-(load-ext "wm")
-(load-ext "utils")
-(load-ext "cc")
-(load-ext "fonts")
-(load-ext "env")
+(load-conf "utils")
+(load-conf "cc")
+(load-conf "fonts")
+(load-conf "env")
 
-(load-ext "org" "org")
-(load-ext "zencolor" "zenburn")
-(load-ext "iresize" "iresize")
-(load-ext "ac" "auto-complete")
-(load-ext "root-win" "split-root")
+(load-conf "org" "org")
+(load-conf "zb" "zenburn")
+(load-conf "iresize" "iresize")
+(load-conf "ac" "auto-complete")
+(load-conf "root-win" "split-root")
 
-(load-ext "wn" 'window-numbering-mode)
-(load-ext "gtags" 'gtags-mode)
-(load-ext "fs" 'flyspell-mode)
-(load-ext "ispell" 'ispell-word)
-(load-ext "psvn" 'svn-status)
+(load-conf "wn" 'window-numbering-mode)
+(load-conf "gtags" 'gtags-mode)
+(load-conf "fs" 'flyspell-mode)
+(load-conf "ispell" 'ispell-word)
+(load-conf "psvn" 'svn-status)
 
 (unless (string= system-type "windows-nt")
-  (load-ext "mpc" 'mpc)
-  (load-ext "dictem" "dictem")
-  (load-ext "nt" "newsticker")
-  (load-ext "jabber" "emacs-jabber")
-  (load-ext "wl" "wl")
-  (load-ext "magit" "magit")
-  (load-ext "w3m" "w3m")
-  (load-ext "gdb"))
+  (load-conf "wm")
+  (load-conf "mpc" 'mpc)
+  (load-conf "dictem" "dictem")
+  (load-conf "nt" "newsticker")
+  (load-conf "jabber" "emacs-jabber")
+  (load-conf "wl" "wl")
+  (load-conf "magit" "magit")
+  (load-conf "w3m" "w3m")
+  (load-conf "gdb"))
 
 ;;-------------------------------------------------------------------------------
 
@@ -305,4 +302,4 @@ vertically."
 ;;-------------------------------------------------------------------------------
 ;; loaded finally to be sure that all mode maps are available
 
-(load-ext "keys")
+(load-conf "keys")
