@@ -29,4 +29,4 @@
 
 (add-hook 'c-mode-common-hook
           '(lambda()
-	     (c-toggle-auto-newline -1)) t)
+             (c-toggle-auto-newline -1)) t)

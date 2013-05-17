@@ -12,25 +12,25 @@
   "Swaps the current and a last buffers"
   (interactive)
   (let ((buf (current-buffer))
-	(frame (selected-frame)))
+        (frame (selected-frame)))
     (switch-to-buffer
      (if last
-	 (progn
-	   (other-buffer buf t frame)
-	   (bury-buffer buf))
+         (progn
+           (other-buffer buf t frame)
+           (bury-buffer buf))
        (last-buffer buf t frame)))))
 
 ;; buffer related shortcuts start from C-x 
 (global-set-key (kbd "C-x p") #'previous-buffer)
 (global-set-key (kbd "C-x n") #'next-buffer)
 (global-set-key (kbd "C-x l")
-		(lexical-let ((swap-last t))
-		  #'(lambda ()
-		      "that's a wrapper around the `swap-buffers'
+                (lexical-let ((swap-last t))
+                  #'(lambda ()
+                      "that's a wrapper around the `swap-buffers'
 function to keep a state variable"
-		      (interactive)
-		      (swap-buffers swap-last)
-		      (setq swap-last (not swap-last)))))
+                      (interactive)
+                      (swap-buffers swap-last)
+                      (setq swap-last (not swap-last)))))
 (global-set-key (kbd "C-x d") #'dired-jump)
 (global-set-key (kbd "C-x c") #'shell-jump)
 (global-set-key (kbd "C-x C-d") #'dired)
@@ -38,11 +38,11 @@ function to keep a state variable"
 (global-set-key (kbd "C-x M-f") #'find-file-other-window)
 (global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
 (global-set-key (kbd "C-x C-n")
-		#'(lambda (newname)
-		    (interactive
-		     (list (read-string "Rename current buffer to: "
-					(buffer-name (current-buffer)))))
-		    (rename-buffer newname)))
+                #'(lambda (newname)
+                    (interactive
+                     (list (read-string "Rename current buffer to: "
+                                        (buffer-name (current-buffer)))))
+                    (rename-buffer newname)))
 
 ;; general commands start from C-c
 (global-set-key (kbd "C-c C-g") #'rgrep)

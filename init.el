@@ -47,8 +47,8 @@ various buffer management routines")
 (defun suitable-buffer-p (buffer)
   "predicate to check the buffer exclusion from the `ignored-buffer-list'"
   (if (find-if #'(lambda (entry)
-		   (string-match entry (buffer-name buffer)))
-	       ignored-buffer-list)
+                   (string-match entry (buffer-name buffer)))
+               ignored-buffer-list)
       nil
     t))
 
@@ -60,22 +60,22 @@ various buffer management routines")
 
   (defun do-load (cfg)
     (load (expand-file-name (format "conf.d/%s.el" cfg)
-			    user-emacs-directory))
+                            user-emacs-directory))
     (let ((path (expand-file-name (format "%s.el" cfg)
-				  local-conf-dir)))
+                                  local-conf-dir)))
       (when (file-regular-p path)
-	(load path)))
+        (load path)))
     t)
 
   (if name
       (if (symbolp name)
-	  (when (fboundp name)
-	    (do-load cfg))
-	(let ((rexp (format "/%s" name)))
-	  (when (find-if #'(lambda (path)
-			     (string-match rexp path))
-			 load-path)
-	    (do-load cfg))))
+          (when (fboundp name)
+            (do-load cfg))
+        (let ((rexp (format "/%s" name)))
+          (when (find-if #'(lambda (path)
+                             (string-match rexp path))
+                         load-path)
+            (do-load cfg))))
     
     (do-load cfg)))
 
@@ -121,8 +121,8 @@ various buffer management routines")
 (iswitchb-mode 1)
 
 (mapcar #'(lambda (entry)
-	    (add-to-list 'iswitchb-buffer-ignore entry))
-	ignored-buffer-list)
+            (add-to-list 'iswitchb-buffer-ignore entry))
+        ignored-buffer-list)
 
 ;;-------------------------------------------------------------------------------
 
@@ -170,8 +170,8 @@ various buffer management routines")
 
 (add-hook 'cperl-mode-hook
           (lambda ()
-	    (local-set-key (kbd "C-h f") 'cperl-perldoc)
-	    (setq indent-tabs-mode nil)
+            (local-set-key (kbd "C-h f") 'cperl-perldoc)
+            (setq indent-tabs-mode nil)
             (cperl-set-style "C++")))
 
 ;;-------------------------------------------------------------------------------
@@ -183,21 +183,21 @@ prefix argument is set"
 
   (interactive)
   (let ((new-shell-buf-name
-	 (if (eq major-mode 'dired-mode)
-	     (concat (buffer-name) ":shell")
-	   (let* ((dir (directory-file-name
-			(if buffer-file-name
-			    (file-name-directory buffer-file-name)
-			  default-directory))))
-	     (concat (car (last (split-string dir "/"))) 
-		     ":shell")))))
+         (if (eq major-mode 'dired-mode)
+             (concat (buffer-name) ":shell")
+           (let* ((dir (directory-file-name
+                        (if buffer-file-name
+                            (file-name-directory buffer-file-name)
+                          default-directory))))
+             (concat (car (last (split-string dir "/"))) 
+                     ":shell")))))
     (if current-prefix-arg
-	(let ((split-height-threshold 0)
-	      (split-width-threshold nil))
-	  (shell new-shell-buf-name))
+        (let ((split-height-threshold 0)
+              (split-width-threshold nil))
+          (shell new-shell-buf-name))
       (let ((same-window-buffer-names
-	     (cons new-shell-buf-name same-window-buffer-names)))
-	(shell new-shell-buf-name)))))
+             (cons new-shell-buf-name same-window-buffer-names)))
+        (shell new-shell-buf-name)))))
 
 ;;-------------------------------------------------------------------------------
 
@@ -208,20 +208,20 @@ prefix argument is set"
 
 (defadvice dired-do-shell-command
   (around split-fashion (command &optional arg file-list) 
-	  activate)
+          activate)
   "Controls the fashion of window splitting. Splits window
 vertically."
   (let ((split-height-threshold 0)
-	(split-width-threshold nil))
+        (split-width-threshold nil))
     ad-do-it))
 
 (defadvice dired-do-async-shell-command
   (around split-fashion (command &optional arg file-list) 
-	  activate)
+          activate)
   "Controls the fashion of window splitting. Splits window
 vertically."
   (let ((split-height-threshold 0)
-	(split-width-threshold nil))
+        (split-width-threshold nil))
     ad-do-it))
 
 (define-key dired-mode-map (kbd "M-n") #'dired-next-line)
@@ -251,7 +251,7 @@ vertically."
 (add-to-list 'same-window-regexps ".*\\.c$")
 
 (remove-hook 'find-file-hook
-	     #'vc-find-file-hook)
+             #'vc-find-file-hook)
 
 ;;-------------------------------------------------------------------------------
 (require 'grep)

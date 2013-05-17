@@ -61,9 +61,9 @@
 
 (add-hook 'wl-mail-setup-hook
           '(lambda()
-	     (save-excursion
-	       (end-of-buffer)
-	       (wl-draft-insert-signature))) t)
+             (save-excursion
+               (end-of-buffer)
+               (wl-draft-insert-signature))) t)
 
 ;; semi + flim
 (setq
@@ -77,56 +77,56 @@
       wl-address-file (expand-file-name "wl/addresses" local-conf-dir))
 
 (add-hook 'wl-folder-mode-hook
-	  #'(lambda ()
-	      (define-key wl-folder-mode-map (kbd "M-n") #'wl-folder-next-unread)
-	      (define-key wl-folder-mode-map (kbd "M-p") #'wl-folder-prev-unread)
-	      (define-key wl-folder-mode-map (kbd "M-g") #'wl-folder-goto-folder-sticky)
-	      (define-key wl-folder-mode-map (kbd "M-j") #'wl-folder-jump-folder)))
+          #'(lambda ()
+              (define-key wl-folder-mode-map (kbd "M-n") #'wl-folder-next-unread)
+              (define-key wl-folder-mode-map (kbd "M-p") #'wl-folder-prev-unread)
+              (define-key wl-folder-mode-map (kbd "M-g") #'wl-folder-goto-folder-sticky)
+              (define-key wl-folder-mode-map (kbd "M-j") #'wl-folder-jump-folder)))
 
 (add-hook 'wl-summary-mode-hook
-	  #'(lambda ()
-	      ;; useful jumps
-	      (define-key wl-summary-mode-map (kbd "M-n") #'wl-summary-down)
-	      (define-key wl-summary-mode-map (kbd "M-p") #'wl-summary-up)
-	      ;; I don't like the shortcuts starting from capital letter
-	      (define-key wl-summary-mode-map (kbd "M-g") #'wl-folder-goto-folder-sticky)
-	      (define-key wl-summary-mode-map (kbd "M-a") #'wl-summary-reply-with-citation)
-	      (define-key wl-summary-mode-map (kbd "M-d") #'wl-summary-delete)
-	      (define-key wl-summary-mode-map (kbd "M-u") #'wl-summary-unmark-all)
-	      ;; it's handy then press '/'
-	      (define-key wl-summary-mode-map (kbd "\\") #'wl-thread-open-close)
-	      ;; frequently used functions should be accessible 
-	      (define-key wl-summary-mode-map (kbd "s") #'wl-summary-sync-update)
-	      (define-key wl-summary-mode-map (kbd "M-s") #'wl-summary-pick)
+          #'(lambda ()
+              ;; useful jumps
+              (define-key wl-summary-mode-map (kbd "M-n") #'wl-summary-down)
+              (define-key wl-summary-mode-map (kbd "M-p") #'wl-summary-up)
+              ;; I don't like the shortcuts starting from capital letter
+              (define-key wl-summary-mode-map (kbd "M-g") #'wl-folder-goto-folder-sticky)
+              (define-key wl-summary-mode-map (kbd "M-a") #'wl-summary-reply-with-citation)
+              (define-key wl-summary-mode-map (kbd "M-d") #'wl-summary-delete)
+              (define-key wl-summary-mode-map (kbd "M-u") #'wl-summary-unmark-all)
+              ;; it's handy then press '/'
+              (define-key wl-summary-mode-map (kbd "\\") #'wl-thread-open-close)
+              ;; frequently used functions should be accessible 
+              (define-key wl-summary-mode-map (kbd "s") #'wl-summary-sync-update)
+              (define-key wl-summary-mode-map (kbd "M-s") #'wl-summary-pick)
 
-	      ;; let's make the complex shortcuts a little bit easy to
-	      ;; complete
-	      (define-key wl-summary-mode-map (kbd "m r")
-		#'wl-summary-target-mark-mark-as-read)
-	      (define-key wl-summary-mode-map (kbd "m m")
-		#'wl-summary-target-mark-all)
-	      (define-key wl-summary-mode-map (kbd "m a")
-		#'wl-summary-target-mark-reply-with-citation)
-	      (define-key wl-summary-mode-map (kbd "m M-d")
-		#'wl-summary-target-mark-delete)
-	      ;; region commands
-	      (define-key wl-summary-mode-map (kbd "r r") 
-		#'wl-summary-mark-as-read-region)
-	      (define-key wl-summary-mode-map (kbd "r m") 
-		#'wl-summary-target-mark-region)
-	      (define-key wl-summary-mode-map (kbd "r M-d")
-		#'wl-summary-delete-region)
-	      ;; thread command
-	      (define-key wl-summary-mode-map (kbd "t r")
-		#'wl-thread-mark-as-read)
-	      (define-key wl-summary-mode-map (kbd "t M-d")
-		#'wl-thread-delete)))
+              ;; let's make the complex shortcuts a little bit easy to
+              ;; complete
+              (define-key wl-summary-mode-map (kbd "m r")
+                #'wl-summary-target-mark-mark-as-read)
+              (define-key wl-summary-mode-map (kbd "m m")
+                #'wl-summary-target-mark-all)
+              (define-key wl-summary-mode-map (kbd "m a")
+                #'wl-summary-target-mark-reply-with-citation)
+              (define-key wl-summary-mode-map (kbd "m M-d")
+                #'wl-summary-target-mark-delete)
+              ;; region commands
+              (define-key wl-summary-mode-map (kbd "r r") 
+                #'wl-summary-mark-as-read-region)
+              (define-key wl-summary-mode-map (kbd "r m") 
+                #'wl-summary-target-mark-region)
+              (define-key wl-summary-mode-map (kbd "r M-d")
+                #'wl-summary-delete-region)
+              ;; thread command
+              (define-key wl-summary-mode-map (kbd "t r")
+                #'wl-thread-mark-as-read)
+              (define-key wl-summary-mode-map (kbd "t M-d")
+                #'wl-thread-delete)))
 
 (add-hook 'wl-summary-mode-hook #'wl-summary-toggle-disp-msg)
 
 (add-hook 'wl-draft-mode-hook
-	  #'(lambda ()
-	      (define-key wl-draft-mode-map (kbd "C-c C-b") #'mail-text)))
+          #'(lambda ()
+              (define-key wl-draft-mode-map (kbd "C-c C-b") #'mail-text)))
 
 (if (boundp 'mail-user-agent)
     (setq mail-user-agent 'wl-user-agent))
@@ -140,9 +140,9 @@
 
 (defun wl-summary-zepp-get-short-name (str)
   (let ((pet-name (elmo-get-hash-val
-		   (downcase
-		    (wl-address-header-extract-address str)) 
-		   wl-address-petname-hash)))
+                   (downcase
+                    (wl-address-header-extract-address str)) 
+                   wl-address-petname-hash)))
     (cond
      ((and pet-name (> (length pet-name) 0)) pet-name)
      ((string-match "\\(.*[^ \t]\\)[ \t]*<[^>]*>" str)

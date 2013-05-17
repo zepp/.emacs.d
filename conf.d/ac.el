@@ -20,14 +20,14 @@
     '(ac-source-words-in-buffer ac-source-dictionary))))
 
 (add-hook 'c-mode-common-hook
-	  #'my-cmode-ac-hook t)
+          #'my-cmode-ac-hook t)
 
 (defun my-lisp-ac-hook ()
   (setq ac-sources '(ac-source-symbols
-		     ac-source-variables
-		     ac-source-functions)))
+                     ac-source-variables
+                     ac-source-functions)))
 
 (add-hook 'emacs-lisp-mode-hook
-	  #'my-lisp-ac-hook t)
+          #'my-lisp-ac-hook t)
 
 (global-auto-complete-mode 1)

@@ -41,9 +41,9 @@
   "changes the current window after the selection. \
 Artists ->Albums, Albums -> Songs"
   (cond ((string= "*MPC Artists*" (buffer-name))
-	 (mpc-jump-to-albums))
-	((string= "*MPC Albums*" (buffer-name))
-	 (mpc-jump-to-songs))))
+         (mpc-jump-to-albums))
+        ((string= "*MPC Albums*" (buffer-name))
+         (mpc-jump-to-songs))))
 
 (defadvice mpc-playlist (after change-window (&optional event) activate)
   "changes the current window to Songs"
