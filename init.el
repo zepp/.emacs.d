@@ -282,6 +282,7 @@ vertically."
 (load-conf "psvn" 'svn-status)
 
 (unless (string= system-type "windows-nt")
+  (load-conf "erc" 'erc)
   (load-conf "wm")
   (load-conf "mpc" 'mpc)
   (load-conf "dictem" "dictem")
