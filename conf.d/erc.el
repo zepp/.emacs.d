@@ -27,3 +27,14 @@
 (require 'erc-truncate)
 (erc-truncate-mode t)
 (setq erc-max-buffer-size 10240)
+
+(defun bitlbee-identify ()
+  (when (and (or (string= "localhost" erc-session-server)
+                 (string= "im.bitlbee.org" erc-session-server))
+             (string= "&bitlbee" (buffer-name)))
+    (require 'secrets)
+    (erc-message "PRIVMSG" (format "%s identify %s"
+                                   (erc-default-target)
+                                   bitlbee-password))))
+
+(add-hook 'erc-join-hook #'bitlbee-identify)
