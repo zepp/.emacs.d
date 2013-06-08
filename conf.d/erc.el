@@ -28,13 +28,12 @@
 (erc-truncate-mode t)
 (setq erc-max-buffer-size 10240)
 
-(defun bitlbee-identify ()
-  (when (and (or (string= "localhost" erc-session-server)
-                 (string= "im.bitlbee.org" erc-session-server))
-             (string= "&bitlbee" (buffer-name)))
-    (require 'secrets)
-    (erc-message "PRIVMSG" (format "%s identify %s"
-                                   (erc-default-target)
-                                   bitlbee-password))))
+(defun bitlbee ()
+  "Starts the ERC connection to the local bitlbee server"
 
-(add-hook 'erc-join-hook #'bitlbee-identify)
+  (interactive)
+  (unless (get-buffer "&bitlbee")
+    (require 'secrets)
+    (erc :server "localhost"
+         :nick bitlbee-nick 
+         :password bitlbee-password)))
