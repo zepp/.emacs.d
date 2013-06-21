@@ -9,9 +9,6 @@
 (erc-autojoin-mode t)
 (erc-track-mode t)
 
-(require 'erc-nicklist)
-(setq erc-nicklist-use-icons nil)
-
 (require 'erc-log)
 (setq 
  erc-log-channels-directory (expand-file-name "erc" local-conf-dir)

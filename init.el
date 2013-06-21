@@ -99,6 +99,7 @@ various buffer management routines")
 
 (add-to-list 'auto-mode-alist '(".*\\.bb$" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("Makefile\\..*" . makefile-mode))
+(add-to-list 'auto-mode-alist '(".*\\.mak$" . makefile-mode))
 (add-to-list 'auto-mode-alist '(".*\\.h\\.in$" . c-mode))
 (add-to-list 'auto-mode-alist '(".*\\.bat$" . dos-mode))
 (add-to-list 'auto-mode-alist '("svn-.*\\.tmp$" . text-mode))
