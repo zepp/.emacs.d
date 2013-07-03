@@ -271,7 +271,7 @@ vertically."
 (load-conf "env")
 
 (load-conf "org" "org")
-(load-conf "zb" "zenburn")
+(load-conf "theme" 'color-theme-initialize)
 (load-conf "iresize" "iresize")
 (load-conf "ac" "auto-complete")
 (load-conf "root-win" "split-root")
