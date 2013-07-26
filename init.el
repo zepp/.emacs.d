@@ -246,7 +246,9 @@ vertically."
 (require 'vc)
 
 (add-to-list 'same-window-buffer-names "*vc-diff*")
-(add-to-list 'same-window-regexps ".*\\.c$")
+(add-to-list 'same-window-regexps ".*\\.[ch]$")
+(add-to-list 'same-window-regexps ".*\\.el$")
+(add-to-list 'same-window-regexps ".*\\.lisp$")
 
 (remove-hook 'find-file-hook
              #'vc-find-file-hook)
