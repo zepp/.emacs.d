@@ -2,8 +2,8 @@
 ;; global keys definition
 
 ;; to make a cursor navigation a little bit easy
-(global-set-key (kbd "M-n") #'next-line)
-(global-set-key (kbd "M-p") #'previous-line)
+(global-set-key (kbd "M-n") #'forward-paragraph)
+(global-set-key (kbd "M-p") #'backward-paragraph)
 
 (global-set-key (kbd "M-#") #'dictem-run-define)
 (global-set-key (kbd "M-*") #'ispell-region)
