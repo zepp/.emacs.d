@@ -34,3 +34,15 @@
     (erc :server "localhost"
          :nick bitlbee-nick 
          :password bitlbee-password)))
+
+(defun bitlbee-auto-login ()
+  "login on all registered accounts"
+  (when (boundp 'bitlbee-acc-num)
+    (when (and (string= "localhost" erc-session-server)
+               (string= "&bitlbee" (buffer-name)))
+      (dotimes (i bitlbee-acc-num)
+        (erc-message "PRIVMSG"
+                     (format "%s acc %d on"
+                             (erc-default-target) i))))))
+
+(add-hook 'erc-join-hook 'bitlbee-auto-login)
