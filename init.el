@@ -193,7 +193,8 @@ prefix argument is set"
         (let ((split-height-threshold 0)
               (split-width-threshold nil))
           (shell new-shell-buf-name))
-      (let ((same-window-buffer-names
+      (let (pop-up-windows
+            (same-window-buffer-names
              (cons new-shell-buf-name same-window-buffer-names)))
         (shell new-shell-buf-name)))))
 
@@ -245,9 +246,22 @@ vertically."
 ;;-------------------------------------------------------------------------------
 (require 'vc)
 
-(add-to-list 'same-window-buffer-names "*vc-diff*")
 (remove-hook 'find-file-hook
              #'vc-find-file-hook)
+
+;; do all the work in same window
+
+(add-to-list 'same-window-buffer-names "*vc-diff*")
+
+(defadvice diff-goto-source
+  (around in-same-window (&optional other-file event) activate)
+  "show a source file in the current window"
+  (let ((display-buffer-function 
+         #'(lambda (buf not-this-window)
+             (let ((win (selected-window)))
+               (set-window-buffer win buffer)
+               win))))
+    ad-do-it))
 
 ;;-------------------------------------------------------------------------------
 (require 'grep)
