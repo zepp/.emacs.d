@@ -1,8 +1,5 @@
 (if (string= system-type "windows-nt")
-    (progn
-      (w32-register-hot-key [M-tab])
-      (add-to-list 'exec-path "C:/Program Files (x86)/Emacs/EmacsW32/gnuwin32/bin")
-      (setenv "PATH" (combine-and-quote-strings exec-path ";")))
+    (w32-register-hot-key [M-tab])
   (setq
    ;; disable internal decoder
    base64-internal-decoding-limit 0
@@ -21,7 +18,8 @@
    base64-external-encode '("uuencode" "-m")
    base64-external-decode '("uudecode" "-m")
    quoted-printable-external-encoder '("uuencode")
-   quoted-printable-external-decoder '("uudecode")))
+   quoted-printable-external-decoder '("uudecode"))
+  (setenv "GPG_AGENT_INFO" nil))
 
 (if (string= (getenv "DESKTOP_SESSION") "stumpwm")
     (setq

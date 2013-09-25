@@ -1,5 +1,3 @@
-(require 'jabber)
-
 (jabber-activity-mode 1)
 (jabber-mode-line-mode -1)
 
@@ -35,14 +33,6 @@
 
 (add-hook 'jabber-post-connect-hooks 'jabber-autoaway-start)
 
-(defun jabber-connect-with-secrets (&optional sec)
-  (interactive)
-  (if sec
-      (require sec)
-    (require 'secrets))
-  (jabber-connect-all)
-  (switch-to-buffer jabber-roster-buffer))
-
 (add-hook 'jabber-roster-mode-hook
           #'(lambda ()
               (define-key jabber-roster-mode-map (kbd "C-c C-l") 
@@ -73,3 +63,13 @@ vertically."
   (let ((split-height-threshold 0)
         (split-width-threshold nil))
     ad-do-it))
+
+(defun jabber-activity-new-window ()
+  (interactive)
+
+  (require 'window-numbering)
+  (when jabber-activity-jids
+    (select-window (split-root-window 10))
+    (jabber-activity-switch-to)))
+
+(global-set-key (kbd "C-x C-j C-u") #'jabber-activity-new-window)

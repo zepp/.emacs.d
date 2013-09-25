@@ -1,5 +1,3 @@
-(require 'flyspell)
-
 (setq
  flyspell-delay 1
  flyspell-default-dictionary ispell-dictionary)
@@ -11,4 +9,3 @@
               (when flyspell-mode
                 (flyspell-buffer))))
 
-(add-hook 'text-mode-hook #'flyspell-mode)

@@ -1,8 +1,3 @@
-;;-------------------------------------------------------------------------------
-
-(require 'org-install)
-(add-to-list 'auto-mode-alist '("\\.org\\(-mode\\)?$" . org-mode))
-
 (setq
  org-mobile-directory "~/dropbox/mobile-org"
  org-id-locations-file (expand-file-name "org/.org-id-locations" local-conf-dir)
@@ -18,4 +13,3 @@
               (define-key org-agenda-mode-map (kbd "C-c p") #'org-mobile-push)
               (define-key org-agenda-mode-map (kbd "C-c M-p") #'org-mobile-pull)))
 
-;;-------------------------------------------------------------------------------

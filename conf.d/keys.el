@@ -68,24 +68,3 @@ function to keep a state variable"
 ;; in F Lock mode
 (global-set-key (kbd "<SunOpen>") #'find-file)
 (global-set-key (kbd "<SunClose>") #'kill-buffer)
-
-;;-------------------------------------------------------------------------------
-;; related to global key redefinition so placed here
-
-(add-hook 'diff-mode-hook
-          '(lambda ()
-             ;; diff-goto-source
-             (define-key diff-mode-map (kbd "C-m") 'diff-goto-source)))
-
-;;-------------------------------------------------------------------------------
-
-(add-hook 'eshell-mode-hook
-          '(lambda ()
-             (define-key eshell-mode-map (kbd "C-c M-s") nil)))
-
-;;-------------------------------------------------------------------------------
-
-(add-hook 'shell-mode-hook
-          '(lambda ()
-             (define-key shell-mode-map (kbd "C-c M-s") nil)))
-

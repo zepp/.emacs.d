@@ -1,6 +1,3 @@
-(require 'auto-complete)
-(require 'auto-complete-config)
-
 (define-key ac-mode-map (kbd "C-c h") #'ac-last-quick-help)
 
 (setq global-auto-complete-mode t

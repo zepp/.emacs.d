@@ -39,30 +39,27 @@ should not be pushed to git repo")
 
 ;;-------------------------------------------------------------------------------
 
-(defun load-conf (conf &optional sym-or-path)
+(defun load-conf (conf &optional file-sym req)
 
   (defun do-load (conf)
-    (load (expand-file-name (format "conf.d/%s.el" conf)
-                            user-emacs-directory))
-    (load (expand-file-name (format "%s.el" conf)
-                            local-conf-dir) t))
+    (let ((main  (expand-file-name (format "conf.d/%s.el" conf)
+                                   user-emacs-directory))
+          (local (expand-file-name (format "%s.el" conf)
+                                   local-conf-dir)))
+      (if (file-regular-p local)
+          `(progn (load ,main) (load ,local))
+        `(load ,main))))
 
-  (if sym-or-path
-      (if (symbolp sym-or-path)
-          (when (fboundp sym-or-path)
-            (do-load conf))
-        (let ((rexp (concat "/" (regexp-quote sym-or-path))))
-          (when (find-if #'(lambda (path)
-                             (string-match rexp path))
-                         load-path)
-            (do-load conf))))
-    
-    (do-load conf)))
+  (if file-sym
+      (eval-after-load file-sym (do-load conf))
+    (eval (do-load conf)))
+  (when (and req file-sym)
+    (require file-sym nil t)))
 
 ;;-------------------------------------------------------------------------------
 
 (defvar ignored-buffer-list 
-  '("*Completions" "*Quail Completions*")
+  '("*Completions" "*Quail Completions*" "*magit-edit-log*")
 "list of the buffer names or regular expressions to be ignored by
 various buffer management routines")
 
@@ -103,16 +100,26 @@ various buffer management routines")
 (add-to-list 'auto-mode-alist '(".*\\.h\\.in$" . c-mode))
 (add-to-list 'auto-mode-alist '(".*\\.bat$" . dos-mode))
 (add-to-list 'auto-mode-alist '("svn-.*\\.tmp$" . text-mode))
+(when (fboundp 'org-mode)
+  (add-to-list 'auto-mode-alist '("\\.org\\(-mode\\)?$" . org-mode)))
 
 (add-hook 'text-mode-hook 'auto-fill-mode)
+(when (boundp flyspell-mode)
+  (add-hook 'text-mode-hook #'flyspell-mode))
+
+(when (fboundp 'gtags-mode)
+  (add-hook 'c-mode-common-hook #'gtags-mode))
+
+;;-------------------------------------------------------------------------------
+;; e/common lisp
 
 (add-hook 'emacs-lisp-mode-hook
           #'(lambda ()
               (setq indent-tabs-mode nil)))
 
 ;;-------------------------------------------------------------------------------
-
 ;; iswitchb
+
 (require 'iswitchb)
 (setq iswitchb-regexp t
       iswitchb-default-method 'samewindow)
@@ -131,38 +138,33 @@ various buffer management routines")
                                 space-after-tab))
 
 ;;-------------------------------------------------------------------------------
+;; calculator
 
-(require 'calculator)
 (setq calculator-electric-mode nil)
 
 ;;-------------------------------------------------------------------------------
+;; compile
 
-(require 'compile)
 (setq compilation-error-regexp-metaware
       '("[Ew] \"\\(.*\\)\",L\\([0-9]+\\)/C\\([0-9]+\\)\\((#[0-9]+)\\)?:\t\
-\\(.*\\)"
-        1 2 3))
-(setq compilation-error-regexp-alist
+\\(.*\\)" 1 2 3)
+      compilation-error-regexp-alist
       `(,compilation-error-regexp-metaware gnu gcc-include))
 
 ;;-------------------------------------------------------------------------------
-
-(require 'epa)
-(setenv "GPG_AGENT_INFO" nil)
-
-;;-------------------------------------------------------------------------------
-
-(require 'ediff)
+;; diff/ediff
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain
       ediff-split-window-function #'(lambda (&optional arg)
                                       (if (> (frame-width) 140)
                                           (split-window-horizontally arg)
                                         (split-window-vertically arg))))
+(add-hook 'diff-mode-hook
+          '(lambda ()
+             ;; diff-goto-source
+             (define-key diff-mode-map (kbd "C-m") 'diff-goto-source)))
 
 ;;-------------------------------------------------------------------------------
-
-(require 'cperl-mode)
 
 (fset 'perl-mode 'cperl-mode)
 
@@ -173,8 +175,8 @@ various buffer management routines")
             (cperl-set-style "C++")))
 
 ;;-------------------------------------------------------------------------------
+;; shell
 
-(require 'shell)
 (defun shell-jump ()
   "opens the shell in the current directory. Opens new window if
 prefix argument is set"
@@ -199,77 +201,67 @@ prefix argument is set"
         (shell new-shell-buf-name)))))
 
 ;;-------------------------------------------------------------------------------
+;; info, useless under non UNIX platform
 
-(setq dired-bind-jump nil
-      dired-recursive-deletes 'always
-      dired-deletion-confirmer #'y-or-n-p)
-(require 'dired-x)
-
-(defadvice dired-do-shell-command
-  (around split-fashion (command &optional arg file-list) 
-          activate)
-  "Controls the fashion of window splitting. Splits window
-vertically."
-  (let ((split-height-threshold 0)
-        (split-width-threshold nil))
-    ad-do-it))
-
-(defadvice dired-do-async-shell-command
-  (around split-fashion (command &optional arg file-list) 
-          activate)
-  "Controls the fashion of window splitting. Splits window
-vertically."
-  (let ((split-height-threshold 0)
-        (split-width-threshold nil))
-    ad-do-it))
-
-(define-key dired-mode-map (kbd "M-n") #'dired-next-line)
-(define-key dired-mode-map (kbd "M-p") #'dired-previous-line)
-(define-key dired-mode-map (kbd "c") #'dired-do-copy)
-(define-key dired-mode-map (kbd "d") #'dired-do-delete)
-(define-key dired-mode-map (kbd "r") #'dired-do-rename)
-(define-key dired-mode-map (kbd "M-d") #'dired-flag-file-deletion)
-
-(put 'dired-find-alternate-file 'disabled nil)
-
-;; -l is mandatory
-;; -G omit the group name
-;; -h human-readable size
-(setq dired-listing-switches "-alGh")
-
-;;-------------------------------------------------------------------------------n
-(require 'info)
-
-(define-key Info-mode-map (kbd "j") #'Info-follow-nearest-node)
-(define-key Info-mode-map (kbd "M-n") nil)
+(eval-after-load 'info
+  '(progn 
+     (define-key Info-mode-map (kbd "j") #'Info-follow-nearest-node)
+     (define-key Info-mode-map (kbd "M-n") nil)))
 
 ;;-------------------------------------------------------------------------------
-(require 'vc)
+;; unfortunately there is no autoloads so I have to do it in such way
+(require 'dictem nil t)
 
-(remove-hook 'find-file-hook
-             #'vc-find-file-hook)
-
-;; do all the work in same window
-
-(add-to-list 'same-window-buffer-names "*vc-diff*")
-
-(defadvice diff-goto-source
-  (around in-same-window (&optional other-file event) activate)
-  "show a source file in the current window"
-  (let ((display-buffer-function 
-         #'(lambda (buf not-this-window)
-             (let ((win (selected-window)))
-               (set-window-buffer win buffer)
-               win))))
-    ad-do-it))
+(setq dictem-default-database "gcide"
+      dictem-use-existing-buffer t)
 
 ;;-------------------------------------------------------------------------------
-(require 'grep)
+;; psvn
+
+(setq svn-status-hide-unmodified t
+      svn-status-hide-externals t)
+
+;;-------------------------------------------------------------------------------
+;; gdb
+
+(setq gdb-many-windows t)
+
+;;-------------------------------------------------------------------------------
+;; missing in fresh installation
+(require 'window-numbering nil t)
+
+(eval-after-load 'window-numbering '(window-numbering-mode 1))
+
+;;-------------------------------------------------------------------------------
+;; missing in older Emacs versions
+(require 'color-theme nil t)
+
+(eval-after-load 'color-theme '(color-theme-initialize))
+
+;;-------------------------------------------------------------------------------
+;; ispell
+
+(setq ispell-program-name "aspell"
+      ispell-have-new-look t
+      ispell-dictionary "english"
+      ispell-extra-args '("--sug-mode=ultra"))
+
+;;-------------------------------------------------------------------------------
+;; missing in fresh installation
+(require 'iresize nil t)
+
+(eval-after-load 'iresize
+  '(progn 
+     (define-key iresize-mode-map (kbd "RET") #'iresize-mode)
+     (define-key iresize-mode-map (kbd "C-f") #'enlarge-window-horizontally)
+     (define-key iresize-mode-map (kbd "C-b") #'shrink-window-horizontally)))
+
+;;-------------------------------------------------------------------------------
+;; grep
 
 (add-to-list 'same-window-buffer-names "*grep*")
 
 ;;-------------------------------------------------------------------------------
-
 (require 'server)
 (setq server-log t)
 
@@ -278,33 +270,25 @@ vertically."
 ;;-------------------------------------------------------------------------------
 
 (load-conf "utils")
-(load-conf "cc")
 (load-conf "fonts")
 (load-conf "env")
 
-(load-conf "org" "org")
-(load-conf "theme" 'color-theme-initialize)
-(load-conf "iresize" "iresize")
-(load-conf "ac" "auto-complete")
-(load-conf "root-win" "split-root")
+(load-conf "ac" 'auto-complete t)
+(load-conf "dired" 'dired t)
 
-(load-conf "wn" 'window-numbering-mode)
-(load-conf "gtags" 'gtags-mode)
-(load-conf "fs" 'flyspell-mode)
-(load-conf "ispell" 'ispell-word)
-(load-conf "psvn" 'svn-status)
+(load-conf "org" 'org)
+(load-conf "gtags" 'gtags)
+(load-conf "fs" 'flyspell)
+(load-conf "cc" 'cc-mode)
+(load-conf "vc" 'vc)
 
 (unless (string= system-type "windows-nt")
-  (load-conf "erc" 'erc)
   (load-conf "wm")
+  (load-conf "erc" 'erc)
   (load-conf "mpc" 'mpc)
-  (load-conf "dictem" "dictem")
-  (load-conf "nt" "newsticker")
-  (load-conf "jabber" "emacs-jabber")
-  (load-conf "wl" "wl")
-  (load-conf "magit" "magit")
-  (load-conf "w3m" "w3m")
-  (load-conf "gdb"))
+  (load-conf "jabber" 'jabber)
+  (load-conf "wl" 'wl)
+  (load-conf "w3m" 'w3m))
 
 ;;-------------------------------------------------------------------------------
 
@@ -314,6 +298,29 @@ vertically."
 (global-set-key [f5] 'recode-buffer)
 
 ;;-------------------------------------------------------------------------------
-;; loaded finally to be sure that all mode maps are available
+;; some top-level wrappers
+
+(defun bitlbee ()
+  "Starts the ERC connection to the local bitlbee server using
+secrets file"
+
+  (interactive)
+  (unless (get-buffer "&bitlbee")
+    (require 'secrets)
+    (erc :server "localhost"
+         :nick bitlbee-nick 
+         :password bitlbee-password)))
+
+(defun jabber-with-secrets ()
+  "Starts the jabber session using secrets file"
+
+  (interactive)
+  (unless (boundp 'jabber-roster-buffer)
+    (require 'secrets)
+    (jabber-connect-all)
+    (switch-to-buffer jabber-roster-buffer)))
+
+;;-------------------------------------------------------------------------------
+;; global key bindings
 
 (load-conf "keys")

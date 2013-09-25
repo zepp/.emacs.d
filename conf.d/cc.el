@@ -1,5 +1,3 @@
-(require 'cc-mode)
-
 ;; http://www.linux.org.ru/books/GNU/emacs/emacs_27.html
 ;; Create my personal coding style.
 

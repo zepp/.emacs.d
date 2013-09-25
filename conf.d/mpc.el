@@ -1,5 +1,3 @@
-(require 'mpc)
-
 (setq
  mpc-browser-tags '(Artist Album)
  mpc-songs-format "%3{Track} %25{Title} %-5{Time}")

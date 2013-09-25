@@ -1,10 +1,3 @@
-;; wanderlust
-
-
-(autoload 'wl "wl" "wanderlust" t)
-(autoload 'wl-draft "wl" "Write draft with Wanderlust." t)
-(autoload 'wl-user-agent-compose "wl-draft" nil t)
-
 ;; ssl.el
 (setq
  ssl-certificate-verification-policy 1
