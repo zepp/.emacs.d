@@ -236,7 +236,9 @@ prefix argument is set"
 ;; missing in older Emacs versions
 (require 'color-theme nil t)
 
-(eval-after-load 'color-theme '(color-theme-initialize))
+(eval-after-load 'color-theme 
+  '(when (fboundp 'color-theme-initialize)
+     (color-theme-initialize)))
 
 ;;-------------------------------------------------------------------------------
 ;; ispell
