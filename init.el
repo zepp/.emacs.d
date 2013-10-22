@@ -309,7 +309,7 @@ secrets file"
   (interactive)
   (unless (get-buffer "&bitlbee")
     (require 'secrets)
-    (erc :server "localhost"
+    (erc :server erc-default-server
          :nick bitlbee-nick 
          :password bitlbee-password)))
 
