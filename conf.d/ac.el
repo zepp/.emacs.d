@@ -1,4 +1,5 @@
 (define-key ac-mode-map (kbd "C-c h") #'ac-last-quick-help)
+(define-key ac-mode-map (kbd "M-t") #'auto-complete)
 
 (setq global-auto-complete-mode t
       ac-dictionary-directories (expand-file-name "ac" local-conf-dir)

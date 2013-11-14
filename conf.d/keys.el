@@ -1,6 +1,15 @@
 ;;-------------------------------------------------------------------------------
 ;; global keys definition
 
+(global-set-key (kbd "C-t") #'transpose-words)
+
+(defun call-keyword-completion ()
+  "Call the command that has keyboard shortcut M-TAB."
+  (interactive)
+  (call-interactively (key-binding (kbd "M-TAB"))))
+
+(global-set-key (kbd "M-t") 'call-keyword-completion)
+
 ;; to make a cursor navigation a little bit easy
 (global-set-key (kbd "M-n") #'forward-paragraph)
 (global-set-key (kbd "M-p") #'backward-paragraph)

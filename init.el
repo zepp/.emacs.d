@@ -113,7 +113,7 @@ various buffer management routines")
 ;;-------------------------------------------------------------------------------
 ;; e/common lisp
 
-(add-hook 'emacs-lisp-mode-hook
+(add-hook 'lisp-mode-hook
           #'(lambda ()
               (setq indent-tabs-mode nil)))
 
