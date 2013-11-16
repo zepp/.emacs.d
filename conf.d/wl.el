@@ -1,21 +1,9 @@
-;; ssl.el
 (setq
  ssl-certificate-verification-policy 1
- ssl-program-name "gnutls-cli"
- ssl-program-arguments '("-p" service host))
 
-(setq
- ;;disable internal flim decoder
+ ;; disable internal flim decoder (bug #5534)
  mel-b-ccl-module nil
-
- elmo-imap4-default-stream-type 'ssl
- elmo-imap4-default-port 993
- elmo-imap4-default-authenticate-type 'clear
- elmo-imap4-debug t
-
- elmo-pop3-default-stream-type 'ssl
- elmo-pop3-default-authenticate-type 'user
- elmo-pop3-debug t
+ mel-q-ccl-module nil
 
  wl-folder-check-async 1
  wl-folder-use-frame nil
@@ -24,9 +12,8 @@
  wl-message-ignored-field-list '("^.*")
  wl-message-visible-field-list '("^From:" "^To:" "^Cc:" "^Date:" "^Subject:" "^User-Agent:" "^X-Mailer:" "^Content-Type:")
  wl-message-sort-field-list    wl-message-visible-field-list
- ;; to avoid noise message
- wl-message-id-domain "fc5697d5365100a6a82bc87acbda"
- wl-message-id-use-wl-from 1
+ ;;wl-message-id-use-wl-from 1
+ wl-message-id-use-message-from 1
 
  ;; for autorefile
  wl-draft-reply-buffer-style 'full
@@ -36,13 +23,12 @@
  ;; Only save draft when I tell it to! (C-x C-s or C-c C-s):
  wl-auto-save-drafts-interval nil
 
- signature-file-prefix (expand-file-name "~/.emacs.d/personal/wl/")
  signature-delete-blank-lines-at-eof t
  signature-insert-at-eof t
  signature-separator ""
 
  wl-summary-auto-refile-skip-marks nil
- wl-summary-line-format "%W %D %M %h:%m %T%P %4S %t%[%c %f% %] %s"
+ wl-summary-line-format "%4S %D/%M | %W %h:%m %T%P %t%[%c %f% %] %s"
  wl-summary-width nil
 
  ;; mark sent messages (folder carbon copy) as read.
