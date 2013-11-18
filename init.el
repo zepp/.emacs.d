@@ -77,7 +77,9 @@ various buffer management routines")
 
 (let ((elpa-root (expand-file-name "~/elisp/elpa")))
   (when (file-directory-p elpa-root)
-    (add-to-list 'load-path elpa-root)
+    ;; installation script places package.el into to the elpa-root
+    (if (< emacs-major-version 24)
+	(add-to-list 'load-path elpa-root))
     (setq package-user-dir elpa-root)
     (require 'package)
     (package-initialize)))
