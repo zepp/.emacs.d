@@ -79,7 +79,7 @@ various buffer management routines")
   (when (file-directory-p elpa-root)
     ;; installation script places package.el into to the elpa-root
     (if (< emacs-major-version 24)
-	(add-to-list 'load-path elpa-root))
+        (add-to-list 'load-path elpa-root))
     (setq package-user-dir elpa-root)
     (require 'package)
     (package-initialize)))
@@ -115,9 +115,12 @@ various buffer management routines")
 ;;-------------------------------------------------------------------------------
 ;; e/common lisp
 
-(add-hook 'lisp-mode-hook
-          #'(lambda ()
-              (setq indent-tabs-mode nil)))
+(defun lisp-no-tabs()
+  "it disables tabs indentation"
+  (setq indent-tabs-mode nil))
+
+(add-hook 'emacs-lisp-mode-hook #'lisp-no-tabs)
+(add-hook 'lisp-mode-hook #'lisp-no-tabs)
 
 ;;-------------------------------------------------------------------------------
 ;; iswitchb
