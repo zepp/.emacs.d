@@ -1,5 +1,9 @@
+;; * After selecting candidates, TAB will behave as RET
+;; * TAB will behave as RET only on candidate remains
+(setq ac-dwim nil)
+
 (define-key ac-mode-map (kbd "C-c h") #'ac-last-quick-help)
-(define-key ac-mode-map (kbd "M-t") #'auto-complete)
+(define-key ac-mode-map (kbd "M-t") #'ac-expand)
 
 (setq global-auto-complete-mode t
       ac-dictionary-directories (expand-file-name "ac" local-conf-dir)
