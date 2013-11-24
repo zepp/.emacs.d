@@ -1,5 +1,6 @@
 (setq
- org-mobile-directory "~/dropbox/mobile-org"
+ org-mobile-force-mobile-change t
+ org-mobile-directory "~/Dropbox/mobile-org"
  org-id-locations-file (expand-file-name "org/.org-id-locations" local-conf-dir)
  org-agenda-window-setup 'current-window)
 
