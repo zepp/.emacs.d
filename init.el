@@ -282,6 +282,7 @@ prefix argument is set"
 
 (load-conf "ac" 'auto-complete t)
 (load-conf "dired" 'dired t)
+(load-conf "es" 'elscreen)
 
 (load-conf "org" 'org)
 (load-conf "gtags" 'gtags)
