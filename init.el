@@ -17,8 +17,9 @@ should not be pushed to git repo")
 (column-number-mode 1)
 
 (setq
- visible-bell t
  inhibit-startup-screen t
+ visible-bell t
+ make-pointer-invisible t
  x-select-enable-clipboard t
  frame-title-format "%F"
  default-input-method 'russian-computer
