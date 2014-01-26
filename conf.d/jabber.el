@@ -64,12 +64,14 @@ vertically."
         (split-width-threshold nil))
     ad-do-it))
 
-(defun jabber-activity-new-window ()
+(when (require 'split-root nil t)
+
+(defun jabber-activity-popup ()
   (interactive)
 
-  (require 'window-numbering)
   (when jabber-activity-jids
     (select-window (split-root-window 10))
     (jabber-activity-switch-to)))
 
-(global-set-key (kbd "C-x C-j C-u") #'jabber-activity-new-window)
+(global-set-key (kbd "C-x C-j C-u") #'jabber-activity-popup))
+
