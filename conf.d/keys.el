@@ -64,16 +64,4 @@ function to keep a state variable"
 (global-set-key (kbd "C-c r") #'iresize-mode)
 (global-set-key (kbd "C-c o") #'other-window)
 
-;;-------------------------------------------------------------------------------
-
-(global-set-key (kbd "<XF86Open>") #'find-file)
-(global-set-key (kbd "<XF86Save>") #'save-buffer)
-(global-set-key (kbd "<XF86Close>") #'kill-buffer)
-(global-set-key (kbd "<XF86New>") #'new-frame)
-(global-set-key (kbd "<XF86Forward>") #'next-buffer)
-(global-set-key (kbd "<XF86Back>") #'previous-buffer)
-
-;; these keys are partly implemented in MS Natural Ergonomic Keyboard
-;; in F Lock mode
-(global-set-key (kbd "<SunOpen>") #'find-file)
-(global-set-key (kbd "<SunClose>") #'kill-buffer)
+(global-set-key (kbd "S-SPC") #'toggle-input-method)
