@@ -14,3 +14,6 @@
 (define-key elscreen-map (kbd "a") 'elscreen-screen-nickname)
 (elscreen-start)
 
+(eval-after-load 'term
+  '(define-key term-raw-escape-map (kbd "l") #'elscreen-toggle))
+(global-set-key (kbd "C-c l") #'elscreen-toggle)
