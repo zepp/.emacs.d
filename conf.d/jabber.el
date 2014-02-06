@@ -29,7 +29,7 @@
 (mapcar
  #'(lambda (h)
      (add-hook 'jabber-chat-mode-hook h))
- `(flyspell-mode auto-fill-mode ,#'(lambda () (bury-buffer "*-jabber-roster-*"))))
+ `(flyspell-mode longlines-mode ,#'(lambda () (bury-buffer "*-jabber-roster-*"))))
 
 (add-hook 'jabber-post-connect-hooks 'jabber-autoaway-start)
 
