@@ -8,8 +8,7 @@
 (define-key gtags-mode-map (kbd "M-^") #'gtags-pop-stack)
 ;; indent new comment, ahh this one was useful
 (define-key gtags-mode-map (kbd "M-j") #'gtags-find-tag-from-here)
-(define-key gtags-mode-map (kbd "M-J") #'gtags-find-tag)
+(define-key gtags-mode-map (kbd "C-M-j") #'gtags-find-tag)
 (define-key gtags-select-mode-map (kbd "M-^") #'gtags-pop-stack)
 (define-key gtags-select-mode-map (kbd "j") #'gtags-select-tag)
 (define-key gtags-select-mode-map (kbd "M-j") #'gtags-select-tag-other-window)
-
