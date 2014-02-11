@@ -17,3 +17,5 @@
 (eval-after-load 'term
   '(define-key term-raw-escape-map (kbd "l") #'elscreen-toggle))
 (global-set-key (kbd "C-c l") #'elscreen-toggle)
+
+(elscreen-set-prefix-key (kbd "C-t"))
