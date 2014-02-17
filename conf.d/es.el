@@ -14,8 +14,9 @@
 (define-key elscreen-map (kbd "a") 'elscreen-screen-nickname)
 (elscreen-start)
 
-(eval-after-load 'term
-  '(define-key term-raw-escape-map (kbd "l") #'elscreen-toggle))
-(global-set-key (kbd "C-c l") #'elscreen-toggle)
-
 (elscreen-set-prefix-key (kbd "C-t"))
+
+(eval-after-load 'term
+  '(let ((term-escape-char (vector elscreen-prefix-key)))
+     (define-key term-raw-map term-escape-char term-raw-escape-map)
+     (define-key term-raw-escape-map term-escape-char #'term-send-raw)))
