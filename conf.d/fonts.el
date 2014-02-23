@@ -7,7 +7,7 @@
     (custom-set-faces
      '(default ((t (:height 120 :family "Lucida Console")))))
   (custom-set-faces
-   '(default ((t (:height 140 :family "Terminus" :foundry "xos4"))))
+   '(default ((t (:height 120 :family "Dejavu Sans Mono" :foundry "xos4"))))
    '(jabber-activity-face ((t (:weight bold))))
    '(jabber-chat-error ((t (:foreground "dark red" :weight bold))))
    '(jabber-chat-prompt-foreign ((t (:foreground "grey"))))
@@ -18,11 +18,7 @@
    '(jabber-roster-user-dnd ((t (:foreground "orange4" :slant italic))))
    '(jabber-roster-user-online ((t (:slant normal))))
    '(jabber-roster-user-xa ((t (:foreground "grey" :slant italic))))
-   '(jabber-title-medium ((t (:family "terminus" :weight bold :foreground "orange3"))))
-   '(jabber-title-small ((t (:family "terminus" :weight bold))))
-   '(newsticker-new-item-face ((t (:family "terminus" :weight bold))))
-   '(newsticker-obsolete-item-face ((t (:family "terminus" :weight bold :strike-through t))))
-   '(newsticker-old-item-face ((t (:family "terminus" :foreground "orange3" :weight bold))))
-   '(newsticker-treeview-face ((t (:family "terminus" :foreground "misty rose" :bold nil))))))
+   '(jabber-title-medium ((t (:family "dejavu sans mono" :weight bold :foreground "orange3"))))
+   '(jabber-title-small ((t (:family "dejavu sans mono" :weight bold))))))
 
-(add-to-list 'default-frame-alist '(font . "terminus-14"))
+(add-to-list 'default-frame-alist '(font . "dejavu sans mono-12"))
