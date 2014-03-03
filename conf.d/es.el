@@ -17,6 +17,5 @@
 (elscreen-set-prefix-key (kbd "C-t"))
 
 (eval-after-load 'term
-  '(let ((term-escape-char (vector elscreen-prefix-key)))
-     (define-key term-raw-map term-escape-char term-raw-escape-map)
-     (define-key term-raw-escape-map term-escape-char #'term-send-raw)))
+  '(let ((term-escape-char (vector ?\C-t)))
+     (define-key term-raw-map term-escape-char elscreen-map)))
