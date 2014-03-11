@@ -52,6 +52,7 @@ function to keep a state variable"
                      (list (read-string "Rename current buffer to: "
                                         (buffer-name (current-buffer)))))
                     (rename-buffer newname)))
+(global-set-key (kbd "C-x C-x") #'server-edit)
 
 ;; general commands start from C-c
 (global-set-key (kbd "C-c C-g") #'rgrep)
