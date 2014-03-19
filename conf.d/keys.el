@@ -44,7 +44,7 @@ function to keep a state variable"
 (global-set-key (kbd "C-x c") #'shell-jump)
 (global-set-key (kbd "C-x C-d") #'dired)
 (global-set-key (kbd "C-x M-d") #'dired-other-window)
-(global-set-key (kbd "C-x M-f") #'find-file-other-window)
+(global-set-key (kbd "C-x M-f") #'find-file-at-point)
 (global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
 (global-set-key (kbd "C-x C-n")
                 #'(lambda (newname)
