@@ -9,10 +9,6 @@
   (when (boundp 'wl-folder-buffer-name)
     (run-in-frame "wl" #'wl)))
 
-(defun wm-run-mpc()
-  (when (boundp 'mpc-status)
-    (run-in-frame "mpc" #'mpc)))
-
 (defun wm-run-agenda()
   (when (boundp 'org-agenda-files)
     (run-in-frame "agenda" #'org-agenda)))

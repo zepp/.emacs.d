@@ -294,7 +294,6 @@ prefix argument is set"
 (unless (string= system-type "windows-nt")
   (load-conf "wm")
   (load-conf "erc" 'erc)
-  (load-conf "mpc" 'mpc)
   (load-conf "jabber" 'jabber)
   (load-conf "wl" 'wl)
   (load-conf "w3m" 'w3m))
