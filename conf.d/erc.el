@@ -1,6 +1,7 @@
 (setq
  ;; 305 - "Welcome back"
  ;; 306 - "You're now away"
+ erc-track-position-in-mode-line t
  erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "305" "306")
  erc-track-exclude-server-buffer t
  erc-track-shorten-start 5
