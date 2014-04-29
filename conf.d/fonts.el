@@ -5,9 +5,9 @@
 
 (if (string= system-type "windows-nt")
     (custom-set-faces
-     '(default ((t (:height 120 :family "Lucida Console")))))
+     '(default ((t (:height 110 :family "Lucida Console")))))
   (custom-set-faces
-   '(default ((t (:height 120 :family "Dejavu Sans Mono" :foundry "xos4"))))
+   '(default ((t (:height 110 :family "Dejavu Sans Mono"))))
    '(jabber-activity-face ((t (:weight bold))))
    '(jabber-chat-error ((t (:foreground "dark red" :weight bold))))
    '(jabber-chat-prompt-foreign ((t (:foreground "grey"))))
@@ -21,4 +21,4 @@
    '(jabber-title-medium ((t (:family "dejavu sans mono" :weight bold :foreground "orange3"))))
    '(jabber-title-small ((t (:family "dejavu sans mono" :weight bold))))))
 
-(add-to-list 'default-frame-alist '(font . "dejavu sans mono-12"))
+(add-to-list 'default-frame-alist '(font . "dejavu sans mono-11"))
