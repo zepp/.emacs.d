@@ -13,6 +13,7 @@
 
 (define-key elscreen-map (kbd "l") 'elscreen-toggle)
 (define-key elscreen-map (kbd "a") 'elscreen-screen-nickname)
+(define-key elscreen-map (kbd "C-d") 'elscreen-dired)
 (elscreen-start)
 
 (elscreen-set-prefix-key (kbd "C-r"))
