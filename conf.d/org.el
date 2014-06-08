@@ -2,7 +2,7 @@
  org-clock-persist t
  org-clock-persist-file (expand-file-name "org/org-clock-save.el" local-conf-dir)
  org-mobile-force-mobile-change t
- org-mobile-directory "~/Dropbox/mobile-org"
+ org-mobile-directory "~/Dropbox/Apps/MobileOrg"
  org-id-locations-file (expand-file-name "org/.org-id-locations" local-conf-dir)
  org-agenda-window-setup 'current-window)
 
