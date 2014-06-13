@@ -239,6 +239,11 @@ prefix argument is set"
 (eval-after-load 'window-numbering '(window-numbering-mode 1))
 
 ;;-------------------------------------------------------------------------------
+(require 'expand-region nil t)
+
+(eval-after-load 'expand-region '(global-set-key (kbd "M-@") 'er/expand-region))
+
+;;-------------------------------------------------------------------------------
 ;; missing in older Emacs versions
 (require 'color-theme nil t)
 
