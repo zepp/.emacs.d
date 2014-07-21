@@ -233,6 +233,11 @@ prefix argument is set"
 (setq gdb-many-windows t)
 
 ;;-------------------------------------------------------------------------------
+
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'reverse)
+
+;;-------------------------------------------------------------------------------
 ;; missing in fresh installation
 (require 'window-numbering nil t)
 

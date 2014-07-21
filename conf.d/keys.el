@@ -66,3 +66,6 @@ function to keep a state variable"
 (global-set-key (kbd "C-c o") #'other-window)
 
 (global-set-key (kbd "S-SPC") #'toggle-input-method)
+
+(when (fboundp 'windmove-default-keybindings)
+  (windmove-default-keybindings 'meta))
