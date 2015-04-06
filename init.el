@@ -295,25 +295,12 @@ prefix argument is set"
 (load-conf "dired" 'dired t)
 (load-conf "es" 'elscreen)
 
-(load-conf "org" 'org)
 (load-conf "gtags" 'gtags)
 (load-conf "fs" 'flyspell)
 (load-conf "cc" 'cc-mode)
 (load-conf "vc" 'vc)
 
-(unless (string= system-type "windows-nt")
-  (load-conf "wm")
-  (load-conf "erc" 'erc)
-  (load-conf "jabber" 'jabber)
-  (load-conf "wl" 'wl)
-  (load-conf "w3m" 'w3m))
-
-;;-------------------------------------------------------------------------------
-
-(require 'buffer-recode)
-(ring-insert evm-coding-systems-list 'windows-1251)
-(ring-insert evm-coding-systems-list 'koi8-r)
-(global-set-key [f5] 'recode-buffer)
+(load-conf "erc" 'erc)
 
 ;;-------------------------------------------------------------------------------
 ;; some top-level wrappers
