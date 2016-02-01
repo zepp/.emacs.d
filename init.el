@@ -124,15 +124,13 @@ various buffer management routines")
 (add-hook 'lisp-mode-hook #'lisp-no-tabs)
 
 ;;-------------------------------------------------------------------------------
-;; iswitchb
+;; ido
 
-(require 'iswitchb)
-(setq iswitchb-regexp t
-      iswitchb-default-method 'samewindow)
-(iswitchb-mode 1)
+(require 'ido)
+(ido-mode 1)
 
 (mapcar #'(lambda (entry)
-            (add-to-list 'iswitchb-buffer-ignore entry))
+            (add-to-list 'ido-ignore-buffers entry))
         ignored-buffer-list)
 
 ;;-------------------------------------------------------------------------------

@@ -4,3 +4,5 @@ local.d/*
 /auto-save-list/*
 /ac-comphist.dat
 session.*
+elpa/*
+ido.last
