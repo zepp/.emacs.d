@@ -1,4 +1,4 @@
-*.el~
+*~
 local.d/*
 /tramp
 /auto-save-list/*

@@ -1,15 +1,6 @@
 (require 'cl)
 (require 'warnings)
 
-(defvar local-conf-dir
-  (expand-file-name "local.d" user-emacs-directory)
-  "directory to keep host specific configuration files those
-should not be pushed to git repo")
-
-;; old emacs versions 
-(unless (boundp 'user-emacs-directory)
-  (setq user-emacs-directory "~/.emacs.d/"))
-
 (transient-mark-mode 1)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
@@ -22,10 +13,7 @@ should not be pushed to git repo")
  make-pointer-invisible t
  x-select-enable-clipboard t
  frame-title-format "%F"
- default-input-method 'russian-computer
- lpr-command "xpp"
- auto-save-list-file-prefix
- (expand-file-name "auto-save/" local-conf-dir))
+ default-input-method 'russian-computer)
 
 (put 'scroll-left 'disabled nil)
 (put 'upcase-region 'disabled nil)
@@ -46,7 +34,9 @@ should not be pushed to git repo")
     (let ((main  (expand-file-name (format "conf.d/%s.el" conf)
                                    user-emacs-directory))
           (local (expand-file-name (format "%s.el" conf)
-                                   local-conf-dir)))
+                                   (expand-file-name
+                                    "local.d"
+                                    user-emacs-directory))))
       (if (file-regular-p local)
           `(progn (load ,main) (load ,local))
         `(load ,main))))
@@ -75,17 +65,15 @@ various buffer management routines")
 (add-to-list 'default-frame-alist `(buffer-predicate . ,#'suitable-buffer-p))
 
 ;;-------------------------------------------------------------------------------
+;; package management
 
-(let ((elpa-root (expand-file-name "~/elisp/elpa")))
-  (when (file-directory-p elpa-root)
-    ;; installation script places package.el into to the elpa-root
-    (if (< emacs-major-version 24)
-        (add-to-list 'load-path elpa-root))
-    (setq package-user-dir elpa-root)
-    (require 'package)
-    (package-initialize)))
-
-;;-------------------------------------------------------------------------------
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (add-to-list
+   'package-archives
+   '("melpa" . "http://melpa.org/packages/")
+   t)
+  (package-initialize))
 
 (let ((opt-site-lisp (expand-file-name "~/opt/share/emacs/site-lisp")))
   (when (file-directory-p opt-site-lisp)
@@ -109,9 +97,6 @@ various buffer management routines")
 (add-hook 'text-mode-hook 'auto-fill-mode)
 (when (boundp flyspell-mode)
   (add-hook 'text-mode-hook #'flyspell-mode))
-
-(when (fboundp 'gtags-mode)
-  (add-hook 'c-mode-common-hook #'gtags-mode))
 
 ;;-------------------------------------------------------------------------------
 ;; e/common lisp
@@ -147,22 +132,8 @@ various buffer management routines")
 (setq calculator-electric-mode nil)
 
 ;;-------------------------------------------------------------------------------
-;; compile
+;; diff
 
-(setq compilation-error-regexp-metaware
-      '("[Ew] \"\\(.*\\)\",L\\([0-9]+\\)/C\\([0-9]+\\)\\((#[0-9]+)\\)?:\t\
-\\(.*\\)" 1 2 3)
-      compilation-error-regexp-alist
-      `(,compilation-error-regexp-metaware gnu gcc-include))
-
-;;-------------------------------------------------------------------------------
-;; diff/ediff
-
-(setq ediff-window-setup-function 'ediff-setup-windows-plain
-      ediff-split-window-function #'(lambda (&optional arg)
-                                      (if (> (frame-width) 140)
-                                          (split-window-horizontally arg)
-                                        (split-window-vertically arg))))
 (add-hook 'diff-mode-hook
           '(lambda ()
              ;; diff-goto-source
@@ -203,21 +174,6 @@ prefix argument is set"
             (same-window-buffer-names
              (cons new-shell-buf-name same-window-buffer-names)))
         (shell new-shell-buf-name)))))
-
-;;-------------------------------------------------------------------------------
-;; info, useless under non UNIX platform
-
-(eval-after-load 'info
-  '(progn 
-     (define-key Info-mode-map (kbd "j") #'Info-follow-nearest-node)
-     (define-key Info-mode-map (kbd "M-n") nil)))
-
-;;-------------------------------------------------------------------------------
-;; unfortunately there is no autoloads so I have to do it in such way
-(require 'dictem nil t)
-
-(setq dictem-default-database "gcide"
-      dictem-use-existing-buffer t)
 
 ;;-------------------------------------------------------------------------------
 ;; psvn
@@ -266,12 +222,6 @@ prefix argument is set"
 ;; missing in fresh installation
 (require 'iresize nil t)
 
-(eval-after-load 'iresize
-  '(progn 
-     (define-key iresize-mode-map (kbd "RET") #'iresize-mode)
-     (define-key iresize-mode-map (kbd "C-f") #'enlarge-window-horizontally)
-     (define-key iresize-mode-map (kbd "C-b") #'shrink-window-horizontally)))
-
 ;;-------------------------------------------------------------------------------
 ;; grep
 
@@ -299,29 +249,6 @@ prefix argument is set"
 (load-conf "vc" 'vc)
 
 (load-conf "erc" 'erc)
-
-;;-------------------------------------------------------------------------------
-;; some top-level wrappers
-
-(defun bitlbee ()
-  "Starts the ERC connection to the local bitlbee server using
-secrets file"
-
-  (interactive)
-  (unless (get-buffer "&bitlbee")
-    (require 'secrets)
-    (erc :server bitlbee-server
-         :nick bitlbee-nick 
-         :password bitlbee-password)))
-
-(defun jabber-with-secrets ()
-  "Starts the jabber session using secrets file"
-
-  (interactive)
-  (unless (boundp 'jabber-roster-buffer)
-    (require 'secrets)
-    (jabber-connect-all)
-    (switch-to-buffer jabber-roster-buffer)))
 
 ;;-------------------------------------------------------------------------------
 ;; global key bindings

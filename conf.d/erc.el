@@ -26,14 +26,3 @@
 (setq erc-max-buffer-size 10240)
 (erc-truncate-mode 1)
 
-(defun bitlbee-auto-login ()
-  "login on all registered accounts"
-  (when (boundp 'bitlbee-acc-num)
-    (when (and (string= erc-default-server erc-session-server)
-               (string= "&bitlbee" (buffer-name)))
-      (dotimes (i bitlbee-acc-num)
-        (erc-message "PRIVMSG"
-                     (format "%s acc %d on"
-                             (erc-default-target) i))))))
-
-(add-hook 'erc-join-hook 'bitlbee-auto-login)
