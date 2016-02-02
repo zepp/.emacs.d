@@ -239,6 +239,7 @@ prefix argument is set"
 (load-conf "fonts")
 (load-conf "env")
 
+(load-conf "helm" 'helm-config)
 (load-conf "ac" 'auto-complete t)
 (load-conf "dired" 'dired t)
 (load-conf "es" 'elscreen)
