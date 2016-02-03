@@ -71,7 +71,7 @@ various buffer management routines")
   (require 'package)
   (add-to-list
    'package-archives
-   '("melpa" . "http://melpa.org/packages/")
+   '("melpa" . "http://stable.melpa.org/packages/")
    t)
   (package-initialize))
 
@@ -237,19 +237,19 @@ prefix argument is set"
 
 (load-conf "utils")
 (load-conf "fonts")
-(load-conf "env")
 
-(load-conf "helm" 'helm-config)
+(load-conf "helm" 'helm)
 (load-conf "ac" 'auto-complete t)
 (load-conf "dired" 'dired t)
 (load-conf "es" 'elscreen)
 
-(load-conf "gtags" 'gtags)
 (load-conf "fs" 'flyspell)
 (load-conf "cc" 'cc-mode)
 (load-conf "vc" 'vc)
 
 (load-conf "erc" 'erc)
+
+(load-conf "env")
 
 ;;-------------------------------------------------------------------------------
 ;; global key bindings

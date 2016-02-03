@@ -1,6 +1,7 @@
 (ido-mode 0)
 (require 'helm-config)
 (helm-mode 1)
+(helm-autoresize-mode 1)
 
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
@@ -19,3 +20,13 @@
 
 (setq helm-buffers-fuzzy-matching t
       helm-recentf-fuzzy-match    t)
+
+(custom-set-variables
+ '(helm-gtags-prefix-key "\C-t")
+ '(helm-gtags-suggested-key-mapping t)
+ '(helm-gtags-auto-update t)
+ '(helm-gtags-fuzzy-match t))
+
+(eval-after-load 'helm-gtags
+  '(add-hook 'c-mode-common-hook #'helm-gtags-mode))
+

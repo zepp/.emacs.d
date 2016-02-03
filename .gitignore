@@ -6,3 +6,4 @@ local.d/*
 session.*
 elpa/*
 ido.last
+recentf

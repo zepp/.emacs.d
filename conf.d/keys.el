@@ -1,8 +1,6 @@
 ;;-------------------------------------------------------------------------------
 ;; global keys definition
 
-(global-set-key (kbd "C-t") #'transpose-words)
-
 (defun call-keyword-completion ()
   "Call the command that has keyboard shortcut M-TAB."
   (interactive)
