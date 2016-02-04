@@ -18,12 +18,18 @@
 (define-key shell-mode-map (kbd "C-c C-l") 'helm-comint-input-ring)
 (define-key minibuffer-local-map (kbd "C-c C-l") 'helm-minibuffer-history)
 
-(setq helm-buffers-fuzzy-matching t
-      helm-recentf-fuzzy-match    t)
+(setf helm-split-window-in-side-p t       ; open helm buffer inside current window, not occupy whole other window
+      helm-move-to-line-cycle-in-source t ; move to end or beginning of source when reaching top or bottom of source.
+      helm-ff-file-name-history-use-recentf t
+      helm-buffers-fuzzy-matching t 
+      helm-recentf-fuzzy-match t
+      helm-M-x-fuzzy-match t)
 
 (custom-set-variables
  '(helm-gtags-prefix-key "\C-t")
  '(helm-gtags-suggested-key-mapping t)
+ '(helm-gtags-use-input-at-cursor t)
+ '(helm-gtags-ignore-case t)
  '(helm-gtags-auto-update t)
  '(helm-gtags-fuzzy-match t))
 
