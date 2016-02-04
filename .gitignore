@@ -1,5 +1,6 @@
 *~
 local.d/*
+loadable/
 /tramp
 /auto-save-list/*
 /ac-comphist.dat

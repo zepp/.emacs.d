@@ -24,8 +24,6 @@
 
 (add-to-list 'warning-suppress-types '(undo discard-info))
 
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/loadable/"))
-
 ;;-------------------------------------------------------------------------------
 
 (defun load-conf (conf &optional file-sym req)
@@ -75,13 +73,12 @@ various buffer management routines")
    t)
   (package-initialize))
 
-(let ((opt-site-lisp (expand-file-name "~/opt/share/emacs/site-lisp")))
-  (when (file-directory-p opt-site-lisp)
-    (add-to-list 'load-path opt-site-lisp)
-    (dolist (entry (directory-files opt-site-lisp t nil t))
-      (when (and (file-directory-p entry)
-                 (equal 'nil (string-match "/\\.\\.?$" entry)))
-        (add-to-list 'load-path (expand-file-name entry))))))
+(let ((my-load-path (expand-file-name "~/.emacs.d/loadable/")))
+  (add-to-list 'load-path my-load-path)
+  (dolist (entry (directory-files my-load-path t nil t))
+    (when (and (file-directory-p entry)
+               (equal 'nil (string-match "/\\.\\.?$" entry)))
+      (add-to-list 'load-path (expand-file-name entry)))))
 
 ;;-------------------------------------------------------------------------------
 
