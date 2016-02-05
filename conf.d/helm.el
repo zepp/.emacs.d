@@ -25,6 +25,10 @@
       helm-recentf-fuzzy-match t
       helm-M-x-fuzzy-match t)
 
+(mapcar #'(lambda (entry)
+            (add-to-list 'helm-boring-buffer-regexp-list entry))
+        ignored-buffer-list)
+
 (custom-set-variables
  '(helm-gtags-prefix-key "\C-t")
  '(helm-gtags-suggested-key-mapping t)

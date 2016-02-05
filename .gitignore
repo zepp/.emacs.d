@@ -1,10 +1,12 @@
 *~
 local.d/*
-loadable/
-/tramp
-/auto-save-list/*
-/ac-comphist.dat
-session.*
+loadable/*
 elpa/*
+auto-save-list/*
+eshell/*
+/tramp
+ac-comphist.dat
+session.*
 ido.last
 recentf
+/tramp

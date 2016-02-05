@@ -48,7 +48,8 @@
 ;;-------------------------------------------------------------------------------
 
 (defvar ignored-buffer-list 
-  '("*Completions" "*Quail Completions*" "*magit-edit-log*")
+  '("\\*Completions" "\\*Quail Completions\\*" "\\*Backtrace\\*" "\\*magit-edit-log\\*"
+    "\\*P4" "\\*Buffer List\\*" "\\**Shell Command Output\\*")
 "list of the buffer names or regular expressions to be ignored by
 various buffer management routines")
 
