@@ -1,19 +1,9 @@
 ;;-------------------------------------------------------------------------------
 ;; global keys definition
 
-(defun call-keyword-completion ()
-  "Call the command that has keyboard shortcut M-TAB."
-  (interactive)
-  (call-interactively (key-binding (kbd "M-TAB"))))
-
-(global-set-key (kbd "M-t") 'call-keyword-completion)
-
 ;; to make a cursor navigation a little bit easy
 (global-set-key (kbd "M-n") #'forward-paragraph)
 (global-set-key (kbd "M-p") #'backward-paragraph)
-
-(global-set-key (kbd "M-#") #'dictem-run-define)
-(global-set-key (kbd "M-*") #'ispell-region)
 
 (defun swap-buffers (&optional last)
   "Swaps the current and a last buffers"
