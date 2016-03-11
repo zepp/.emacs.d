@@ -252,6 +252,7 @@ prefix argument is set"
 (load-conf "vc" 'vc)
 
 (load-conf "erc" 'erc)
+(load-conf "jabber" 'jabber)
 
 (load-conf "env")
 
