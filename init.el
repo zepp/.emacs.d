@@ -196,6 +196,10 @@ prefix argument is set"
 (setq uniquify-buffer-name-style 'reverse)
 
 ;;-------------------------------------------------------------------------------
+
+(electric-pair-mode 1)
+
+;;-------------------------------------------------------------------------------
 ;; missing in fresh installation
 (require 'window-numbering nil t)
 
@@ -246,6 +250,7 @@ prefix argument is set"
 (load-conf "ac" 'auto-complete t)
 (load-conf "dired" 'dired t)
 (load-conf "es" 'elscreen)
+(load-conf "ai" 'aggressive-indent)
 
 (load-conf "fs" 'flyspell)
 (load-conf "cc" 'cc-mode)
