@@ -10,3 +10,5 @@ session.*
 ido.last
 recentf
 /tramp
+/org-clock-save.el
+/.org-id-locations

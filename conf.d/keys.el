@@ -57,3 +57,6 @@ function to keep a state variable"
 
 (when (fboundp 'windmove-default-keybindings)
   (windmove-default-keybindings 'meta))
+
+(global-set-key (kbd "C-c C-x C-a") 'org-agenda)
+
