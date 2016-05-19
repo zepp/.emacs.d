@@ -193,11 +193,14 @@ prefix argument is set"
 ;;-------------------------------------------------------------------------------
 
 (require 'uniquify)
-(setq uniquify-buffer-name-style 'reverse)
+(setq uniquify-buffer-name-style 'forward
+      uniquify-ignore-buffers-re "^\\*")
 
 ;;-------------------------------------------------------------------------------
 
 (electric-pair-mode 1)
+
+(delete-selection-mode t)
 
 ;;-------------------------------------------------------------------------------
 ;; missing in fresh installation
