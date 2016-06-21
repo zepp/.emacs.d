@@ -11,3 +11,5 @@
 (define-key org-agenda-mode-map (kbd "C-c C-x C-a") nil)
 
 (org-clock-persistence-insinuate)
+
+(add-hook 'org-mode-hook #'org-indent-mode)

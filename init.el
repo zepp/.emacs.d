@@ -92,9 +92,13 @@ various buffer management routines")
 (when (fboundp 'org-mode)
   (add-to-list 'auto-mode-alist '("\\.org\\(-mode\\)?$" . org-mode)))
 
-(add-hook 'text-mode-hook 'auto-fill-mode)
 (when (boundp flyspell-mode)
   (add-hook 'text-mode-hook #'flyspell-mode))
+
+;;-------------------------------------------------------------------------------
+
+(global-visual-line-mode 1)
+(setq visual-line-fringe-indicators '(nil right-curly-arrow))
 
 ;;-------------------------------------------------------------------------------
 ;; e/common lisp
