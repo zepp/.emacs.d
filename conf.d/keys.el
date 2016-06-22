@@ -5,23 +5,11 @@
 (global-set-key (kbd "M-n") #'forward-paragraph)
 (global-set-key (kbd "M-p") #'backward-paragraph)
 
-(defun swap-buffers (&optional last)
-  "Swaps the current and a last buffers"
-  (interactive)
-  (let ((buf (current-buffer))
-        (frame (selected-frame)))
-    (switch-to-buffer
-     (if last
-         (progn
-           (other-buffer buf t frame)
-           (bury-buffer buf))
-       (last-buffer buf t frame)))))
-
 ;; buffer related shortcuts start from C-x 
 (global-set-key (kbd "C-x p") #'previous-buffer)
 (global-set-key (kbd "C-x n") #'next-buffer)
 (global-set-key (kbd "C-x l")
-                (lexical-let ((swap-last t))
+                (lexical-let (swap-last)
                   #'(lambda ()
                       "that's a wrapper around the `swap-buffers'
 function to keep a state variable"

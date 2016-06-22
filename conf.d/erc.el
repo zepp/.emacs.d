@@ -12,7 +12,6 @@
 (erc-track-mode t)
 
 (setq 
- erc-log-channels-directory (expand-file-name "erc" local-conf-dir)
  erc-save-buffer-on-part t
  erc-truncate-buffer-on-save t)
 (erc-log-mode 1)

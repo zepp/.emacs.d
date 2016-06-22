@@ -1,11 +1,15 @@
 (require 'cl)
 (require 'warnings)
 
-(transient-mark-mode 1)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 (toggle-scroll-bar -1)
 (column-number-mode 1)
+
+(transient-mark-mode 1)
+(delete-selection-mode 1)
+
+(electric-pair-mode 1)
 
 (setq
  inhibit-startup-screen t
@@ -13,7 +17,9 @@
  make-pointer-invisible t
  x-select-enable-clipboard t
  frame-title-format "%F"
- default-input-method 'russian-computer)
+ default-input-method 'russian-computer
+ gdb-many-windows t
+ calculator-electric-mode nil)
 
 (put 'scroll-left 'disabled nil)
 (put 'upcase-region 'disabled nil)
@@ -24,32 +30,35 @@
 
 (add-to-list 'warning-suppress-types '(undo discard-info))
 
+(add-to-list 'same-window-buffer-names "*grep*")
+
 ;;-------------------------------------------------------------------------------
 
 (defun load-conf (conf &optional file-sym req)
 
   (defun do-load (conf)
-    (let ((main  (expand-file-name (format "conf.d/%s.el" conf)
-                                   user-emacs-directory))
-          (local (expand-file-name (format "%s.el" conf)
-                                   (expand-file-name
-                                    "local.d"
-                                    user-emacs-directory))))
+    (let ((main  (expand-file-name (format "conf.d/%s.el" conf) user-emacs-directory))
+          (local (expand-file-name (format "local.d/%s.el" conf) user-emacs-directory)))
       (if (file-regular-p local)
           `(progn (load ,main) (load ,local))
         `(load ,main))))
 
-  (if file-sym
+  (if (not file-sym)
+      (eval (do-load conf))
+    (progn
       (eval-after-load file-sym (do-load conf))
-    (eval (do-load conf)))
-  (when (and req file-sym)
-    (require file-sym nil t)))
+      (when req
+        (require file-sym nil t)))))
+
+(defun load-simple (file-sym form)
+  (eval-after-load file-sym form)
+  (require file-sym nil t))
 
 ;;-------------------------------------------------------------------------------
 
 (defvar ignored-buffer-list 
   '("\\*Completions" "\\*Quail Completions\\*" "\\*Backtrace\\*" "\\*magit-edit-log\\*"
-    "\\*P4" "\\*Buffer List\\*" "\\**Shell Command Output\\*")
+    "\\*P4" "\\*Buffer List\\*" "\\**Shell Command Output\\*" "\\*helm mini\\*")
 "list of the buffer names or regular expressions to be ignored by
 various buffer management routines")
 
@@ -89,11 +98,6 @@ various buffer management routines")
 (add-to-list 'auto-mode-alist '(".*\\.h\\.in$" . c-mode))
 (add-to-list 'auto-mode-alist '(".*\\.bat$" . dos-mode))
 (add-to-list 'auto-mode-alist '("svn-.*\\.tmp$" . text-mode))
-(when (fboundp 'org-mode)
-  (add-to-list 'auto-mode-alist '("\\.org\\(-mode\\)?$" . org-mode)))
-
-(when (boundp flyspell-mode)
-  (add-hook 'text-mode-hook #'flyspell-mode))
 
 ;;-------------------------------------------------------------------------------
 
@@ -129,11 +133,6 @@ various buffer management routines")
                                 space-after-tab))
 
 ;;-------------------------------------------------------------------------------
-;; calculator
-
-(setq calculator-electric-mode nil)
-
-;;-------------------------------------------------------------------------------
 ;; diff
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain
@@ -158,118 +157,61 @@ various buffer management routines")
             (cperl-set-style "C++")))
 
 ;;-------------------------------------------------------------------------------
-;; shell
-
-(defun shell-jump ()
-  "opens the shell in the current directory. Opens new window if
-prefix argument is set"
-
-  (interactive)
-  (let ((new-shell-buf-name
-         (if (eq major-mode 'dired-mode)
-             (concat (buffer-name) ":shell")
-           (let* ((dir (directory-file-name
-                        (if buffer-file-name
-                            (file-name-directory buffer-file-name)
-                          default-directory))))
-             (concat (car (last (split-string dir "/"))) 
-                     ":shell")))))
-    (if current-prefix-arg
-        (let ((split-height-threshold 0)
-              (split-width-threshold nil))
-          (shell new-shell-buf-name))
-      (let (pop-up-windows
-            (same-window-buffer-names
-             (cons new-shell-buf-name same-window-buffer-names)))
-        (shell new-shell-buf-name)))))
-
-;;-------------------------------------------------------------------------------
-;; psvn
-
-(setq svn-status-hide-unmodified t
-      svn-status-hide-externals t)
-
-;;-------------------------------------------------------------------------------
-;; gdb
-
-(setq gdb-many-windows t)
-
-;;-------------------------------------------------------------------------------
 
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward
       uniquify-ignore-buffers-re "^\\*")
 
 ;;-------------------------------------------------------------------------------
-
-(electric-pair-mode 1)
-
-(delete-selection-mode t)
-
-;;-------------------------------------------------------------------------------
-;; missing in fresh installation
-(require 'window-numbering nil t)
-
-(eval-after-load 'window-numbering '(window-numbering-mode 1))
-
-;;-------------------------------------------------------------------------------
-(require 'expand-region nil t)
-
-(eval-after-load 'expand-region '(global-set-key (kbd "M-@") 'er/expand-region))
-
-;;-------------------------------------------------------------------------------
-;; missing in older Emacs versions
-(require 'color-theme nil t)
-
-(eval-after-load 'color-theme 
-  '(when (fboundp 'color-theme-initialize)
-     (color-theme-initialize)))
-
-;;-------------------------------------------------------------------------------
-;; ispell
+;; spell
 
 (setq ispell-program-name "aspell"
       ispell-have-new-look t
       ispell-dictionary "english"
       ispell-extra-args '("--sug-mode=ultra"))
 
+(when (boundp flyspell-mode)
+  (add-hook 'text-mode-hook #'flyspell-mode))
+
 ;;-------------------------------------------------------------------------------
-;; missing in fresh installation
+
+(require 'server)
+(add-hook 'kill-emacs-hook #'basic-save-buffer)
+
+;;-------------------------------------------------------------------------------
+
 (require 'iresize nil t)
 
-;;-------------------------------------------------------------------------------
-;; grep
+(load-simple 'window-numbering
+             '(window-numbering-mode 1))
 
-(add-to-list 'same-window-buffer-names "*grep*")
+(load-simple 'expand-region
+             '(global-set-key (kbd "M-@") 'er/expand-region))
 
-;;-------------------------------------------------------------------------------
-(require 'server)
-(setq server-log t)
-
-(add-hook 'kill-emacs-hook #'basic-save-buffer)
+(load-simple 'which-key
+             '(progn (setq which-key-idle-delay 2.0)
+                     (which-key-mode 1)))
 
 ;;-------------------------------------------------------------------------------
 
 (load-conf "utils")
 (load-conf "fonts")
 
-(load-conf "helm" 'helm)
+(load-conf "helm" 'helm t)
+(load-conf "helm-gtags" 'helm-gtags t)
 (load-conf "ac" 'auto-complete t)
 (load-conf "dired" 'dired t)
-(load-conf "es" 'elscreen)
-(load-conf "ai" 'aggressive-indent)
+(load-conf "ai" 'aggressive-indent t)
 
 (load-conf "fs" 'flyspell)
 (load-conf "cc" 'cc-mode)
 (load-conf "vc" 'vc)
 
+(load-conf "es" 'elscreen)
 (load-conf "erc" 'erc)
 (load-conf "jabber" 'jabber)
 (load-conf "org" 'org)
 
 (load-conf "env")
-
-;;-------------------------------------------------------------------------------
-;; global key bindings
 
 (load-conf "keys")

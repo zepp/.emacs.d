@@ -13,3 +13,5 @@
 (org-clock-persistence-insinuate)
 
 (add-hook 'org-mode-hook #'org-indent-mode)
+
+(add-to-list 'auto-mode-alist '("\\.org\\(-mode\\)?$" . org-mode))
