@@ -1,3 +1,22 @@
+(defun load-conf (file-sym conf-form &optional req)
+
+  (defun do-load (conf)
+    (let ((main  (expand-file-name
+                  (format "conf.d/%s.el" conf) user-emacs-directory))
+          (local (expand-file-name
+                  (format "local.d/%s.el" conf) user-emacs-directory)))
+      (if (file-regular-p local)
+          `(progn (load ,main) (load ,local))
+        `(load ,main))))
+
+  (if (stringp conf-form)
+      (eval-after-load file-sym (do-load conf-form))
+    (eval-after-load file-sym conf-form))
+  (when req
+    (require file-sym nil t)))
+
+;;-------------------------------------------------------------------------------
+
 (defun shell-jump ()
   "opens the shell in the current directory. Opens new window if
 prefix argument is set"
@@ -21,6 +40,8 @@ prefix argument is set"
              (cons new-shell-buf-name same-window-buffer-names)))
         (shell new-shell-buf-name)))))
 
+;;-------------------------------------------------------------------------------
+
 (defun swap-buffers (&optional last)
   "Swaps the current and a last buffers"
   (interactive)
@@ -33,13 +54,4 @@ prefix argument is set"
          (other-buffer buf t frame)
          (bury-buffer buf))))))
 
-(defun kill-region-size()
-  "calculates the region size and puts one into the kill-ring"
-
-  (interactive)
-  (when (use-region-p)
-    (let ((region-size (+ (count-lines (region-end) (region-beginning))
-                          (- (region-end) (region-beginning)))))
-      (kill-new (format "%s" region-size))
-      (message (format "region size: %s" region-size)))
-    (deactivate-mark)))
+(provide 'my-utils)

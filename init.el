@@ -15,52 +15,30 @@
  inhibit-startup-screen t
  visible-bell t
  make-pointer-invisible t
- x-select-enable-clipboard t
- frame-title-format "%F"
+ x-select-enable-clipboard t 
  default-input-method 'russian-computer
  gdb-many-windows t
- calculator-electric-mode nil)
+ calculator-electric-mode nil
+ browse-url-browser-function 'browse-url-firefox)
 
 (put 'scroll-left 'disabled nil)
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 
-(add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
-
 (add-to-list 'warning-suppress-types '(undo discard-info))
 
 (add-to-list 'same-window-buffer-names "*grep*")
 
-;;-------------------------------------------------------------------------------
-
-(defun load-conf (conf &optional file-sym req)
-
-  (defun do-load (conf)
-    (let ((main  (expand-file-name (format "conf.d/%s.el" conf) user-emacs-directory))
-          (local (expand-file-name (format "local.d/%s.el" conf) user-emacs-directory)))
-      (if (file-regular-p local)
-          `(progn (load ,main) (load ,local))
-        `(load ,main))))
-
-  (if (not file-sym)
-      (eval (do-load conf))
-    (progn
-      (eval-after-load file-sym (do-load conf))
-      (when req
-        (require file-sym nil t)))))
-
-(defun load-simple (file-sym form)
-  (eval-after-load file-sym form)
-  (require file-sym nil t))
-
-;;-------------------------------------------------------------------------------
+(setenv "GPG_AGENT_INFO" nil)
 
 (defvar ignored-buffer-list 
   '("\\*Completions" "\\*Quail Completions\\*" "\\*Backtrace\\*" "\\*magit-edit-log\\*"
     "\\*P4" "\\*Buffer List\\*" "\\**Shell Command Output\\*" "\\*helm mini\\*")
-"list of the buffer names or regular expressions to be ignored by
+  "list of the buffer names or regular expressions to be ignored by
 various buffer management routines")
+
+;;-------------------------------------------------------------------------------
 
 (defun suitable-buffer-p (buffer)
   "predicate to check the buffer exclusion from the `ignored-buffer-list'"
@@ -70,25 +48,9 @@ various buffer management routines")
       nil
     t))
 
+(setf frame-title-format "%F")
 (add-to-list 'default-frame-alist `(buffer-predicate . ,#'suitable-buffer-p))
-
-;;-------------------------------------------------------------------------------
-;; package management
-
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (add-to-list
-   'package-archives
-   '("melpa" . "http://stable.melpa.org/packages/")
-   t)
-  (package-initialize))
-
-(let ((my-load-path (expand-file-name "~/.emacs.d/loadable/")))
-  (add-to-list 'load-path my-load-path)
-  (dolist (entry (directory-files my-load-path t nil t))
-    (when (and (file-directory-p entry)
-               (equal 'nil (string-match "/\\.\\.?$" entry)))
-      (add-to-list 'load-path (expand-file-name entry)))))
+(add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
 
 ;;-------------------------------------------------------------------------------
 
@@ -118,7 +80,6 @@ various buffer management routines")
 ;; ido
 
 (require 'ido)
-(ido-mode 1)
 
 (mapcar #'(lambda (entry)
             (add-to-list 'ido-ignore-buffers entry))
@@ -170,48 +131,106 @@ various buffer management routines")
       ispell-dictionary "english"
       ispell-extra-args '("--sug-mode=ultra"))
 
-(when (boundp flyspell-mode)
-  (add-hook 'text-mode-hook #'flyspell-mode))
-
 ;;-------------------------------------------------------------------------------
 
 (require 'server)
 (add-hook 'kill-emacs-hook #'basic-save-buffer)
 
 ;;-------------------------------------------------------------------------------
+;; package management
 
-(require 'iresize nil t)
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (add-to-list
+   'package-archives
+   '("melpa" . "http://stable.melpa.org/packages/")
+   t)
+  (package-initialize))
 
-(load-simple 'window-numbering
-             '(window-numbering-mode 1))
-
-(load-simple 'expand-region
-             '(global-set-key (kbd "M-@") 'er/expand-region))
-
-(load-simple 'which-key
-             '(progn (setq which-key-idle-delay 2.0)
-                     (which-key-mode 1)))
+(let ((my-load-path (expand-file-name "~/.emacs.d/loadable/")))
+  (add-to-list 'load-path my-load-path)
+  (dolist (entry (directory-files my-load-path t nil t))
+    (when (and (file-directory-p entry)
+               (equal 'nil (string-match "/\\.\\.?$" entry)))
+      (add-to-list 'load-path (expand-file-name entry)))))
 
 ;;-------------------------------------------------------------------------------
 
-(load-conf "utils")
-(load-conf "fonts")
+(require 'local-env nil t)
+(require 'my-utils)
 
-(load-conf "helm" 'helm t)
-(load-conf "helm-gtags" 'helm-gtags t)
-(load-conf "ac" 'auto-complete t)
-(load-conf "dired" 'dired t)
-(load-conf "ai" 'aggressive-indent t)
+(load-conf 'iresize
+           '(global-set-key (kbd "C-c r") #'iresize-mode)
+           t)
 
-(load-conf "fs" 'flyspell)
-(load-conf "cc" 'cc-mode)
-(load-conf "vc" 'vc)
+(load-conf 'window-numbering
+           '(window-numbering-mode 1)
+           t)
 
-(load-conf "es" 'elscreen)
-(load-conf "erc" 'erc)
-(load-conf "jabber" 'jabber)
-(load-conf "org" 'org)
+(load-conf 'expand-region
+           '(global-set-key (kbd "M-@") 'er/expand-region)
+           t)
 
-(load-conf "env")
+(load-conf 'which-key
+           '(progn
+              (setq which-key-idle-delay 2.0)
+              (which-key-mode 1))
+           t)
 
-(load-conf "keys")
+(load-conf 'helm "helm" t)
+(load-conf 'helm-gtags "helm-gtags" t)
+(load-conf 'auto-complete "ac" t)
+(load-conf 'aggressive-indent "ai" t)
+(load-conf 'flyspell "fs" t)
+
+(load-conf 'dired "dired")
+(load-conf 'cc-mode "cc")
+(load-conf 'vc "vc")
+
+(load-conf 'elscreen "es")
+(load-conf 'erc "erc")
+(load-conf 'jabber "jabber")
+(load-conf 'org "org")
+
+;;-------------------------------------------------------------------------------
+
+;; to make a cursor navigation a little bit easy
+(global-set-key (kbd "M-n") #'forward-paragraph)
+(global-set-key (kbd "M-p") #'backward-paragraph)
+
+;; buffer related shortcuts start from C-x 
+(global-set-key (kbd "C-x p") #'previous-buffer)
+(global-set-key (kbd "C-x n") #'next-buffer)
+(global-set-key (kbd "C-x l")
+                (lexical-let (swap-last)
+                  #'(lambda ()
+                      "that's a wrapper around the `swap-buffers'
+function to keep a state variable"
+                      (interactive)
+                      (swap-buffers swap-last)
+                      (setq swap-last (not swap-last)))))
+(global-set-key (kbd "C-x d") #'dired-jump)
+(global-set-key (kbd "C-x c") #'shell-jump)
+(global-set-key (kbd "C-x C-d") #'dired)
+(global-set-key (kbd "C-x M-d") #'dired-other-window)
+(global-set-key (kbd "C-x M-f") #'find-file-at-point)
+(global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
+(global-set-key (kbd "C-x C-n")
+                #'(lambda (newname)
+                    (interactive
+                     (list (read-string "Rename current buffer to: "
+                                        (buffer-name (current-buffer)))))
+                    (rename-buffer newname)))
+(global-set-key (kbd "C-x C-x") #'server-edit)
+
+;; general commands start from C-c
+(global-set-key (kbd "C-c g") #'rgrep)
+(global-set-key (kbd "C-c w") #'browse-url)
+;; window management in StumpWM style :)
+(global-set-key (kbd "C-c s") #'split-window-horizontally)
+(global-set-key (kbd "C-c v") #'split-window-vertically)
+(global-set-key (kbd "C-c q") #'delete-other-windows)
+(global-set-key (kbd "C-c k") #'delete-window)
+(global-set-key (kbd "C-c o") #'other-window)
+
+(global-set-key (kbd "C-c C-x C-a") #'org-agenda)
