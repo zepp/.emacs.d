@@ -131,7 +131,6 @@ various buffer management routines")
 ;; spell
 
 (setq ispell-program-name "aspell"
-      ispell-have-new-look t
       ispell-dictionary "english"
       ispell-extra-args '("--sug-mode=ultra"))
 
@@ -184,6 +183,11 @@ various buffer management routines")
 (load-conf 'helm "helm" t)
 (load-conf 'helm-gtags "helm-gtags" t)
 (load-conf 'auto-complete "ac" t)
+(load-conf 'ac-ispell
+           '(progn
+              (ac-ispell-setup)
+              (add-hook 'text-mode-hook 'ac-ispell-ac-setup))
+           t)
 (load-conf 'aggressive-indent "ai" t)
 (load-conf 'flyspell "fs" t)
 
@@ -197,6 +201,7 @@ various buffer management routines")
 (load-conf 'org "org")
 
 ;;-------------------------------------------------------------------------------
+(global-set-key (kbd "M-t") nil)
 
 ;; to make a cursor navigation a little bit easy
 (global-set-key (kbd "M-n") #'forward-paragraph)

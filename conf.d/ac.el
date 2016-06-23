@@ -8,7 +8,7 @@
       ac-auto-start              nil ; should be nil to use trigger key
       )
 
-(ac-set-trigger-key "TAB")
+(ac-set-trigger-key "M-t")
 
 (defun ac-fix-c-sources ()
   (setq ac-sources '(ac-source-gtags
