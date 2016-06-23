@@ -4,8 +4,8 @@
 (require 'dired-x)
 
 (defadvice dired-do-shell-command
-  (around split-fashion (command &optional arg file-list) 
-          activate)
+    (around split-fashion (command &optional arg file-list)
+            activate)
   "Controls the fashion of window splitting. Splits window
 vertically."
   (let ((split-height-threshold 0)
@@ -13,8 +13,8 @@ vertically."
     ad-do-it))
 
 (defadvice dired-do-async-shell-command
-  (around split-fashion (command &optional arg file-list) 
-          activate)
+    (around split-fashion (command &optional arg file-list)
+            activate)
   "Controls the fashion of window splitting. Splits window
 vertically."
   (let ((split-height-threshold 0)

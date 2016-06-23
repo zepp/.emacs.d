@@ -15,7 +15,7 @@
  inhibit-startup-screen t
  visible-bell t
  make-pointer-invisible t
- x-select-enable-clipboard t 
+ x-select-enable-clipboard t
  default-input-method 'russian-computer
  gdb-many-windows t
  calculator-electric-mode nil
@@ -32,7 +32,7 @@
 
 (setenv "GPG_AGENT_INFO" nil)
 
-(defvar ignored-buffer-list 
+(defvar ignored-buffer-list
   '("\\*Completions" "\\*Quail Completions\\*" "\\*Backtrace\\*" "\\*magit-edit-log\\*"
     "\\*P4" "\\*Buffer List\\*" "\\**Shell Command Output\\*" "\\*helm mini\\*")
   "list of the buffer names or regular expressions to be ignored by
@@ -88,10 +88,14 @@ various buffer management routines")
 ;;-------------------------------------------------------------------------------
 
 (require 'whitespace)
-(global-whitespace-mode 0)
-(setq
- whitespace-style '(indentation space-before-tab
-                                space-after-tab))
+
+(global-whitespace-mode 1)
+(setq whitespace-style '(face
+                         trailing
+                         empty
+                         indentation
+                         space-after-tab
+                         space-before-tab))
 
 ;;-------------------------------------------------------------------------------
 ;; diff
@@ -198,7 +202,7 @@ various buffer management routines")
 (global-set-key (kbd "M-n") #'forward-paragraph)
 (global-set-key (kbd "M-p") #'backward-paragraph)
 
-;; buffer related shortcuts start from C-x 
+;; buffer related shortcuts start from C-x
 (global-set-key (kbd "C-x p") #'previous-buffer)
 (global-set-key (kbd "C-x n") #'next-buffer)
 (global-set-key (kbd "C-x l")

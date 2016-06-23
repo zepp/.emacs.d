@@ -29,7 +29,7 @@
 
 ;;; Code:
 
-(defvar iresize-mode-map 
+(defvar iresize-mode-map
   (let ((m (make-sparse-keymap)))
     (define-key m (kbd "C-p") 'enlarge-window)
     (define-key m (kbd "p") 'enlarge-window)

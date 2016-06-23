@@ -21,7 +21,7 @@
       helm-autoresize-max-height 20
       helm-move-to-line-cycle-in-source t ; move to end or beginning of source when reaching top or bottom of source.
       helm-ff-file-name-history-use-recentf t
-      helm-buffers-fuzzy-matching t 
+      helm-buffers-fuzzy-matching t
       helm-recentf-fuzzy-match t
       helm-M-x-fuzzy-match t)
 

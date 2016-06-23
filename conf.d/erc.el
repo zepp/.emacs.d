@@ -11,7 +11,7 @@
 (erc-autojoin-mode t)
 (erc-track-mode t)
 
-(setq 
+(setq
  erc-save-buffer-on-part t
  erc-truncate-buffer-on-save t)
 (erc-log-mode 1)
@@ -24,4 +24,3 @@
 
 (setq erc-max-buffer-size 10240)
 (erc-truncate-mode 1)
-
