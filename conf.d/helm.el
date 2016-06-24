@@ -1,10 +1,9 @@
+(setq helm-command-prefix-key (kbd "C-x C-h"))
 (require 'helm-config)
-(helm-mode 1)
+(require 'helm-buffers)
 (helm-autoresize-mode 1)
 
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
-(global-unset-key (kbd "C-x c"))
-
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "M-x") 'helm-M-x)
@@ -14,7 +13,8 @@
 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
 (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
 
-(define-key shell-mode-map (kbd "C-c C-l") 'helm-comint-input-ring)
+(eval-after-load 'shell
+  '(define-key shell-mode-map (kbd "C-c C-l") 'helm-comint-input-ring))
 (define-key minibuffer-local-map (kbd "C-c C-l") 'helm-minibuffer-history)
 
 (setf helm-split-window-in-side-p t       ; open helm buffer inside current window, not occupy whole other window
@@ -28,3 +28,7 @@
 (mapcar #'(lambda (entry)
             (add-to-list 'helm-boring-buffer-regexp-list entry))
         ignored-buffer-list)
+
+(add-to-list 'ignored-buffer-list "\\*helm")
+
+(require 'helm-gtags nil t)

@@ -30,11 +30,13 @@
 
 (add-to-list 'same-window-buffer-names "*grep*")
 
+(add-hook 'kill-emacs-hook #'basic-save-buffer)
+
 (setenv "GPG_AGENT_INFO" nil)
 
 (defvar ignored-buffer-list
   '("\\*Completions" "\\*Quail Completions\\*" "\\*Backtrace\\*" "\\*magit-edit-log\\*"
-    "\\*P4" "\\*Buffer List\\*" "\\**Shell Command Output\\*" "\\*helm mini\\*")
+    "\\*P4" "\\*Buffer List\\*" "\\**Shell Command Output\\*")
   "list of the buffer names or regular expressions to be ignored by
 various buffer management routines")
 
@@ -77,17 +79,6 @@ various buffer management routines")
 (add-hook 'lisp-mode-hook #'lisp-no-tabs)
 
 ;;-------------------------------------------------------------------------------
-;; ido
-
-(require 'ido)
-
-(mapcar #'(lambda (entry)
-            (add-to-list 'ido-ignore-buffers entry))
-        ignored-buffer-list)
-
-;;-------------------------------------------------------------------------------
-
-(require 'whitespace)
 
 (global-whitespace-mode 1)
 (setq whitespace-style '(face
@@ -135,11 +126,6 @@ various buffer management routines")
       ispell-extra-args '("--sug-mode=ultra"))
 
 ;;-------------------------------------------------------------------------------
-
-(require 'server)
-(add-hook 'kill-emacs-hook #'basic-save-buffer)
-
-;;-------------------------------------------------------------------------------
 ;; package management
 
 (when (>= emacs-major-version 24)
@@ -180,8 +166,8 @@ various buffer management routines")
               (which-key-mode 1))
            t)
 
-(load-conf 'helm "helm" t)
-(load-conf 'helm-gtags "helm-gtags" t)
+(load-conf 'helm "helm")
+(load-conf 'helm-gtags "helm-gtags")
 (load-conf 'auto-complete "ac" t)
 (load-conf 'ac-ispell
            '(progn
@@ -194,6 +180,13 @@ various buffer management routines")
 (load-conf 'dired "dired")
 (load-conf 'cc-mode "cc")
 (load-conf 'vc "vc")
+(load-conf 'ido
+           '(progn
+              (setq ido-enable-flex-matching t
+                    ido-create-new-buffer 'always)
+              (mapcar #'(lambda (entry)
+                          (add-to-list 'ido-ignore-buffers entry))
+                      ignored-buffer-list)))
 
 (load-conf 'elscreen "es")
 (load-conf 'erc "erc")
