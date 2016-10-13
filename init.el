@@ -236,3 +236,6 @@ function to keep a state variable"
 (global-set-key (kbd "C-c o") #'other-window)
 
 (global-set-key (kbd "C-c C-x C-a") #'org-agenda)
+
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file :noerror)
