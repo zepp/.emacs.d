@@ -168,7 +168,10 @@ various buffer management routines")
 
 (load-conf 'helm "helm")
 (load-conf 'helm-gtags "helm-gtags")
-(load-conf 'auto-complete "ac" t)
+(load-conf 'auto-complete "ac")
+(load-conf 'company
+           '(progn
+              (global-set-key (kbd "M-t") #'company-complete)))
 (load-conf 'ac-ispell
            '(progn
               (ac-ispell-setup)
@@ -194,8 +197,6 @@ various buffer management routines")
 (load-conf 'org "org")
 
 ;;-------------------------------------------------------------------------------
-(global-set-key (kbd "M-t") nil)
-
 ;; to make a cursor navigation a little bit easy
 (global-set-key (kbd "M-n") #'forward-paragraph)
 (global-set-key (kbd "M-p") #'backward-paragraph)

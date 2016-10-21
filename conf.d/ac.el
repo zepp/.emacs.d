@@ -25,5 +25,3 @@
 
 (add-hook 'emacs-lisp-mode-hook
           #'ac-fix-lisp-sources t)
-
-(global-auto-complete-mode 1)
