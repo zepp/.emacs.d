@@ -166,6 +166,7 @@ various buffer management routines")
               (which-key-mode 1))
            t)
 
+(load-conf 'ggtags "ggtags")
 (load-conf 'helm "helm")
 (load-conf 'helm-gtags "helm-gtags")
 (load-conf 'auto-complete "ac")

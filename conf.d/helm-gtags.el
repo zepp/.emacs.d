@@ -1,4 +1,4 @@
-(setq helm-gtags-prefix-key (kbd "C-t")
+(setq helm-gtags-prefix-key (kbd "M-j")
       helm-gtags-suggested-key-mapping nil
       helm-gtags-use-input-at-cursor t
       helm-gtags-ignore-case t
@@ -6,16 +6,16 @@
       helm-gtags-update-interval-second nil
       helm-gtags-fuzzy-match t)
 
-;; this keymap is mostly duplicate default one but handles C-t problem
-(define-key helm-gtags-mode-map (kbd "C-t h") #'helm-gtags-display-browser)
-(define-key helm-gtags-mode-map (kbd "C-t P") #'helm-gtags-find-files)
-(define-key helm-gtags-mode-map (kbd "C-t f") #'helm-gtags-parse-file)
-(define-key helm-gtags-mode-map (kbd "C-t g") #'helm-gtags-find-pattern)
-(define-key helm-gtags-mode-map (kbd "C-t s") #'helm-gtags-find-symbol)
-(define-key helm-gtags-mode-map (kbd "C-t r") #'helm-gtags-find-rtag)
-(define-key helm-gtags-mode-map (kbd "C-t t") #'helm-gtags-find-tag)
-(define-key helm-gtags-mode-map (kbd "C-t d") #'helm-gtags-find-tag)
-(define-key helm-gtags-mode-map (kbd "C-t C-t") #'helm-gtags-pop-stack)
-(define-key helm-gtags-mode-map (kbd "M-*") #'helm-gtags-pop-stack)
+;; ggtags style shortcuts
+(let ((map (define-prefix-command 'my-helm-gtags-prefix-mode-map)))
+  (define-key map (kbd "M-p") #'helm-gtags-previous-history)
+  (define-key map (kbd "M-n") #'helm-gtags-next-history)
+  (define-key map (kbd "M-f") #'helm-gtags-find-files)
+  (define-key map (kbd "M-g") #'helm-gtags-find-pattern)
+  (define-key map (kbd "M-o") #'helm-gtags-find-symbol)
+  (define-key map (kbd "M-r") #'helm-gtags-find-rtag)
+  (define-key map (kbd "M-t") #'helm-gtags-dwim)
+  (define-key helm-gtags-mode-map helm-gtags-prefix-key map))
+(define-key helm-gtags-mode-map [remap xref-pop-marker-stack] #'helm-gtags-pop-stack)
 
 (add-hook 'c-mode-common-hook #'helm-gtags-mode)
