@@ -98,16 +98,6 @@ various buffer management routines")
 
 ;;-------------------------------------------------------------------------------
 
-(fset 'perl-mode 'cperl-mode)
-
-(add-hook 'cperl-mode-hook
-          (lambda ()
-            (local-set-key (kbd "C-h f") 'cperl-perldoc)
-            (setq indent-tabs-mode nil)
-            (cperl-set-style "C++")))
-
-;;-------------------------------------------------------------------------------
-
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward
       uniquify-ignore-buffers-re "^\\*")
