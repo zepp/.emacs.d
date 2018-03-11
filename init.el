@@ -176,7 +176,6 @@ various buffer management routines")
                           (add-to-list 'ido-ignore-buffers entry))
                       ignored-buffer-list)))
 
-(load-conf 'elscreen "es")
 (load-conf 'erc "erc")
 (load-conf 'jabber "jabber")
 (load-conf 'org "org")
