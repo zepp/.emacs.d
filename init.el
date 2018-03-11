@@ -172,7 +172,6 @@ various buffer management routines")
                       ignored-buffer-list)))
 
 (load-conf 'erc "erc")
-(load-conf 'jabber "jabber")
 (load-conf 'org "org")
 
 ;;-------------------------------------------------------------------------------
