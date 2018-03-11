@@ -153,15 +153,10 @@ various buffer management routines")
 (load-conf 'ggtags "ggtags")
 (load-conf 'helm "helm")
 (load-conf 'helm-gtags "helm-gtags")
-(load-conf 'auto-complete "ac")
 (load-conf 'company
            '(progn
               (global-set-key (kbd "M-t") #'company-complete)))
-(load-conf 'ac-ispell
-           '(progn
-              (ac-ispell-setup)
-              (add-hook 'text-mode-hook 'ac-ispell-ac-setup))
-           t)
+
 (load-conf 'aggressive-indent "ai" t)
 (load-conf 'flyspell "fs" t)
 
