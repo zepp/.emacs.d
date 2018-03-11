@@ -181,7 +181,7 @@ various buffer management routines")
 (load-conf 'aggressive-indent "ai" t)
 (load-conf 'flyspell "fs" t)
 
-(load-conf 'dired "dired")
+(load-conf 'dired "dired" t)
 (load-conf 'cc-mode "cc")
 (load-conf 'vc "vc")
 (load-conf 'ido

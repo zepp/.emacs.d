@@ -1,5 +1,4 @@
-(setq dired-bind-jump nil
-      dired-recursive-deletes 'always
+(setq dired-recursive-deletes 'always
       dired-deletion-confirmer #'y-or-n-p)
 (require 'dired-x)
 
