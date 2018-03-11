@@ -91,12 +91,6 @@ various buffer management routines")
 ;;-------------------------------------------------------------------------------
 ;; diff
 
-(setq ediff-window-setup-function 'ediff-setup-windows-plain
-      ediff-split-window-function #'(lambda (&optional arg)
-                                      (if (> (frame-width) 140)
-                                          (split-window-horizontally arg)
-                                        (split-window-vertically arg))))
-
 (add-hook 'diff-mode-hook
           '(lambda ()
              ;; diff-goto-source
