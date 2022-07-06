@@ -17,7 +17,8 @@
  make-pointer-invisible t
  x-select-enable-clipboard t
  default-input-method 'russian-computer
- browse-url-browser-function 'browse-url-firefox)
+ browse-url-browser-function 'browse-url-chrome
+ browse-url-chrome-program "brave")
 
 (put 'scroll-left 'disabled nil)
 (put 'upcase-region 'disabled nil)
