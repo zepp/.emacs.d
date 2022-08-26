@@ -44,7 +44,7 @@
     m))
 
 ;;;###autoload
-(define-minor-mode iresize-mode
+(define-minor-mode iresize-mode "A minor mode to interactively resize a window"
   :initial-value nil
   :lighter " IResize"
   :keymap iresize-mode-map
