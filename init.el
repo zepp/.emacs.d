@@ -18,7 +18,8 @@
  x-select-enable-clipboard t
  default-input-method 'russian-computer
  browse-url-browser-function 'browse-url-chrome
- browse-url-chrome-program "brave")
+ browse-url-chrome-program "brave"
+ custom-file "~/.emacs.d/local.d/custom.el")
 
 (put 'scroll-left 'disabled nil)
 (put 'upcase-region 'disabled nil)
@@ -122,70 +123,42 @@ various buffer management routines")
 (require 'local-env nil t)
 (require 'my-utils)
 
-;; third party modules
-(load-package 'iresize
-              :after-load ((global-set-key (kbd "C-c r") #'iresize-mode))
-              :required t)
-
-(load-package 'window-numbering
-              :after-load ((window-numbering-mode 1))
-              :required t)
-
 (load-package 'expand-region
-              :after-load ((global-set-key (kbd "M-@") 'er/expand-region))
+              :after-load '((global-set-key (kbd "M-@") #'er/expand-region))
               :required t)
 
 (load-package 'which-key
-              :options ((which-key-idle-delay . 2.0))
-              :after-load ((which-key-mode 1))
-              :required t)
-
-(load-package 'aggressive-indent
-              :after-load ((global-aggressive-indent-mode 1))
+              :options '((which-key-idle-delay . 2.0))
+              :after-load '((which-key-mode 1))
               :required t)
 
 (load-package 'company
-              :after-load ((global-company-mode 1)
-                           (global-set-key (kbd "M-t") #'company-complete))
+              :after-load '((global-company-mode 1)
+                            (global-set-key (kbd "M-t") #'company-complete))
               :required t)
 
-(load-package 'ggtags
-              :options ((ggtags-mode-prefix-key . (kbd "M-j"))
-                        (ggtags-enable-navigation-keys . nil)
-                        (ggtags-split-window-function . #'split-window-vertically))
-              :config "ggtags")
-
-(load-package 'helm
-              :options ((helm-command-prefix-key . (kbd "C-x C-h")))
-              :config "helm")
-(load-package 'helm-gtags :config "helm-gtags")
-
 (load-package 'ivy :config "ivy")
-(load-package 'counsel-gtags :config "counsel-gtags")
 
 (load-package 'powerline
-              :after-load ((powerline-default-theme))
+              :after-load '((powerline-default-theme))
               :required t)
 
 ;; embedded packages
-(load-package 'ispell :config "spell")
-(load-package 'flyspell :config "fs" :required t)
-(load-package 'org :config "org")
+(load-package 'ispell :config "spell" :required t)
+(load-package 'flyspell :config "fs")
+(load-package 'org :config "org" :required t)
 (load-package 'dired :config "dired")
-(load-package 'cc-mode :config "cc")
-(load-package 'erc :config "erc")
 (load-package 'ido
-              :options ((ido-enable-flex-matching . t)
+              :options '((ido-enable-flex-matching . t)
                         (ido-create-new-buffer . 'always))
-              :after-load ((dolist (entry ignored-buffer-list)
+              :after-load '((dolist (entry ignored-buffer-list)
                              (add-to-list 'ido-ignore-buffers entry))))
 
 ;;-------------------------------------------------------------------------------
 (global-set-key (kbd "C-x l")
                 (lexical-let (swap-last)
                   #'(lambda ()
-                      "that's a wrapper around the `swap-buffers'
-function to keep a state variable"
+                      "that's a wrapper around the `swap-buffers' function to keep a state variable"
                       (interactive)
                       (swap-buffers swap-last)
                       (setq swap-last (not swap-last)))))
@@ -206,5 +179,4 @@ function to keep a state variable"
 (global-set-key (kbd "C-c C-x C-a") #'org-agenda)
 (global-set-key (kbd "C-c C-x g") #'magit-status)
 
-(setq custom-file "~/.emacs.d/custom.el")
 (load custom-file :noerror)

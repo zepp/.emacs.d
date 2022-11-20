@@ -1,29 +1,29 @@
-(defmacro* load-package (name &key options after-load required config)
-  `(progn
-     ,@(mapcar (lambda (option) `(setf ,(car option) ,(cdr option))) options)
-     ,(when after-load
-        `(eval-after-load ,name
-           (lambda ()
-             ,@after-load)))
-     ,(when config
-        `(eval-after-load ,name
-           (lambda ()
-             (load-config ,config))))
-     ,(when required
-        `(require ,name nil t))))
+(cl-defun load-package (name &key required after-load config options)
 
-(defun load-config (name)
+  (when (or after-load config options)
+    (lexical-let ((closure-after-load after-load)
+                  (closure-config config)
+                  (closure-options options))
+      (eval-after-load name
+        #'(lambda()
+            (when closure-after-load
+              (mapcar #'eval closure-after-load))
 
-  "it loads configuration that is saved in conf.d and local.d directories"
+            (when closure-config
+              (let ((default (expand-file-name
+                              (format "conf.d/%s.el" closure-config) user-emacs-directory))
+                    (local (expand-file-name
+                            (format "local.d/%s.el" closure-config) user-emacs-directory)))
 
-  (let ((main  (expand-file-name
-                (format "conf.d/%s.el" name) user-emacs-directory))
-        (local (expand-file-name
-                (format "local.d/%s.el" name) user-emacs-directory)))
+                (load default)
+                (when (file-regular-p local)
+                  (load local))))
 
-    (load main)
-    (if (file-regular-p local)
-        (load local))))
+            (when closure-options
+              (mapcar #'(lambda (option) (setf (car option) (cdr option))) closure-options))))))
+
+  (when required
+    (require name nil t)))
 
 ;;-------------------------------------------------------------------------------
 
@@ -64,8 +64,6 @@ prefix argument is set"
          (other-buffer buf t frame)
          (bury-buffer buf))))))
 
-(provide 'my-utils)
-
 ;;-------------------------------------------------------------------------------
 
  ;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
@@ -76,3 +74,7 @@ prefix argument is set"
             ;; This would override `fill-column' if it's an integer.
             (emacs-lisp-docstring-fill-column t))
         (fill-paragraph nil region)))
+
+;;-------------------------------------------------------------------------------
+
+(provide 'my-utils)
