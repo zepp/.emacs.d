@@ -176,7 +176,6 @@ various buffer management routines")
 (global-set-key (kbd "C-c k") #'delete-window)
 (global-set-key (kbd "C-c o") #'other-window)
 
-(global-set-key (kbd "C-c C-x C-a") #'org-agenda)
-(global-set-key (kbd "C-c C-x g") #'magit-status)
+(global-set-key (kbd "C-x C-a") #'org-agenda)
 
 (load custom-file :noerror)
