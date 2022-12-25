@@ -6,11 +6,9 @@
  org-time-stamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
  org-agenda-window-setup 'current-window)
 
-(define-key org-mode-map (kbd "C-c C-x C-a") nil)
-(define-key org-agenda-mode-map (kbd "C-c C-x C-a") nil)
-
 (add-hook 'org-mode-hook #'org-indent-mode)
 (add-hook 'org-mode-hook #'org-toggle-time-stamp-overlays)
+(add-hook 'org-mode-hook #'flyspell-mode)
 
 (add-to-list 'auto-mode-alist '("\\.org\\(-mode\\)?$" . org-mode))
 

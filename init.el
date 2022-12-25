@@ -66,6 +66,7 @@ various buffer management routines")
 
 (add-hook 'text-mode-hook
           #'(lambda()
+              (flyspell-mode 1)
               (define-key text-mode-map (kbd "M-q") #'unfill-paragraph)))
 
 ;;-------------------------------------------------------------------------------
@@ -144,8 +145,8 @@ various buffer management routines")
               :required t)
 
 ;; embedded packages
-(load-package 'ispell :config "spell" :required t)
-(load-package 'flyspell :config "fs")
+(load-package 'flyspell
+              :after-load '((define-key flyspell-mode-map (kbd "C-c i") #'ispell-change-dictionary)))
 (load-package 'org :config "org" :required t)
 (load-package 'dired :config "dired")
 (load-package 'ido
