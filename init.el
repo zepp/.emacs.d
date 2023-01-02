@@ -66,8 +66,7 @@ various buffer management routines")
 
 (add-hook 'text-mode-hook
           #'(lambda()
-              (flyspell-mode 1)
-              (define-key text-mode-map (kbd "M-q") #'unfill-paragraph)))
+              (flyspell-mode 1)))
 
 ;;-------------------------------------------------------------------------------
 ;; e/common lisp
@@ -104,14 +103,6 @@ various buffer management routines")
 ;;-------------------------------------------------------------------------------
 ;; package management
 
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (add-to-list
-   'package-archives
-   '("melpa" . "http://stable.melpa.org/packages/")
-   t)
-  (package-initialize))
-
 (let ((my-load-path (expand-file-name "~/.emacs.d/loadable/")))
   (add-to-list 'load-path my-load-path)
   (dolist (entry (directory-files my-load-path t nil t))
@@ -119,10 +110,16 @@ various buffer management routines")
                (equal 'nil (string-match "/\\.\\.?$" entry)))
       (add-to-list 'load-path (expand-file-name entry)))))
 
+(require 'my-utils)
+
 ;;-------------------------------------------------------------------------------
 
-(require 'local-env nil t)
-(require 'my-utils)
+(require 'package)
+  (add-to-list
+   'package-archives
+   '("melpa" . "http://stable.melpa.org/packages/")
+   t)
+  (package-initialize)
 
 (load-package 'expand-region
               :after-load '((global-set-key (kbd "M-@") #'er/expand-region))
@@ -156,13 +153,7 @@ various buffer management routines")
                              (add-to-list 'ido-ignore-buffers entry))))
 
 ;;-------------------------------------------------------------------------------
-(global-set-key (kbd "C-x l")
-                (lexical-let (swap-last)
-                  #'(lambda ()
-                      "that's a wrapper around the `swap-buffers' function to keep a state variable"
-                      (interactive)
-                      (swap-buffers swap-last)
-                      (setq swap-last (not swap-last)))))
+(global-set-key (kbd "C-x p") #'previous-buffer)
 (global-set-key (kbd "C-x c") #'shell-jump)
 (global-set-key (kbd "C-x M-f") #'find-file-at-point)
 (global-set-key (kbd "C-x C-x") #'server-edit)

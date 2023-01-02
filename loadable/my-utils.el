@@ -52,29 +52,4 @@ prefix argument is set"
 
 ;;-------------------------------------------------------------------------------
 
-(defun swap-buffers (&optional last)
-  "Swaps the current and a last buffers"
-  (interactive)
-  (let ((buf (current-buffer))
-        (frame (selected-frame)))
-    (switch-to-buffer
-     (if last
-         (last-buffer buf t frame)
-       (progn
-         (other-buffer buf t frame)
-         (bury-buffer buf))))))
-
-;;-------------------------------------------------------------------------------
-
- ;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
-(defun unfill-paragraph (&optional region)
-      "Takes a multi-line paragraph and makes it into a single line of text."
-      (interactive (progn (barf-if-buffer-read-only) '(t)))
-      (let ((fill-column (point-max))
-            ;; This would override `fill-column' if it's an integer.
-            (emacs-lisp-docstring-fill-column t))
-        (fill-paragraph nil region)))
-
-;;-------------------------------------------------------------------------------
-
 (provide 'my-utils)
