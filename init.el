@@ -142,8 +142,7 @@ various buffer management routines")
               :required t)
 
 ;; embedded packages
-(load-package 'flyspell
-              :after-load '((define-key flyspell-mode-map (kbd "C-c i") #'ispell-change-dictionary)))
+(load-package 'ispell :config "ispell" :required t)
 (load-package 'org :config "org" :required t)
 (load-package 'dired :config "dired")
 (load-package 'ido
