@@ -13,3 +13,7 @@
 
 (add-to-list 'auto-mode-alist '("\\.org\\(-mode\\)?$" . org-mode))
 
+(setq
+ org-export-with-toc nil
+ org-export-with-section-numbers nil
+ org-html-postamble nil)
