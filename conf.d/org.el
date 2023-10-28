@@ -2,6 +2,7 @@
 
 (setq
  calendar-week-start-day 1
+ org-tags-column 0
  org-catch-invisible-edits 'show-and-error
  org-time-stamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
  org-agenda-window-setup 'current-window)
@@ -16,4 +17,5 @@
 (setq
  org-export-with-toc nil
  org-export-with-section-numbers nil
+ org-export-initial-scope 'subtree
  org-html-postamble nil)
