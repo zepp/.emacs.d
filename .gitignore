@@ -4,11 +4,13 @@ loadable/*
 elpa/*
 auto-save-list/*
 eshell/*
+transient/*
 /tramp
 ac-comphist.dat
 session.*
 ido.last
 recentf
+bookmarks
 /tramp
 /org-clock-save.el
 /.org-id-locations
