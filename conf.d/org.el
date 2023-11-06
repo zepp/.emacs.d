@@ -20,3 +20,5 @@
  org-export-with-section-numbers nil
  org-export-initial-scope 'subtree
  org-html-postamble nil)
+
+(add-to-list 'org-latex-packages-alist '("AUTO" "babel" t ("pdflatex")))
