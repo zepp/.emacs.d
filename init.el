@@ -103,12 +103,9 @@ various buffer management routines")
 ;;-------------------------------------------------------------------------------
 ;; package management
 
-(let ((my-load-path (expand-file-name "~/.emacs.d/loadable/")))
-  (add-to-list 'load-path my-load-path)
-  (dolist (entry (directory-files my-load-path t nil t))
-    (when (and (file-directory-p entry)
-               (equal 'nil (string-match "/\\.\\.?$" entry)))
-      (add-to-list 'load-path (expand-file-name entry)))))
+(let ((default-directory "~/.emacs.d/loadable/"))
+  (normal-top-level-add-to-load-path '("."))
+  (normal-top-level-add-subdirs-to-load-path))
 
 (require 'my-utils)
 
@@ -142,8 +139,8 @@ various buffer management routines")
               :required t)
 
 ;; embedded packages
-(load-package 'ispell :config "ispell" :required t)
-(load-package 'org :config "org" :required t)
+(load-package 'ispell :config "ispell")
+(load-package 'org :config "org")
 (load-package 'dired :config "dired")
 (load-package 'ido
               :options '((ido-enable-flex-matching . t)
