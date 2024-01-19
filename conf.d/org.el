@@ -19,6 +19,8 @@
  org-export-with-toc nil
  org-export-with-section-numbers nil
  org-export-initial-scope 'subtree
- org-html-postamble nil)
+ org-html-postamble nil
+ org-ascii-verbatim-format "\"%s\""
+ org-ascii-text-width 1000)
 
 (add-to-list 'org-latex-packages-alist '("AUTO" "babel" t ("pdflatex")))
