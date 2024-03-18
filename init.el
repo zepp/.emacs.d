@@ -138,6 +138,9 @@ various buffer management routines")
               :after-load '((powerline-default-theme))
               :required t)
 
+(load-package 'tide
+              :config "tide")
+
 ;; embedded packages
 (load-package 'ispell :config "ispell")
 (load-package 'org :config "org")
