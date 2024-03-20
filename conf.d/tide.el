@@ -12,9 +12,22 @@
       company-tooltip-align-annotations t
       tide-completion-detailed t)
 
+(defun tide-unversal-rename ()
+  "wrapper around `tide-rename-file' and
+`tide-rename-symbol'. Specify any universal argument to rename
+file"
+  (interactive)
+
+  (if current-prefix-arg
+      (tide-rename-file)
+    (tide-rename-symbol)))
+
 (define-key tide-mode-map (kbd "C-c C-j") #'tide-jump-to-definition)
+(define-key tide-mode-map (kbd "C-c C-u") #'tide-jump-back)
 (define-key tide-mode-map (kbd "C-c C-f") #'tide-references)
-(define-key tide-mode-map (kbd "C-c C-n") #'tide-rename-symbol)
+(define-key tide-mode-map (kbd "C-c C-n") #'tide-unversal-rename)
+(define-key tide-mode-map (kbd "C-c C-d") #'tide-documentation-at-point)
+(define-key tide-mode-map (kbd "C-c C-c") #'tide-project-errors)
 (define-key tide-mode-map (kbd "C-M-\\") #'tide-format)
 
 ;; formats the buffer before saving
