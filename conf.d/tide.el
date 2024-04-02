@@ -27,7 +27,8 @@ file"
 (define-key tide-mode-map (kbd "C-c C-f") #'tide-references)
 (define-key tide-mode-map (kbd "C-c C-n") #'tide-unversal-rename)
 (define-key tide-mode-map (kbd "C-c C-d") #'tide-documentation-at-point)
-(define-key tide-mode-map (kbd "C-c C-c") #'tide-project-errors)
+(define-key tide-mode-map (kbd "C-c C-l") #'tide-project-errors)
+(define-key tide-mode-map (kbd "C-c C-c") #'compile)
 (define-key tide-mode-map (kbd "C-M-\\") #'tide-format)
 
 ;; formats the buffer before saving
