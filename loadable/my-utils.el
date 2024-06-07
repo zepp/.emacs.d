@@ -1,31 +1,4 @@
-(cl-defun load-package (name &key required after-load config options)
-
-  (when (or after-load config options)
-    (lexical-let ((closure-after-load after-load)
-                  (closure-config config)
-                  (closure-options options))
-      (eval-after-load name
-        #'(lambda()
-            (when closure-after-load
-              (mapcar #'eval closure-after-load))
-
-            (when closure-config
-              (let ((default (expand-file-name
-                              (format "conf.d/%s.el" closure-config) user-emacs-directory))
-                    (local (expand-file-name
-                            (format "local.d/%s.el" closure-config) user-emacs-directory)))
-
-                (load default)
-                (when (file-regular-p local)
-                  (load local))))
-
-            (when closure-options
-              (mapcar #'(lambda (option) (setf (car option) (cdr option))) closure-options))))))
-
-  (when required
-    (require name nil t)))
-
-;;-------------------------------------------------------------------------------
+;; my utility functions and crutches
 
 (defun shell-jump ()
   "opens the shell in the current directory. Opens new window if
