@@ -17,8 +17,6 @@
  make-pointer-invisible t
  x-select-enable-clipboard t
  default-input-method 'russian-computer
- browse-url-browser-function 'browse-url-chrome
- browse-url-chrome-program "brave"
  custom-file "~/.emacs.d/custom.el"
  use-package-hook-name-suffix nil)
 
@@ -62,6 +60,30 @@ various buffer management routines")
 
 (global-visual-line-mode 1)
 (setq visual-line-fringe-indicators '(nil right-curly-arrow))
+
+;;-------------------------------------------------------------------------------
+;; package management
+
+(let ((default-directory "~/.emacs.d/loadable/"))
+  (normal-top-level-add-to-load-path '("."))
+  (normal-top-level-add-subdirs-to-load-path))
+
+(require 'my-utils)
+
+(require 'package)
+(add-to-list
+ 'package-archives
+ '("melpa" . "http://stable.melpa.org/packages/")
+ t)
+(package-initialize)
+
+;;-------------------------------------------------------------------------------
+
+(use-package browse-url
+  :init
+  browse-url-browser-function 'browse-url-chrome
+  browse-url-chrome-program "brave"
+  :defer t)
 
 ;;-------------------------------------------------------------------------------
 
@@ -159,22 +181,6 @@ vertically."
   :defer t)
 
 ;;-------------------------------------------------------------------------------
-;; package management
-
-(let ((default-directory "~/.emacs.d/loadable/"))
-  (normal-top-level-add-to-load-path '("."))
-  (normal-top-level-add-subdirs-to-load-path))
-
-(require 'my-utils)
-
-;;-------------------------------------------------------------------------------
-
-(require 'package)
-(add-to-list
- 'package-archives
- '("melpa" . "http://stable.melpa.org/packages/")
- t)
-(package-initialize)
 
 (use-package expand-region
   :bind ("M-@" . er/expand-region)
