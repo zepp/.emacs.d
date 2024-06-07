@@ -19,7 +19,7 @@
  default-input-method 'russian-computer
  browse-url-browser-function 'browse-url-chrome
  browse-url-chrome-program "brave"
- custom-file "~/.emacs.d/local.d/custom.el"
+ custom-file "~/.emacs.d/custom.el"
  use-package-hook-name-suffix nil)
 
 (put 'scroll-left 'disabled nil)
