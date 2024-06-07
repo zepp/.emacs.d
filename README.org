@@ -4,5 +4,5 @@ Directory structure:
 - =loadable= - directory for standalone packages those are not available in =MEPLA=
 
 #+begin_comment
-pandoc --wrap=none -f org -t markdown README.org -o README.md
+pandoc --wrap=none -f org -t gfm README.org -o README.md
 #+end_comment

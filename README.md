@@ -2,4 +2,4 @@ Here is my Emacs configuration. I strives to keep it *simple* as much as possibl
 
 Directory structure:
 
--   `loadable`{.verbatim} - directory for standalone packages those are not available in `MEPLA`{.verbatim}
+- `loadable` - directory for standalone packages those are not available in `MEPLA`
