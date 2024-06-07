@@ -81,8 +81,9 @@ various buffer management routines")
 
 (use-package browse-url
   :init
-  browse-url-browser-function 'browse-url-chrome
-  browse-url-chrome-program "brave"
+  (setq
+   browse-url-browser-function 'browse-url-chrome
+   browse-url-chrome-program "brave")
   :defer t)
 
 ;;-------------------------------------------------------------------------------
