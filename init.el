@@ -239,6 +239,27 @@ vertically."
 (use-package flycheck
   :ensure t)
 
+(use-package compile
+  :init
+  (setq
+   compilation-auto-jump-to-first-error 'if-location-known
+   compilation-scroll-output 'first-error)
+
+  :config
+  (let ((regexp
+         ;; groups: 1 - file, 2 - line, 3 - column
+         '(webpack "ERROR in \\([^(\r\n]+\\)\(\\([0-9]+\\),\\([0-9]+\\)\)?$" 1 2 3)))
+    (add-to-list 'compilation-error-regexp-alist-alist regexp)
+    (add-to-list 'compilation-error-regexp-alist (car regexp)))
+
+  (defadvice compile
+      (around split-fashion (command &optional comint)
+              activate)
+    "Controls the fashion of window splitting. Splits window vertically."
+    (let ((split-height-threshold 0)
+          (split-width-threshold nil))
+      ad-do-it)))
+
 (defun zeppa/tide-mode ()
   "setup tide mode in current buffer"
   (interactive)
