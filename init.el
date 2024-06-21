@@ -251,6 +251,11 @@ vertically."
           (split-width-threshold nil))
       ad-do-it)))
 
+(use-package css-mode
+  :bind
+  (:map css-mode-map
+        ("C-c C-c" . compile)))
+
 (defun zeppa/tide-mode ()
   "setup tide mode in current buffer"
   (interactive)
