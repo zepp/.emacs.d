@@ -155,15 +155,6 @@ vertically."
         (split-width-threshold nil))
     ad-do-it))
 
-(defadvice dired-do-async-shell-command
-    (around split-fashion (command &optional arg file-list)
-            activate)
-  "Controls the fashion of window splitting. Splits window
-vertically."
-  (let ((split-height-threshold 0)
-        (split-width-threshold nil))
-    ad-do-it))
-
 (use-package dired
   :bind (:map dired-mode-map
               (("M-n" . dired-next-line)
