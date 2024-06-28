@@ -328,6 +328,7 @@ file"
    org-export-initial-scope 'subtree
    org-latex-tables-centered nil
    ;; https://orgmode.org/manual/CSS-support.html
+   org-html-self-link-headlines t
    org-html-head-include-default-style nil
    org-html-head-include-scripts nil
    org-html-head "<script src=\"dist/bundle.js\"></script>"
