@@ -337,7 +337,9 @@ file"
    org-ascii-verbatim-format "\"%s\""
    org-ascii-text-width 1000)
 
-  :config (add-to-list 'org-latex-packages-alist '("AUTO" "babel" t ("pdflatex")))
+  :config
+  (add-to-list 'org-latex-packages-alist '("AUTO" "babel" t ("pdflatex")))
+  (add-to-list 'org-latex-packages-alist '("" "tabularx"))
 
   :hook
   (org-mode-hook . org-indent-mode)
