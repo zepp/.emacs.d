@@ -257,17 +257,21 @@ vertically."
     "Controls the fashion of window splitting. Splits window vertically."
     (let ((split-height-threshold 0)
           (split-width-threshold nil))
-      ad-do-it)))
+      ad-do-it))
+
+  :defer t)
 
 (use-package css-mode
   :bind
   (:map css-mode-map
-        ("C-c C-c" . compile)))
+        ("C-c C-c" . compile))
+  :defer t)
 
 (use-package json-mode
   :bind
   (:map json-mode-map
         ("C-c C-c" . compile))
+  :defer t
   :ensure t)
 
 (defun zeppa/tide-mode ()
