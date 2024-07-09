@@ -57,9 +57,17 @@ various buffer management routines")
 (add-to-list 'auto-mode-alist '(".*\\.h\\.in$" . c-mode))
 
 ;;-------------------------------------------------------------------------------
+;; simple.el
 
 (global-visual-line-mode 1)
 (setq visual-line-fringe-indicators '(nil right-curly-arrow))
+
+(defadvice async-shell-command
+    (around split-fashion (command &optional output-buffer error-buffer)
+            activate)
+  "Changes output buffer name to a command name"
+  (let ((shell-command-buffer-name-async (format "*async: %s*" command)))
+        ad-do-it))
 
 ;;-------------------------------------------------------------------------------
 ;; package management
