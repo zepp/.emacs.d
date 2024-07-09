@@ -352,7 +352,7 @@ file"
    org-html-head "<script src=\"dist/bundle.js\"></script>"
    org-html-head-extra "<meta property=\"og:type\" content=\"article\" />"
    org-html-postamble nil
-   org-ascii-verbatim-format "\"%s\""
+   org-ascii-verbatim-format "«%s»"
    org-ascii-text-width 1000)
 
   :config
