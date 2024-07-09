@@ -264,6 +264,12 @@ vertically."
   (:map css-mode-map
         ("C-c C-c" . compile)))
 
+(use-package json-mode
+  :bind
+  (:map json-mode-map
+        ("C-c C-c" . compile))
+  :ensure t)
+
 (defun zeppa/tide-mode ()
   "setup tide mode in current buffer"
   (interactive)
