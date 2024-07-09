@@ -96,7 +96,16 @@ various buffer management routines")
 
 ;;-------------------------------------------------------------------------------
 
+(defun zeppa/insert-double-q-marks ()
+  "it inserts double angle quotation marks"
+  (interactive)
+
+  (save-excursion (insert "«»"))
+  (forward-char 1))
+
 (use-package text-mode
+  :bind (:map text-mode-map
+              ("C-c M-C-q" . #'zeppa/insert-double-q-marks))
   :hook (text-mode-hook . flyspell-mode)
   :defer t)
 
