@@ -283,6 +283,10 @@ vertically."
   :defer t
   :ensure t)
 
+(use-package prettier
+  :defer t
+  :ensure t)
+
 (defun zeppa/tide-mode ()
   "setup tide mode in current buffer"
   (interactive)
@@ -325,7 +329,6 @@ file"
   (typescript-ts-mode-hook . zeppa/tide-mode)
   (tsx-ts-mode-hook . zeppa/tide-mode)
   (js2-mode-hook . zeppa/tide-mode)
-  (before-save-hook . tide-format-before-save)
 
   :after (flycheck)
 
@@ -335,6 +338,11 @@ file"
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 ;;(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 ;;(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+
+;; place on of these into the custom.el
+;;(add-hook 'typescript-mode-hook #'prettier-mode)
+;;(add-hook 'js2-mode-hook #'prettier-mode)
+;;(add-hook 'before-save-hook #'tide-format-before-save)
 
 ;;-------------------------------------------------------------------------------
 
