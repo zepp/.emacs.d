@@ -105,7 +105,7 @@ various buffer management routines")
 
 (use-package text-mode
   :bind (:map text-mode-map
-              ("C-c M-C-q" . #'zeppa/insert-double-q-marks))
+              ("C-q" . #'zeppa/insert-double-q-marks))
   :hook (text-mode-hook . flyspell-mode)
   :defer t)
 
@@ -375,6 +375,7 @@ file"
   :config
   (add-to-list 'org-latex-packages-alist '("AUTO" "babel" t ("pdflatex")))
   (add-to-list 'org-latex-packages-alist '("" "tabularx"))
+  (add-to-list 'org-latex-packages-alist '("" "spverbatim"))
 
   :hook
   (org-mode-hook . org-indent-mode)
