@@ -283,6 +283,15 @@ vertically."
   :defer t
   :ensure t)
 
+(use-package web-mode
+  :bind
+  (:map web-mode-map
+        ("C-c C-c" . compile))
+  :mode
+  (("\\.html\\'" . web-mode))
+  :ensure t
+  :defer t)
+
 (use-package prettier
   :defer t
   :ensure t)
@@ -383,9 +392,10 @@ file"
   (org-mode-hook . auto-revert-mode)
   (org-mode-hook . flyspell-mode)
 
-  :defer t)
+  :mode
+  (("\\.org\\'" . org-mode))
 
-(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+  :defer t)
 
 ;;-------------------------------------------------------------------------------
 
