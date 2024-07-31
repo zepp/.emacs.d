@@ -62,6 +62,9 @@ various buffer management routines")
 (global-visual-line-mode 1)
 (setq visual-line-fringe-indicators '(nil right-curly-arrow))
 
+;; disable tab indentation globally
+(setq-default indent-tabs-mode nil)
+
 (defadvice async-shell-command
     (around split-fashion (command &optional output-buffer error-buffer)
             activate)
@@ -114,7 +117,6 @@ various buffer management routines")
 (defun zeppa/elisp-mode()
   "it disables tabs indentation and enables documentation hints in
 mini-buffer"
-  (setq-local indent-tabs-mode nil)
   (eldoc-mode 1))
 
 (use-package elisp-mode
