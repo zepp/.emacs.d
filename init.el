@@ -256,11 +256,14 @@ vertically."
    compilation-scroll-output 'first-error)
 
   :config
-  (let ((regexp
-         ;; groups: 1 - file, 2 - line, 3 - column
-         '(webpack "ERROR in \\([^(\r\n]+\\)\(\\([0-9]+\\),\\([0-9]+\\)\)?$" 1 2 3)))
-    (add-to-list 'compilation-error-regexp-alist-alist regexp)
-    (add-to-list 'compilation-error-regexp-alist (car regexp)))
+  (let ((alist '((webpack "ERROR in \\([^(\r\n]+\\)\(\\([0-9]+\\),\\([0-9]+\\)\)?$" 1 2 3)
+                 (nx "[[:blank:]]+\\([^(\r\n]+\\):\\([0-9]+\\):\\([0-9]+\\):$" 1 2 3))))
+  (dolist (cell alist)
+    (add-to-list 'compilation-error-regexp-alist-alist cell)
+    (add-to-list 'compilation-error-regexp-alist (car cell))))
+
+  (add-to-list 'compilation-environment "TERM=xterm-mono")
+  (add-to-list 'compilation-environment "NO_COLOR=1")
 
   (defadvice compile
       (around split-fashion (command &optional comint)
