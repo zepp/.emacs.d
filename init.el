@@ -404,6 +404,7 @@ file"
 
 ;;-------------------------------------------------------------------------------
 
+(global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
 (global-set-key (kbd "C-x p") #'previous-buffer)
 (global-set-key (kbd "C-x c") #'shell-jump)
 (global-set-key (kbd "C-x M-f") #'find-file-at-point)
