@@ -262,7 +262,6 @@ vertically."
     (add-to-list 'compilation-error-regexp-alist-alist cell)
     (add-to-list 'compilation-error-regexp-alist (car cell))))
 
-  (add-to-list 'compilation-environment "TERM=xterm-mono")
   (add-to-list 'compilation-environment "NO_COLOR=1")
 
   (defadvice compile
