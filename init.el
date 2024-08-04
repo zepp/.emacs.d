@@ -210,7 +210,7 @@ vertically."
 ;;-------------------------------------------------------------------------------
 
 (use-package ivy
-  :bind (("C-c C-s" . swiper)
+  :bind (("C-s" . swiper)
          ("C-c C-r" . ivy-resume)
 
          :map ivy-minibuffer-map
@@ -290,6 +290,7 @@ vertically."
 (use-package web-mode
   :bind
   (:map web-mode-map
+        ("C-c C-r" . nil)
         ("C-c C-c" . compile))
   :mode
   (("\\.html\\'" . web-mode))
