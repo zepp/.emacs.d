@@ -287,15 +287,13 @@ vertically."
   :defer t
   :ensure t)
 
-(use-package web-mode
-  :bind
-  (:map web-mode-map
-        ("C-c C-r" . nil)
-        ("C-c C-c" . compile))
-  :mode
-  (("\\.html\\'" . web-mode))
-  :ensure t
-  :defer t)
+(use-package ng2-mode
+  :bind (:map ng2-html-map
+              ("C-c C-j" . #'ng2-html-goto-binding)
+              ("C-c C-c" . #'compile))
+  :hook (ng2-html-mode-hook . (lambda () (flyspell-mode 0)))
+  ;; :defer t - breaks :bind in this case
+  :ensure t)
 
 (use-package prettier
   :defer t
