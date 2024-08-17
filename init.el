@@ -365,6 +365,7 @@ file"
   (setq
    calendar-week-start-day 1
    org-tags-column 0
+   org-log-into-drawer t
    org-catch-invisible-edits 'show-and-error
    org-time-stamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
    org-agenda-remove-tags t
