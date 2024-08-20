@@ -18,9 +18,9 @@
  x-select-enable-clipboard t
  default-input-method 'russian-computer
  custom-file "~/.emacs.d/custom.el"
- use-package-hook-name-suffix nil)
+ use-package-hook-name-suffix nil
+ calendar-week-start-day 1)
 
-(put 'scroll-left 'disabled nil)
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
@@ -33,28 +33,9 @@
 
 (setenv "GPG_AGENT_INFO" nil)
 
-(defvar ignored-buffer-list
-  '("\\*Completions" "\\*Quail Completions\\*" "\\*Backtrace\\*" "\\*magit-edit-log\\*" "\\*P4" "\\*Buffer List\\*")
-  "list of the buffer names or regular expressions to be ignored by
-various buffer management routines")
+(setf frame-title-format "%b")
 
-;;-------------------------------------------------------------------------------
-
-(defun suitable-buffer-p (buffer)
-  "predicate to check the buffer exclusion from the `ignored-buffer-list'"
-  (not (find-if #'(lambda (entry)
-                    (string-match entry (buffer-name buffer)))
-                ignored-buffer-list)))
-
-(setf frame-title-format "%F")
-(add-to-list 'default-frame-alist `(buffer-predicate . ,#'suitable-buffer-p))
 (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
-
-;;-------------------------------------------------------------------------------
-
-(add-to-list 'auto-mode-alist '("Makefile\\..*" . makefile-mode))
-(add-to-list 'auto-mode-alist '(".*\\.mak$" . makefile-mode))
-(add-to-list 'auto-mode-alist '(".*\\.h\\.in$" . c-mode))
 
 ;;-------------------------------------------------------------------------------
 ;; simple.el
@@ -176,9 +157,7 @@ vertically."
 
 (use-package dired
   :bind (:map dired-mode-map
-              (("M-n" . dired-next-line)
-               ("M-p" . dired-previous-line)
-               ("c" . dired-do-copy)
+              (("c" . dired-do-copy)
                ("d" . dired-do-delete)
                ("r" . dired-do-rename)
                ("M-d" . dired-flag-file-deletion)))
@@ -219,20 +198,17 @@ vertically."
   :init (setq ivy-use-virtual-buffers t
               ivy-count-format "[%d/%d] ")
 
-  :config (dolist (buf ignored-buffer-list)
+  :config (dolist (buf '("magit-process: .*"
+                         "\\*vc-diff\\*.*"
+                         "\\*tide-server\\*"
+                         "\\*Quail Completions\\*"
+                         "\\*Buffer List\\*"))
             (add-to-list 'ivy-ignore-buffers buf))
 
   ;; doesn't work if it's placed in :config
   :hook (after-init-hook . ivy-mode)
 
   :ensure t)
-
-(use-package ido
-  :init (setq ido-enable-flex-matching t
-              ido-create-new-buffer 'always)
-  :config (dolist (buf ignored-buffer-list)
-            (add-to-list 'ido-ignore-buffers buf))
-  :disabled t)
 
 ;;-------------------------------------------------------------------------------
 
@@ -363,7 +339,6 @@ file"
 
   :init
   (setq
-   calendar-week-start-day 1
    org-tags-column 0
    org-log-into-drawer t
    org-catch-invisible-edits 'show-and-error
