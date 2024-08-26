@@ -46,12 +46,14 @@
 ;; disable tab indentation globally
 (setq-default indent-tabs-mode nil)
 
-(defadvice async-shell-command
-    (around split-fashion (command &optional output-buffer error-buffer)
-            activate)
+(defun form-shell-command-buffer-name (orig &rest args)
   "Changes output buffer name to a command name"
-  (let ((shell-command-buffer-name-async (format "*async: %s*" command)))
-        ad-do-it))
+
+  (let* ((command (nth 0 args))
+         (shell-command-buffer-name-async (format "*async: %s*" command)))
+    (apply orig args)))
+
+(advice-add 'async-shell-command :around #'form-shell-command-buffer-name)
 
 ;;-------------------------------------------------------------------------------
 ;; package management
@@ -146,14 +148,12 @@ mini-buffer"
 
 ;;-------------------------------------------------------------------------------
 
-(defadvice dired-do-shell-command
-    (around split-fashion (command &optional arg file-list)
-            activate)
+(defun dired-shell-command-popup (orig &rest args)
   "Controls the fashion of window splitting. Splits window
 vertically."
   (let ((split-height-threshold 0)
         (split-width-threshold nil))
-    ad-do-it))
+    (apply orig args)))
 
 (use-package dired
   :bind (:map dired-mode-map
@@ -168,6 +168,10 @@ vertically."
               ;; -G omit the group name
               ;; -h human-readable size
               dired-listing-switches "-alGh")
+
+  :config
+  (advice-add 'dired-do-shell-command :around #'dired-shell-command-popup)
+
   :defer t)
 
 ;;-------------------------------------------------------------------------------
@@ -225,6 +229,16 @@ vertically."
 (use-package flycheck
   :ensure t)
 
+(defun compile-popup (orig &rest args)
+  "Controls the fashion of how window is split and
+buffer naming"
+
+  (let* ((compilation-buffer-name-function
+          #'(lambda (mode) (format "*%s: %s*" mode (nth 0 args))))
+         (split-height-threshold 0)
+         (split-width-threshold nil))
+    (apply orig args)))
+
 (use-package compile
   :init
   (setq
@@ -239,13 +253,7 @@ vertically."
 
   (add-to-list 'compilation-environment "NO_COLOR=1")
 
-  (defadvice compile
-      (around split-fashion (command &optional comint)
-              activate)
-    "Controls the fashion of window splitting. Splits window vertically."
-    (let ((split-height-threshold 0)
-          (split-width-threshold nil))
-      ad-do-it))
+  (advice-add 'compile :around #'compile-popup)
 
   :defer t)
 
