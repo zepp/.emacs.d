@@ -232,11 +232,10 @@ vertically."
    compilation-scroll-output 'first-error)
 
   :config
-  (let ((alist '((webpack "ERROR in \\([^(\r\n]+\\)\(\\([0-9]+\\),\\([0-9]+\\)\)?$" 1 2 3)
-                 (nx "[[:blank:]]+\\([^(\r\n]+\\):\\([0-9]+\\):\\([0-9]+\\):$" 1 2 3))))
-  (dolist (cell alist)
-    (add-to-list 'compilation-error-regexp-alist-alist cell)
-    (add-to-list 'compilation-error-regexp-alist (car cell))))
+  (let ((alist '((webpack "ERROR in \\([^(\r\n]+\\)\(\\([0-9]+\\),\\([0-9]+\\)\)?$" 1 2 3))))
+    (dolist (cell alist)
+      (add-to-list 'compilation-error-regexp-alist-alist cell)
+      (add-to-list 'compilation-error-regexp-alist (car cell))))
 
   (add-to-list 'compilation-environment "NO_COLOR=1")
 
@@ -260,18 +259,6 @@ vertically."
   :bind
   (:map json-mode-map
         ("C-c C-c" . compile))
-  :defer t
-  :ensure t)
-
-(use-package ng2-mode
-  :bind (:map ng2-html-map
-              ("C-c C-j" . #'ng2-html-goto-binding)
-              ("C-c C-c" . #'compile))
-  :hook (ng2-html-mode-hook . (lambda () (flyspell-mode 0)))
-  ;; :defer t - breaks :bind in this case
-  :ensure t)
-
-(use-package prettier
   :defer t
   :ensure t)
 
@@ -317,6 +304,7 @@ file"
   (typescript-ts-mode-hook . zeppa/tide-mode)
   (tsx-ts-mode-hook . zeppa/tide-mode)
   (js2-mode-hook . zeppa/tide-mode)
+  (before-save-hook . tide-format-before-save)
 
   :after (flycheck)
 
@@ -326,11 +314,6 @@ file"
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 ;;(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 ;;(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
-
-;; place on of these into the custom.el
-;;(add-hook 'typescript-mode-hook #'prettier-mode)
-;;(add-hook 'js2-mode-hook #'prettier-mode)
-;;(add-hook 'before-save-hook #'tide-format-before-save)
 
 ;;-------------------------------------------------------------------------------
 
