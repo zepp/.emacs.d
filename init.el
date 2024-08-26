@@ -62,8 +62,6 @@
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path))
 
-(require 'my-utils)
-
 (require 'package)
 (add-to-list
  'package-archives
@@ -172,6 +170,22 @@ vertically."
   :config
   (advice-add 'dired-do-shell-command :around #'dired-shell-command-popup)
 
+  :defer t)
+
+(defun form-shell-buffer-name (orig &rest args)
+  "it forms meaningful buffer name"
+
+  (let* ((dir (directory-file-name default-directory))
+         (name (concat (car (last (split-string dir "/")))
+                       ":shell")))
+    (apply orig
+           (if (not (nth 0 args))
+               (list name)
+             args))))
+
+(use-package shell
+  :config
+  (advice-add 'shell :around #'form-shell-buffer-name)
   :defer t)
 
 ;;-------------------------------------------------------------------------------
@@ -371,7 +385,6 @@ file"
 
 (global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
 (global-set-key (kbd "C-x p") #'previous-buffer)
-(global-set-key (kbd "C-x c") #'shell-jump)
 (global-set-key (kbd "C-x M-f") #'find-file-at-point)
 (global-set-key (kbd "C-x C-x") #'server-edit)
 
