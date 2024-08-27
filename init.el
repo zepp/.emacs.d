@@ -359,7 +359,9 @@ file"
    org-html-self-link-headlines t
    org-html-head-include-default-style nil
    org-html-head-include-scripts nil
-   org-html-head "<script src=\"dist/bundle.js\"></script>"
+   org-html-head
+   (concat "<link rel=\"stylesheet\" type=\"text/css\" href=\"dist/article.css\"/>\n"
+           "<script src=\"dist/bundle.js\"></script>")
    org-html-head-extra "<meta property=\"og:type\" content=\"article\" />"
    org-html-postamble nil
    org-ascii-verbatim-format "«%s»"
