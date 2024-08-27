@@ -1,4 +1,3 @@
-(require 'cl)
 (require 'warnings)
 
 (menu-bar-mode 0)
