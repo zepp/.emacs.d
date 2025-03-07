@@ -339,7 +339,9 @@ file"
 ;;-------------------------------------------------------------------------------
 
 (use-package org
-  :bind ("C-x C-a" . org-agenda)
+  :bind (("C-x C-a" . org-agenda)
+         (:map org-mode-map
+               ("C-c M-s" . #'org-store-link)))
 
   :init
   (setq
