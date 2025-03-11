@@ -89,7 +89,9 @@
 (use-package text-mode
   :bind (:map text-mode-map
               ("C-q" . #'zeppa/insert-double-q-marks))
-  :hook (text-mode-hook . flyspell-mode)
+  :hook
+  (text-mode-hook . flyspell-mode)
+  (text-mode-hook . abbrev-mode)
   :defer t)
 
 ;;-------------------------------------------------------------------------------
