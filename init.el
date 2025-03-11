@@ -234,6 +234,16 @@ vertically."
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
+;; Magit
+
+(use-package git-commit
+  :config
+  ;; append to end of hook list
+  (add-hook 'git-commit-setup-hook 'turn-off-auto-fill t)
+
+  :defer t)
+
+;;-------------------------------------------------------------------------------
 
 (use-package tree-sitter-langs
   :after tree-sitter
