@@ -367,7 +367,6 @@ file"
    org-export-with-toc nil
    org-export-with-section-numbers nil
    org-export-initial-scope 'subtree
-   org-latex-tables-centered nil
    ;; https://orgmode.org/manual/CSS-support.html
    org-html-self-link-headlines t
    org-html-head-include-default-style nil
