@@ -179,16 +179,16 @@ vertically."
   :init (setq ivy-use-virtual-buffers t
               ivy-count-format "[%d/%d] ")
 
-  :config (dolist (buf '("magit-process: .*"
-                         "\\*vc-diff\\*.*"
-                         "\\*tide-server\\*"
-                         "\\*Quail Completions\\*"
-                         "\\*Buffer List\\*"))
-            (add-to-list 'ivy-ignore-buffers buf))
+  :config
+  (dolist (buf '("magit-process: .*"
+                 "\\*vc-diff\\*.*"
+                 "\\*tide-server\\*"
+                 "\\*Quail Completions\\*"
+                 "\\*Buffer List\\*"))
+    (add-to-list 'ivy-ignore-buffers buf))
+  (ivy-mode 1)
 
-  ;; doesn't work if it's placed in :config
-  :hook (after-init-hook . ivy-mode)
-
+  :demand t
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
