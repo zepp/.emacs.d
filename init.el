@@ -191,10 +191,6 @@ vertically."
 
 ;;-------------------------------------------------------------------------------
 
-(use-package expand-region
-  :bind ("M-@" . er/expand-region)
-  :ensure t)
-
 (use-package which-key
   :init (setq which-key-idle-delay 2.0)
   :config (which-key-mode 1)
