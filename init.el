@@ -79,23 +79,6 @@
 
 ;;-------------------------------------------------------------------------------
 
-(defun zeppa/insert-double-q-marks ()
-  "it inserts double angle quotation marks"
-  (interactive)
-
-  (save-excursion (insert "«»"))
-  (forward-char 1))
-
-(use-package text-mode
-  :bind (:map text-mode-map
-              ("C-q" . #'zeppa/insert-double-q-marks))
-  :hook
-  (text-mode-hook . flyspell-mode)
-  (text-mode-hook . abbrev-mode)
-  :defer t)
-
-;;-------------------------------------------------------------------------------
-
 (defun zeppa/elisp-mode()
   "it disables tabs indentation and enables documentation hints in
 mini-buffer"
@@ -127,23 +110,6 @@ mini-buffer"
 (use-package uniquify
   :init (setq uniquify-buffer-name-style 'forward
               uniquify-ignore-buffers-re "^\\*"))
-
-;;-------------------------------------------------------------------------------
-;; ;; https://200ok.ch/posts/2020-08-22_setting_up_spell_checking_with_multiple_dictionaries.html
-
-(use-package ispell
-  :init
-  (setq ispell-program-name "hunspell"
-        ispell-dictionary "ru_RU,en_US"
-        ispell-personal-dictionary "~/.hunspell_personal")
-
-  :config
-  (ispell-set-spellchecker-params)
-  (ispell-hunspell-add-multi-dic "ru_RU,en_US")
-  (unless (file-exists-p ispell-personal-dictionary)
-    (write-region "" nil ispell-personal-dictionary nil 0))
-
-  :defer t)
 
 ;;-------------------------------------------------------------------------------
 
@@ -242,6 +208,36 @@ vertically."
   :defer t)
 
 ;;-------------------------------------------------------------------------------
+;; https://200ok.ch/posts/2020-08-22_setting_up_spell_checking_with_multiple_dictionaries.html
+
+(use-package ispell
+  :init
+  (setq ispell-program-name "hunspell"
+        ispell-dictionary "ru_RU,en_US"
+        ispell-personal-dictionary "~/.hunspell_personal")
+
+  :config
+  (ispell-set-spellchecker-params)
+  (ispell-hunspell-add-multi-dic "ru_RU,en_US")
+  (unless (file-exists-p ispell-personal-dictionary)
+    (write-region "" nil ispell-personal-dictionary nil 0))
+
+  :defer t)
+
+(defun zeppa/insert-double-q-marks ()
+  "it inserts double angle quotation marks"
+  (interactive)
+
+  (save-excursion (insert "«»"))
+  (forward-char 1))
+
+(use-package text-mode
+  :bind (:map text-mode-map
+              ("C-q" . #'zeppa/insert-double-q-marks))
+  :hook
+  (text-mode-hook . flyspell-mode)
+  (text-mode-hook . abbrev-mode)
+  :defer t)
 
 (use-package org
   :bind (("C-x C-a" . org-agenda)
