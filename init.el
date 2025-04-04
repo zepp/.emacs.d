@@ -207,6 +207,10 @@ vertically."
 
   :defer t)
 
+(use-package ssh-agency
+  :demand t
+  :ensure t)
+
 ;;-------------------------------------------------------------------------------
 ;; https://200ok.ch/posts/2020-08-22_setting_up_spell_checking_with_multiple_dictionaries.html
 
