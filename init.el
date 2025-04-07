@@ -305,4 +305,31 @@ vertically."
 (global-set-key (kbd "C-c k") #'delete-window)
 (global-set-key (kbd "C-c o") #'other-window)
 
+;;-------------------------------------------------------------------------------
+;; windows specific configuration
+
+(when (string= system-type "windows-nt")
+  (setq
+   ;; make `rgrep' work
+   find-program
+   (expand-file-name "bin/find.exe"
+                     (getenv "ChocolateyInstall"))
+
+   browse-url-chrome-program
+   (expand-file-name
+    "brave.exe"
+    "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application"))
+
+  ;; make `hunspell' work
+  (let ((root (expand-file-name ".dicts"
+                                (or (getenv "HOME")
+                                    (getenv "HOMEPATH")))))
+    (setenv "DICPATH" root)
+    (setenv "DICTIONARY" "en_US")
+    (setq ispell-hunspell-dict-paths-alist
+          `(("en_US" ,(expand-file-name "en_US.aff" root))
+            ("ru_RU" ,(expand-file-name "ru_RU.aff" root))))))
+
+;;-------------------------------------------------------------------------------
+
 (load custom-file :noerror)
