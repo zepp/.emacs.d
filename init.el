@@ -308,6 +308,18 @@ vertically."
 ;;-------------------------------------------------------------------------------
 ;; windows specific configuration
 
+(defun zeppa/list-dicts(directory)
+  "builds dictionary path alist for hunspell"
+
+  (let ((root (expand-file-name directory)))
+    (mapcar #'(lambda(file)
+                (list (substring file 0 -4)
+                      (expand-file-name file root)))
+            (directory-files
+             root
+             nil
+             "[[:lower:]]\\{2\\}_[[:upper:]]\\{2\\}\\.aff"))))
+
 (when (string= system-type "windows-nt")
   (setq
    ;; make `rgrep' work
@@ -326,9 +338,7 @@ vertically."
                                     (getenv "HOMEPATH")))))
     (setenv "DICPATH" root)
     (setenv "DICTIONARY" "en_US")
-    (setq ispell-hunspell-dict-paths-alist
-          `(("en_US" ,(expand-file-name "en_US.aff" root))
-            ("ru_RU" ,(expand-file-name "ru_RU.aff" root))))))
+    (setq ispell-hunspell-dict-paths-alist (zeppa/list-dicts root))))
 
 ;;-------------------------------------------------------------------------------
 
