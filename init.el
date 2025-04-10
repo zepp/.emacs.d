@@ -98,14 +98,6 @@ mini-buffer"
   :config (global-whitespace-mode 1))
 
 ;;-------------------------------------------------------------------------------
-;; diff
-
-(use-package diff-mode
-  :bind (:map diff-mode-map
-              ("C-m" . diff-goto-source))
-  :defer t)
-
-;;-------------------------------------------------------------------------------
 
 (use-package uniquify
   :init (setq uniquify-buffer-name-style 'forward
@@ -202,7 +194,12 @@ vertically."
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
-;; Magit
+;; version control
+
+(use-package diff-mode
+  :bind (:map diff-mode-map
+              ("C-m" . diff-goto-source))
+  :defer t)
 
 (use-package git-commit
   :config
