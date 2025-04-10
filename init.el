@@ -170,8 +170,7 @@ vertically."
 ;;-------------------------------------------------------------------------------
 
 (use-package ivy
-  :bind (("C-s" . swiper)
-         ("C-c C-r" . ivy-resume)
+  :bind (("C-c C-r" . ivy-resume)
 
          :map ivy-minibuffer-map
          ("M-t" . ivy-partial-or-done))
@@ -188,6 +187,11 @@ vertically."
     (add-to-list 'ivy-ignore-buffers buf))
   (ivy-mode 1)
 
+  :demand t
+  :ensure t)
+
+(use-package swiper
+  :bind ("C-s" . swiper)
   :demand t
   :ensure t)
 
