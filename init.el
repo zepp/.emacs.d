@@ -79,13 +79,8 @@
 
 ;;-------------------------------------------------------------------------------
 
-(defun zeppa/elisp-mode()
-  "it disables tabs indentation and enables documentation hints in
-mini-buffer"
-  (eldoc-mode 1))
-
 (use-package elisp-mode
-  :hook (emacs-lisp-mode-hook . zeppa/elisp-mode)
+  :hook (emacs-lisp-mode-hook . eldoc-mode)
   :defer t)
 
 ;;-------------------------------------------------------------------------------
