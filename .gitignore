@@ -8,6 +8,7 @@
 /transient/
 /auto-save-list/
 /org-persist/
+/.org-id-locations
 /custom.el
 /bookmarks
 /network-security.data
