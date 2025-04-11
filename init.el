@@ -78,12 +78,6 @@
 
 ;;-------------------------------------------------------------------------------
 
-(use-package elisp-mode
-  :hook (emacs-lisp-mode-hook . eldoc-mode)
-  :defer t)
-
-;;-------------------------------------------------------------------------------
-
 (use-package whitespace
   :init (setq whitespace-style '(face
                                  trailing
@@ -147,11 +141,6 @@ vertically."
   :config (which-key-mode 1)
   :ensure t)
 
-(use-package company
-  :bind ("M-t" . company-complete)
-  :config (global-company-mode 1)
-  :ensure t)
-
 ;;-------------------------------------------------------------------------------
 
 (use-package ivy
@@ -187,11 +176,21 @@ vertically."
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
+;; programming modes
 
 (use-package prog-mode
   :hook
   (prog-mode-hook . visual-line-mode)
   (prog-mode-hook . whitespace-mode))
+
+(use-package elisp-mode
+  :hook (emacs-lisp-mode-hook . eldoc-mode)
+  :defer t)
+
+(use-package company
+  :bind ("M-t" . company-complete)
+  :config (global-company-mode 1)
+  :ensure t)
 
 ;;-------------------------------------------------------------------------------
 ;; version control
