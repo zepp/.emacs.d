@@ -308,7 +308,7 @@ vertically."
 (global-set-key (kbd "C-c o") #'other-window)
 
 ;;-------------------------------------------------------------------------------
-;; windows specific configuration
+;; os specific configuration
 
 (defun zeppa/list-dicts(directory)
   "builds dictionary path alist for hunspell"
@@ -322,7 +322,9 @@ vertically."
              nil
              "[[:lower:]]\\{2\\}_[[:upper:]]\\{2\\}\\.aff"))))
 
-(when (string= system-type "windows-nt")
+(cond
+
+ ((string= system-type "windows-nt")
   (setq
    ;; make `rgrep' work
    find-program
@@ -341,6 +343,10 @@ vertically."
     (setenv "DICPATH" root)
     (setenv "DICTIONARY" "en_US")
     (setq ispell-hunspell-dict-paths-alist (zeppa/list-dicts root))))
+
+ ((string= system-type "darwin")
+  (setq mac-command-modifier 'meta
+        mac-option-modifier 'super)))
 
 ;;-------------------------------------------------------------------------------
 
