@@ -200,11 +200,12 @@ vertically."
               ("C-m" . diff-goto-source))
   :defer t)
 
-(use-package git-commit
+(use-package magit
   :config
   ;; append to end of hook list
   (add-hook 'git-commit-setup-hook 'turn-off-auto-fill t)
 
+  :ensure t
   :defer t)
 
 (use-package ssh-agency
