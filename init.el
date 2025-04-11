@@ -39,7 +39,6 @@
 ;;-------------------------------------------------------------------------------
 ;; simple.el
 
-(global-visual-line-mode 1)
 (setq visual-line-fringe-indicators '(nil right-curly-arrow))
 
 ;; disable tab indentation globally
@@ -89,8 +88,7 @@
   :init (setq whitespace-style '(face
                                  trailing
                                  space-after-tab
-                                 space-before-tab))
-  :config (global-whitespace-mode 1))
+                                 space-before-tab)))
 
 ;;-------------------------------------------------------------------------------
 
@@ -189,6 +187,13 @@ vertically."
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
+
+(use-package prog-mode
+  :hook
+  (prog-mode-hook . visual-line-mode)
+  (prog-mode-hook . whitespace-mode))
+
+;;-------------------------------------------------------------------------------
 ;; version control
 
 (use-package diff-mode
@@ -235,6 +240,8 @@ vertically."
   :bind (:map text-mode-map
               ("C-q" . #'zeppa/insert-double-q-marks))
   :hook
+  (text-mode-hook . visual-line-mode)
+  (text-mode-hook . whitespace-mode)
   (text-mode-hook . flyspell-mode)
   (text-mode-hook . abbrev-mode)
   :defer t)
