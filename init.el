@@ -20,17 +20,11 @@
  use-package-hook-name-suffix nil
  calendar-week-start-day 1)
 
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-(put 'narrow-to-region 'disabled nil)
-
 (add-to-list 'warning-suppress-types '(undo discard-info))
 
 (add-to-list 'same-window-buffer-names "*grep*")
 
 (add-hook 'kill-emacs-hook #'basic-save-buffer)
-
-(setenv "GPG_AGENT_INFO" nil)
 
 (setf frame-title-format "%b")
 
