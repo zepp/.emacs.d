@@ -38,15 +38,6 @@
 ;; disable tab indentation globally
 (setq-default indent-tabs-mode nil)
 
-(defun form-shell-command-buffer-name (orig &rest args)
-  "Changes output buffer name to a command name"
-
-  (let* ((command (nth 0 args))
-         (shell-command-buffer-name-async (format "*async: %s*" command)))
-    (apply orig args)))
-
-(advice-add 'async-shell-command :around #'form-shell-command-buffer-name)
-
 ;;-------------------------------------------------------------------------------
 ;; package management
 
@@ -77,6 +68,15 @@
               uniquify-ignore-buffers-re "^\\*"))
 
 ;;-------------------------------------------------------------------------------
+
+(defun form-shell-command-buffer-name (orig &rest args)
+  "Changes output buffer name to a command name"
+
+  (let* ((command (nth 0 args))
+         (shell-command-buffer-name-async (format "*async: %s*" command)))
+    (apply orig args)))
+
+(advice-add 'async-shell-command :around #'form-shell-command-buffer-name)
 
 (defun dired-shell-command-popup (orig &rest args)
   "Controls the fashion of window splitting. Splits window
