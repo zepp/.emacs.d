@@ -78,14 +78,6 @@
 
 ;;-------------------------------------------------------------------------------
 
-(use-package whitespace
-  :init (setq whitespace-style '(face
-                                 trailing
-                                 space-after-tab
-                                 space-before-tab)))
-
-;;-------------------------------------------------------------------------------
-
 (use-package uniquify
   :init (setq uniquify-buffer-name-style 'forward
               uniquify-ignore-buffers-re "^\\*"))
@@ -135,13 +127,12 @@ vertically."
   :defer t)
 
 ;;-------------------------------------------------------------------------------
+;; UI related
 
 (use-package which-key
   :init (setq which-key-idle-delay 2.0)
   :config (which-key-mode 1)
   :ensure t)
-
-;;-------------------------------------------------------------------------------
 
 (use-package ivy
   :bind (("C-c C-r" . ivy-resume)
@@ -169,11 +160,17 @@ vertically."
   :demand t
   :ensure t)
 
-;;-------------------------------------------------------------------------------
-
 (use-package powerline
   :config (powerline-default-theme)
   :ensure t)
+
+;;-------------------------------------------------------------------------------
+
+(use-package whitespace
+  :init (setq whitespace-style '(face
+                                 trailing
+                                 space-after-tab
+                                 space-before-tab)))
 
 ;;-------------------------------------------------------------------------------
 ;; programming modes
