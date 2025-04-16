@@ -172,6 +172,11 @@ vertically."
                                  space-after-tab
                                  space-before-tab)))
 
+(defun zeppa/ws-long-lines ()
+  "highlights long lines using whitespace-mode"
+
+  (setq-local whitespace-style (cons 'lines-char whitespace-style)))
+
 ;;-------------------------------------------------------------------------------
 ;; programming modes
 
@@ -201,6 +206,7 @@ vertically."
   :config
   ;; append to end of hook list
   (add-hook 'git-commit-setup-hook 'turn-off-auto-fill t)
+  (add-hook 'git-commit-setup-hook #'zeppa/ws-long-lines)
 
   :ensure t
   :defer t)
