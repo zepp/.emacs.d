@@ -1,20 +1,11 @@
 (require 'warnings)
 
-(menu-bar-mode 0)
-(tool-bar-mode 0)
-(toggle-scroll-bar -1)
-(column-number-mode 1)
-
 (transient-mark-mode 1)
 (delete-selection-mode 1)
 
 (electric-pair-mode 1)
 
 (setq
- inhibit-startup-screen t
- visible-bell t
- make-pointer-invisible t
- x-select-enable-clipboard t
  default-input-method 'russian-computer
  custom-file "~/.emacs.d/custom.el"
  use-package-hook-name-suffix nil
@@ -25,15 +16,6 @@
 (add-to-list 'same-window-buffer-names "*grep*")
 
 (add-hook 'kill-emacs-hook #'basic-save-buffer)
-
-(setf frame-title-format "%b")
-
-(add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
-
-;;-------------------------------------------------------------------------------
-;; simple.el
-
-(setq visual-line-fringe-indicators '(nil right-curly-arrow))
 
 ;; disable tab indentation globally
 (setq-default indent-tabs-mode nil)
@@ -122,6 +104,21 @@ vertically."
 
 ;;-------------------------------------------------------------------------------
 ;; UI related
+
+(setq
+ inhibit-startup-screen t
+ frame-title-format "%b"
+ visible-bell t
+ make-pointer-invisible t
+ x-select-enable-clipboard t
+ visual-line-fringe-indicators '(nil right-curly-arrow))
+
+(add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
+
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(toggle-scroll-bar -1)
+(column-number-mode 1)
 
 (use-package which-key
   :init (setq which-key-idle-delay 2.0)
