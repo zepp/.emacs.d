@@ -223,16 +223,24 @@ vertically."
 
   :defer t)
 
-(defun zeppa/insert-double-q-marks ()
-  "it inserts double angle quotation marks"
+(defun zeppa/double-q-marks ()
+  "if region is active then it wraps marked text with double angle
+quotation marks otherwise just inserts it"
   (interactive)
 
-  (save-excursion (insert "«»"))
-  (forward-char 1))
+  (if (use-region-p)
+        (let* ((start (region-beginning))
+               (end (region-end))
+               (text (buffer-substring start end)))
+          (delete-region start end)
+	  (insert (format "«%s»" text)))
+
+      (insert "«»")
+      (backward-char 1)))
 
 (use-package text-mode
   :bind (:map text-mode-map
-              ("C-q" . #'zeppa/insert-double-q-marks))
+              ("C-q" . #'zeppa/double-q-marks))
   :hook
   (text-mode-hook . visual-line-mode)
   (text-mode-hook . whitespace-mode)
