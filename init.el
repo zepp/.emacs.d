@@ -1,10 +1,5 @@
 (require 'warnings)
 
-(transient-mark-mode 1)
-(delete-selection-mode 1)
-
-(electric-pair-mode 1)
-
 (setq
  default-input-method 'russian-computer
  custom-file "~/.emacs.d/custom.el"
@@ -16,9 +11,6 @@
 (add-to-list 'same-window-buffer-names "*grep*")
 
 (add-hook 'kill-emacs-hook #'basic-save-buffer)
-
-;; disable tab indentation globally
-(setq-default indent-tabs-mode nil)
 
 ;;-------------------------------------------------------------------------------
 ;; package management
@@ -156,6 +148,13 @@ vertically."
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
+
+;; disable tab indentation globally
+(setq-default indent-tabs-mode nil)
+
+(transient-mark-mode 1)
+(delete-selection-mode 1)
+(electric-pair-mode 1)
 
 (use-package whitespace
   :init (setq whitespace-style '(face
