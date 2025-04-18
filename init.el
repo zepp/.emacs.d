@@ -341,7 +341,7 @@ vertically."
 
  ((string= system-type "darwin")
   (setq mac-command-modifier 'meta
-        mac-option-modifier 'super
+        mac-option-modifier 'none
         browse-url-browser-function 'browse-url-default-macosx-browser)))
 
 ;;-------------------------------------------------------------------------------
