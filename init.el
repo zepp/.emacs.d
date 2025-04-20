@@ -28,14 +28,6 @@
 
 ;;-------------------------------------------------------------------------------
 
-(use-package browse-url
-  :init
-  (setq
-   browse-url-browser-function 'browse-url-chrome
-   browse-url-chrome-program "brave")
-  :defer t)
-
-;;-------------------------------------------------------------------------------
 
 (use-package uniquify
   :init (setq uniquify-buffer-name-style 'forward
@@ -331,12 +323,7 @@ quotation marks otherwise just inserts it"
    ;; make `rgrep' work
    find-program
    (expand-file-name "bin/find.exe"
-                     (getenv "ChocolateyInstall"))
-
-   browse-url-chrome-program
-   (expand-file-name
-    "brave.exe"
-    "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application"))
+                     (getenv "ChocolateyInstall")))
 
   ;; make `hunspell' work
   (let ((root (expand-file-name ".dicts"
