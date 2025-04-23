@@ -1,12 +1,17 @@
-(require 'warnings)
-
 (setq
+ calendar-week-start-day 1
  default-input-method 'russian-computer
  custom-file "~/.emacs.d/custom.el"
- use-package-hook-name-suffix nil
- calendar-week-start-day 1)
+ use-package-hook-name-suffix nil)
 
+;; prevent warning buffer from popping up in case of
+;; `undo-outer-limit' is exceeded
+(require 'warnings)
 (add-to-list 'warning-suppress-types '(undo discard-info))
+
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward
+      uniquify-ignore-buffers-re "^\\*")
 
 (add-to-list 'same-window-buffer-names "*grep*")
 
@@ -25,13 +30,6 @@
  '("melpa" . "http://stable.melpa.org/packages/")
  t)
 (package-initialize)
-
-;;-------------------------------------------------------------------------------
-
-
-(use-package uniquify
-  :init (setq uniquify-buffer-name-style 'forward
-              uniquify-ignore-buffers-re "^\\*"))
 
 ;;-------------------------------------------------------------------------------
 
