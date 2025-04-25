@@ -244,6 +244,7 @@ quotation marks otherwise just inserts it"
 
   :init
   (setq
+   org-hide-emphasis-markers t
    org-tags-column 0
    org-log-into-drawer t
    org-catch-invisible-edits 'show-and-error
