@@ -261,6 +261,7 @@ quotation marks otherwise just inserts it"
    org-html-self-link-headlines t
    org-html-head-include-default-style nil
    org-html-head-include-scripts nil
+   org-html-htmlize-output-type nil
    org-html-head
    (concat "<link rel=\"stylesheet\" type=\"text/css\" href=\"dist/article.css\"/>\n"
            "<script src=\"dist/bundle.js\"></script>")
