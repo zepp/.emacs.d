@@ -247,7 +247,7 @@ quotation marks otherwise just inserts it"
    org-hide-emphasis-markers t
    org-tags-column 0
    org-log-into-drawer t
-   org-catch-invisible-edits 'show-and-error
+   org-fold-catch-invisible-edits 'show-and-error
    org-time-stamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
    org-agenda-remove-tags t
    org-agenda-window-setup 'current-window
