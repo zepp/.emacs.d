@@ -230,7 +230,8 @@ quotation marks otherwise just inserts it"
 
 (use-package text-mode
   :bind (:map text-mode-map
-              ("C-q" . #'zeppa/double-q-marks))
+              ("C-q" . #'zeppa/double-q-marks)
+              ("C-c C-o" . #'browse-url))
   :hook
   (text-mode-hook . visual-line-mode)
   (text-mode-hook . whitespace-mode)
@@ -290,10 +291,8 @@ quotation marks otherwise just inserts it"
 (global-set-key (kbd "C-x p") #'previous-buffer)
 (global-set-key (kbd "C-x M-f") #'find-file-at-point)
 (global-set-key (kbd "C-x C-x") #'server-edit)
-
-;; general commands start from C-c
 (global-set-key (kbd "C-c g") #'rgrep)
-(global-set-key (kbd "C-c w") #'browse-url)
+
 ;; window management in StumpWM style :)
 (global-set-key (kbd "C-c s") #'split-window-horizontally)
 (global-set-key (kbd "C-c v") #'split-window-vertically)
