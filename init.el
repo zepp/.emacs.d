@@ -100,6 +100,7 @@ vertically."
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
+(tab-bar-mode 1)
 (column-number-mode 1)
 
 (use-package which-key
