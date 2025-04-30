@@ -336,7 +336,14 @@ quotation marks otherwise just inserts it"
  ((string= system-type "darwin")
   (setq mac-command-modifier 'meta
         mac-option-modifier 'none
-        browse-url-browser-function 'browse-url-default-macosx-browser)))
+        browse-url-browser-function 'browse-url-default-macosx-browser)
+  (when (eq window-system 'ns)
+    (use-package exec-path-from-shell
+      :config
+      (add-to-list 'exec-path-from-shell-variables "LANG")
+      (exec-path-from-shell-initialize)
+      :demand t
+      :ensure t))))
 
 ;;-------------------------------------------------------------------------------
 
