@@ -314,7 +314,7 @@ quotation marks otherwise just inserts it"
             (directory-files
              root
              nil
-             "[[:lower:]]\\{2\\}_[[:upper:]]\\{2\\}\\.aff"))))
+             "[[:lower:]]\\{2\\}_[[:upper:]]\\{2\\}\\.dic"))))
 
 (cond
 
