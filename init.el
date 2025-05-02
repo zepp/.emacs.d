@@ -143,6 +143,7 @@ vertically."
 ;; disable tab indentation globally
 (setq-default indent-tabs-mode nil)
 
+(save-place-mode 1)
 (transient-mark-mode 1)
 (delete-selection-mode 1)
 (electric-pair-mode 1)
