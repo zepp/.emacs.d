@@ -334,9 +334,11 @@ quotation marks otherwise just inserts it"
     (setq ispell-hunspell-dict-paths-alist (zeppa/list-dicts root))))
 
  ((string= system-type "darwin")
+  (menu-bar-mode 1)
   (setq mac-command-modifier 'meta
         mac-option-modifier 'none
-        browse-url-browser-function 'browse-url-default-macosx-browser)
+        browse-url-browser-function 'browse-url-default-macosx-browser
+        visible-bell nil)
   (when (eq window-system 'ns)
     (use-package exec-path-from-shell
       :config
