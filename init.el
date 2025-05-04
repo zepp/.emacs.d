@@ -176,6 +176,65 @@ vertically."
   :config (global-company-mode 1)
   :ensure t)
 
+(use-package compile
+  :init
+  (setq
+   compilation-auto-jump-to-first-error 'if-location-known
+   compilation-scroll-output t)
+
+  :config
+  (let ((alist '((webpack "ERROR in \\([^(\r\n]+\\)(\\([0-9]+\\),\\([0-9]+\\))?$" 1 2 3))))
+    (dolist (cell alist)
+      (add-to-list 'compilation-error-regexp-alist-alist cell)
+      (add-to-list 'compilation-error-regexp-alist (car cell))))
+
+  :defer t)
+
+(defun zeppa/ts-install-grammars ()
+  (dolist (grammar
+           '((css . ("https://github.com/tree-sitter/tree-sitter-css"))
+             (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+             (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+             (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1" "src"))
+             (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "tsx/src"))
+             (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "typescript/src"))
+             (python . ("https://github.com/tree-sitter/tree-sitter-python"))))
+
+    (add-to-list 'treesit-language-source-alist grammar)
+
+    (unless (treesit-language-available-p (car grammar))
+      (treesit-install-language-grammar (car grammar)))))
+
+(use-package treesit
+  :mode
+  (("\\.css\\'" . css-ts-mode)
+   ("\\.scss\\'" . css-ts-mode)
+   ("\\.tsx\\'" . tsx-ts-mode)
+   ("\\.jsx\\'" . tsx-ts-mode)
+   ("\\.js\\'"  . typescript-ts-mode)
+   ("\\.ts\\'"  . typescript-ts-mode)
+   ("\\.mjs\\'" . typescript-ts-mode)
+   ("\\.mts\\'" . typescript-ts-mode)
+   ("\\.cjs\\'" . typescript-ts-mode)
+   ("\\.json\\'" .  json-ts-mode)
+   ("\\.py\\'" . python-ts-mode))
+
+  :init
+  (dolist (mapping
+           '((css-mode . css-ts-mode)
+             (typescript-mode . typescript-ts-mode)
+             (js-mode . typescript-ts-mode)
+             (json-mode . json-ts-mode)
+             (js-json-mode . json-ts-mode)
+             (python-mode . python-ts-mode)
+             (bash-mode . bash-ts-mode)
+             (sh-mode . bash-ts-mode)
+             (sh-base-mode . bash-ts-mode)))
+    (add-to-list 'major-mode-remap-alist mapping))
+
+  :config
+  (zeppa/ts-install-grammars))
+
 ;;-------------------------------------------------------------------------------
 ;; version control
 
