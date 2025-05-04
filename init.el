@@ -84,6 +84,11 @@ vertically."
   (advice-add 'shell :around #'form-shell-buffer-name)
   :defer t)
 
+(use-package ag
+  :bind ("C-c g" . ag-regexp)
+  :defer t
+  :ensure t)
+
 ;;-------------------------------------------------------------------------------
 ;; UI related
 
@@ -352,7 +357,6 @@ quotation marks otherwise just inserts it"
 (global-set-key (kbd "C-x p") #'previous-buffer)
 (global-set-key (kbd "C-x M-f") #'find-file-at-point)
 (global-set-key (kbd "C-x C-x") #'server-edit)
-(global-set-key (kbd "C-c g") #'rgrep)
 
 ;; window management in StumpWM style :)
 (global-set-key (kbd "C-c s") #'split-window-horizontally)
