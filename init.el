@@ -317,6 +317,14 @@ quotation marks otherwise just inserts it"
              nil
              "[[:lower:]]\\{2\\}_[[:upper:]]\\{2\\}\\.dic"))))
 
+(defun zeppa/fix-find-regexp (list)
+  (mapcar #'(lambda(entry)
+              (if (string-match "\\^find" (car entry))
+                  (list (string-replace "^find" "find\\.exe" (car entry))
+                        (cadr entry))
+                entry))
+          list))
+
 (cond
 
  ((string= system-type "windows-nt")
@@ -325,6 +333,10 @@ quotation marks otherwise just inserts it"
    find-program
    (expand-file-name "bin/find.exe"
                      (getenv "ChocolateyInstall")))
+
+  (with-eval-after-load 'grep
+    (setq grep-mode-font-lock-keywords
+          (zeppa/fix-find-regexp grep-mode-font-lock-keywords)))
 
   ;; make `hunspell' work
   (let ((root (expand-file-name ".dicts"
