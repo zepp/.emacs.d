@@ -85,7 +85,9 @@ vertically."
   :defer t)
 
 (use-package ag
-  :bind ("C-c g" . ag-regexp)
+  :bind (("C-c g" . ag-project)
+         ("C-c M-g" . ag-project-regexp)
+         ("C-c f" . ag-project-files))
   :defer t
   :ensure t)
 
