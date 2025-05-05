@@ -98,7 +98,9 @@ vertically."
    compilation-scroll-output t)
 
   :config
-  (let ((alist '((webpack "ERROR in \\([^(\r\n]+\\)(\\([0-9]+\\),\\([0-9]+\\))?$" 1 2 3))))
+  (let ((alist
+         '((webpack "ERROR in \\([^(\r\n]+\\)(\\([0-9]+\\),\\([0-9]+\\))?$" 1 2 3)
+           (angular-nx "\\s-*\\([^:\r\n]+\\):\\([0-9]+\\):\\([0-9]+\\):$" 1 2 3))))
     (dolist (cell alist)
       (add-to-list 'compilation-error-regexp-alist-alist cell)
       (add-to-list 'compilation-error-regexp-alist (car cell))))
