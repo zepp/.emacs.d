@@ -84,6 +84,29 @@ vertically."
   (advice-add 'shell :around #'form-shell-buffer-name)
   :defer t)
 
+(defun zeppa/compile-buf-name (orig &rest args)
+  "prettify name of compilation buffer"
+
+  (let* ((compilation-buffer-name-function
+          #'(lambda (mode) (format "*%s: %s*" mode (nth 0 args)))))
+    (apply orig args)))
+
+(use-package compile
+  :init
+  (setq
+   compilation-auto-jump-to-first-error 'if-location-known
+   compilation-scroll-output t)
+
+  :config
+  (let ((alist '((webpack "ERROR in \\([^(\r\n]+\\)(\\([0-9]+\\),\\([0-9]+\\))?$" 1 2 3))))
+    (dolist (cell alist)
+      (add-to-list 'compilation-error-regexp-alist-alist cell)
+      (add-to-list 'compilation-error-regexp-alist (car cell))))
+
+  (advice-add 'compile :around #'zeppa/compile-buf-name)
+
+  :defer t)
+
 (use-package ag
   :bind (("C-c g" . ag-project)
          ("C-c M-g" . ag-project-regexp)
@@ -182,20 +205,6 @@ vertically."
   :bind ("M-t" . company-complete)
   :config (global-company-mode 1)
   :ensure t)
-
-(use-package compile
-  :init
-  (setq
-   compilation-auto-jump-to-first-error 'if-location-known
-   compilation-scroll-output t)
-
-  :config
-  (let ((alist '((webpack "ERROR in \\([^(\r\n]+\\)(\\([0-9]+\\),\\([0-9]+\\))?$" 1 2 3))))
-    (dolist (cell alist)
-      (add-to-list 'compilation-error-regexp-alist-alist cell)
-      (add-to-list 'compilation-error-regexp-alist (car cell))))
-
-  :defer t)
 
 (defun zeppa/ts-install-grammars ()
   (dolist (grammar
