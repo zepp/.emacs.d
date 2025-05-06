@@ -199,15 +199,16 @@ vertically."
 (use-package prog-mode
   :hook
   (prog-mode-hook . visual-line-mode)
-  (prog-mode-hook . whitespace-mode))
+  (prog-mode-hook . whitespace-mode)
+  (prog-mode-hook . company-mode))
 
 (use-package elisp-mode
   :hook (emacs-lisp-mode-hook . eldoc-mode)
   :defer t)
 
 (use-package company
-  :bind ("M-t" . company-complete)
-  :config (global-company-mode 1)
+  :bind (:map company-mode-map
+              ("M-t" . company-complete))
   :ensure t)
 
 (defun zeppa/ts-install-grammars ()
