@@ -92,6 +92,8 @@ vertically."
     (apply orig args)))
 
 (use-package compile
+  :bind ("C-c c" . compile)
+
   :init
   (setq
    compilation-auto-jump-to-first-error 'if-location-known
@@ -262,6 +264,8 @@ vertically."
   :defer t)
 
 (use-package magit
+  :bind ("C-x f" . #'magit-file-dispatch)
+
   :config
   ;; append to end of hook list
   (add-hook 'git-commit-setup-hook 'turn-off-auto-fill t)
@@ -308,7 +312,8 @@ quotation marks otherwise just inserts it"
 
 (use-package text-mode
   :bind (:map text-mode-map
-              ("C-q" . #'zeppa/double-q-marks)
+              ("M-q" . #'zeppa/double-q-marks)
+              ("C-c C-q" . #'fill-paragraph)
               ("C-c C-o" . #'browse-url))
   :hook
   (text-mode-hook . visual-line-mode)
@@ -344,9 +349,7 @@ quotation marks otherwise just inserts it"
    (concat "<link rel=\"stylesheet\" type=\"text/css\" href=\"dist/article.css\"/>\n"
            "<script src=\"dist/bundle.js\"></script>")
    org-html-head-extra "<meta property=\"og:type\" content=\"article\" />"
-   org-html-postamble nil
-   org-ascii-verbatim-format "«%s»"
-   org-ascii-text-width 1000)
+   org-html-postamble nil)
 
   :config
   (add-to-list 'org-latex-packages-alist '("AUTO" "babel" t ("pdflatex")))
@@ -368,7 +371,6 @@ quotation marks otherwise just inserts it"
 
 (global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
 (global-set-key (kbd "C-x p") #'previous-buffer)
-(global-set-key (kbd "C-x M-f") #'find-file-at-point)
 (global-set-key (kbd "C-x C-x") #'server-edit)
 
 ;; window management in StumpWM style :)
