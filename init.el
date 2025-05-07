@@ -164,7 +164,7 @@ vertically."
   :ensure t)
 
 (use-package swiper
-  :bind ("C-s" . swiper)
+  :bind ("M-s" . swiper)
   :demand t
   :ensure t)
 
