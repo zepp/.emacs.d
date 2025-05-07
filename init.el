@@ -326,7 +326,8 @@ quotation marks otherwise just inserts it"
 (use-package org
   :bind (("C-x C-a" . org-agenda)
          (:map org-mode-map
-               ("C-c M-s" . #'org-store-link)))
+               ("M-m" . org-emphasize)
+               ("C-c M-s" . org-store-link)))
 
   :init
   (setq
