@@ -296,6 +296,10 @@ vertically."
 
   :defer t)
 
+(use-package flyspell
+  :bind (:map flyspell-mode-map
+              ("M-t" . flyspell-auto-correct-word)))
+
 (defun zeppa/double-q-marks ()
   "if region is active then it wraps marked text with double angle
 quotation marks otherwise just inserts it"
@@ -326,6 +330,7 @@ quotation marks otherwise just inserts it"
 (use-package org
   :bind (("C-x C-a" . org-agenda)
          (:map org-mode-map
+               ("M-t" . nil)
                ("M-m" . org-emphasize)
                ("C-c M-s" . org-store-link)))
 
