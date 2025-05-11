@@ -2,6 +2,7 @@
  calendar-week-start-day 1
  default-input-method 'russian-computer
  custom-file "~/.emacs.d/custom.el"
+ use-package-always-defer t
  use-package-hook-name-suffix nil)
 
 ;; prevent warning buffer from popping up in case of
@@ -25,6 +26,7 @@
   (normal-top-level-add-subdirs-to-load-path))
 
 (require 'package)
+(setq use-package-compute-statistics t)
 (add-to-list
  'package-archives
  '("melpa" . "http://stable.melpa.org/packages/")
@@ -64,9 +66,7 @@ vertically."
               dired-listing-switches "-alGh")
 
   :config
-  (advice-add 'dired-do-shell-command :around #'dired-shell-command-popup)
-
-  :defer t)
+  (advice-add 'dired-do-shell-command :around #'dired-shell-command-popup))
 
 (defun form-shell-buffer-name (orig &rest args)
   "it forms meaningful buffer name"
@@ -81,8 +81,7 @@ vertically."
 
 (use-package shell
   :config
-  (advice-add 'shell :around #'form-shell-buffer-name)
-  :defer t)
+  (advice-add 'shell :around #'form-shell-buffer-name))
 
 (defun zeppa/compile-buf-name (orig &rest args)
   "prettify name of compilation buffer"
@@ -107,15 +106,12 @@ vertically."
       (add-to-list 'compilation-error-regexp-alist-alist cell)
       (add-to-list 'compilation-error-regexp-alist (car cell))))
 
-  (advice-add 'compile :around #'zeppa/compile-buf-name)
-
-  :defer t)
+  (advice-add 'compile :around #'zeppa/compile-buf-name))
 
 (use-package ag
   :bind (("C-c g" . ag-project)
          ("C-c M-g" . ag-project-regexp)
          ("C-c f" . ag-project-files))
-  :defer t
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
@@ -140,6 +136,7 @@ vertically."
 (use-package which-key
   :init (setq which-key-idle-delay 2.0)
   :config (which-key-mode 1)
+  :demand t
   :ensure t)
 
 (use-package ivy
@@ -170,6 +167,7 @@ vertically."
 
 (use-package powerline
   :config (powerline-default-theme)
+  :demand t
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
@@ -203,8 +201,7 @@ vertically."
   (prog-mode-hook . company-mode))
 
 (use-package elisp-mode
-  :hook (emacs-lisp-mode-hook . eldoc-mode)
-  :defer t)
+  :hook (emacs-lisp-mode-hook . eldoc-mode))
 
 (use-package company
   :bind (:map company-mode-map
@@ -261,8 +258,7 @@ vertically."
 
 (use-package diff-mode
   :bind (:map diff-mode-map
-              ("C-m" . diff-goto-source))
-  :defer t)
+              ("C-m" . diff-goto-source)))
 
 (use-package magit
   :bind ("C-x f" . #'magit-file-dispatch)
@@ -272,8 +268,7 @@ vertically."
   (add-hook 'git-commit-setup-hook 'turn-off-auto-fill t)
   (add-hook 'git-commit-setup-hook #'zeppa/ws-long-lines)
 
-  :ensure t
-  :defer t)
+  :ensure t)
 
 (use-package ssh-agency
   :demand t
@@ -292,9 +287,7 @@ vertically."
   (ispell-set-spellchecker-params)
   (ispell-hunspell-add-multi-dic "ru_RU,en_US")
   (unless (file-exists-p ispell-personal-dictionary)
-    (write-region "" nil ispell-personal-dictionary nil 0))
-
-  :defer t)
+    (write-region "" nil ispell-personal-dictionary nil 0)))
 
 (use-package flyspell
   :bind (:map flyspell-mode-map
@@ -324,8 +317,7 @@ quotation marks otherwise just inserts it"
   (text-mode-hook . visual-line-mode)
   (text-mode-hook . whitespace-mode)
   (text-mode-hook . flyspell-mode)
-  (text-mode-hook . abbrev-mode)
-  :defer t)
+  (text-mode-hook . abbrev-mode))
 
 (use-package org
   :bind (("C-x C-a" . org-agenda)
@@ -370,9 +362,7 @@ quotation marks otherwise just inserts it"
   (org-mode-hook . flyspell-mode)
 
   :mode
-  (("\\.org\\'" . org-mode))
-
-  :defer t)
+  (("\\.org\\'" . org-mode)))
 
 ;;-------------------------------------------------------------------------------
 
