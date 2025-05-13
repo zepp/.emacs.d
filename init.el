@@ -132,8 +132,29 @@ vertically."
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
-(tab-bar-mode 1)
 (column-number-mode 1)
+
+(defun zeppa/tab-bar-map ()
+  "builds custom `tab-bar-mode' map"
+
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-t") #'tab-bar-new-tab)
+    (define-key map (kbd "C-n") #'tab-bar-switch-to-next-tab)
+    (define-key map (kbd "C-p") #'tab-bar-switch-to-prev-tab)
+    (define-key map (kbd "C-r") #'tab-bar-switch-to-recent-tab)
+    (define-key map (kbd "C-l") #'tab-bar-switch-to-last-tab)
+    (define-key map (kbd "C-q") #'tab-bar-close-other-tabs)
+    (define-key map (kbd "C-k") #'tab-bar-close-tab)
+    map))
+
+(use-package tab-bar
+  :bind-keymap ("C-t" . tab-bar-mode-map)
+
+  :config
+  (setq tab-bar-mode-map (zeppa/tab-bar-map))
+  (tab-bar-mode 1)
+
+  :demand t)
 
 (use-package which-key
   :init (setq which-key-idle-delay 2.0)
