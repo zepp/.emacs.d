@@ -326,7 +326,7 @@ quotation marks otherwise just inserts it"
          (:map org-mode-map
                ("M-t" . nil)
                ("M-m" . org-emphasize)
-               ("C-c M-s" . org-store-link)))
+               ("C-c C-x C-s" . org-store-link)))
 
   :init
   (setq
@@ -337,6 +337,7 @@ quotation marks otherwise just inserts it"
    org-time-stamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
    org-agenda-remove-tags t
    org-agenda-window-setup 'current-window
+   org-archive-subtree-save-file-p t
 
    org-export-with-toc nil
    org-export-with-section-numbers nil
