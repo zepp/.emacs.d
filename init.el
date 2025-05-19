@@ -221,6 +221,7 @@ vertically."
   :hook
   (prog-mode-hook . visual-line-mode)
   (prog-mode-hook . whitespace-mode)
+  (prog-mode-hook . auto-revert-mode)
   (prog-mode-hook . company-mode))
 
 (use-package elisp-mode
