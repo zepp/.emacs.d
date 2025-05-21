@@ -53,7 +53,8 @@ vertically."
 
 (use-package dired
   :bind (:map dired-mode-map
-              (("c" . dired-do-copy)
+              (("C-t C-t" . nil)
+               ("c" . dired-do-copy)
                ("d" . dired-do-delete)
                ("r" . dired-do-rename)
                ("M-d" . dired-flag-file-deletion)))
