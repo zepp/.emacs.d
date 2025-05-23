@@ -233,20 +233,15 @@ vertically."
               ("M-t" . company-complete))
   :ensure t)
 
-(defun zeppa/ts-install-grammars ()
-  (dolist (grammar
-           '((css . ("https://github.com/tree-sitter/tree-sitter-css"))
-             (html . ("https://github.com/tree-sitter/tree-sitter-html"))
-             (json . ("https://github.com/tree-sitter/tree-sitter-json"))
-             (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1" "src"))
-             (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "tsx/src"))
-             (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "typescript/src"))
-             (python . ("https://github.com/tree-sitter/tree-sitter-python"))))
-
-    (add-to-list 'treesit-language-source-alist grammar)
-
-    (unless (treesit-language-available-p (car grammar))
-      (treesit-install-language-grammar (car grammar)))))
+(use-package tree-sitter-langs
+  :init
+  (setq tree-sitter-langs-grammar-dir
+        (expand-file-name "tree-sitter"
+                          user-emacs-directory))
+  (unless (file-directory-p tree-sitter-langs-grammar-dir)
+    (make-directory tree-sitter-langs-grammar-dir))
+  :demand t
+  :ensure t)
 
 (use-package treesit
   :mode
@@ -273,10 +268,7 @@ vertically."
              (bash-mode . bash-ts-mode)
              (sh-mode . bash-ts-mode)
              (sh-base-mode . bash-ts-mode)))
-    (add-to-list 'major-mode-remap-alist mapping))
-
-  :config
-  (zeppa/ts-install-grammars))
+    (add-to-list 'major-mode-remap-alist mapping)))
 
 ;;-------------------------------------------------------------------------------
 ;; version control
