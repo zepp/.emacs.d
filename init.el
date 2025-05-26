@@ -109,12 +109,18 @@ vertically."
       (add-to-list 'compilation-error-regexp-alist-alist cell)
       (add-to-list 'compilation-error-regexp-alist (car cell))))
 
+  (add-to-list 'display-buffer-alist
+               '("^\\*compilation: .*" display-buffer-at-bottom))
+
   (advice-add 'compile :around #'zeppa/compile-buf-name))
 
 (use-package ag
   :bind (("C-c g" . ag-project)
          ("C-c M-g" . ag-project-regexp)
          ("C-c f" . ag-project-files))
+  :config
+  (add-to-list 'display-buffer-alist
+               '("^\\*ag.*" display-buffer-use-some-window))
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
@@ -300,7 +306,10 @@ vertically."
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
-;; https://200ok.ch/posts/2020-08-22_setting_up_spell_checking_with_multiple_dictionaries.html
+
+(use-package abbrev
+  :bind (:map edit-abbrevs-mode-map
+              ("C-x C-w") . nil))
 
 (use-package ispell
   :init
@@ -392,16 +401,14 @@ quotation marks otherwise just inserts it"
 
 ;;-------------------------------------------------------------------------------
 
-(global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
-(global-set-key (kbd "C-x p") #'previous-buffer)
 (global-set-key (kbd "C-x C-x") #'server-edit)
-
-;; window management in StumpWM style :)
-(global-set-key (kbd "C-c s") #'split-window-horizontally)
-(global-set-key (kbd "C-c v") #'split-window-vertically)
-(global-set-key (kbd "C-c q") #'delete-other-windows)
-(global-set-key (kbd "C-c k") #'delete-window)
-(global-set-key (kbd "C-c o") #'other-window)
+(global-set-key (kbd "C-x p") #'previous-buffer)
+(global-set-key (kbd "C-x M-s") #'write-file)
+(global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
+(global-set-key (kbd "C-x M-f") #'find-file-other-window)
+(global-set-key (kbd "C-x M-d") #'dired-other-window)
+;; originaly it was `write-file'
+(global-set-key (kbd "C-x C-w") #'delete-window)
 
 ;;-------------------------------------------------------------------------------
 ;; os specific configuration
