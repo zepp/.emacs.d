@@ -120,7 +120,7 @@ vertically."
          ("C-c f" . ag-project-files))
   :config
   (add-to-list 'display-buffer-alist
-               '("^\\*ag.*" display-buffer-use-some-window))
+               '("^\\*ag.*" display-buffer-at-bottom))
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
@@ -150,8 +150,7 @@ vertically."
     (define-key map (kbd "C-p") #'tab-bar-switch-to-prev-tab)
     (define-key map (kbd "C-r") #'tab-bar-switch-to-recent-tab)
     (define-key map (kbd "C-l") #'tab-bar-switch-to-last-tab)
-    (define-key map (kbd "C-q") #'tab-bar-close-other-tabs)
-    (define-key map (kbd "C-k") #'tab-bar-close-tab)
+    (define-key map (kbd "C-w") #'tab-bar-close-tab)
     map))
 
 (use-package tab-bar
@@ -173,7 +172,8 @@ vertically."
   :bind (("C-c C-r" . ivy-resume)
 
          :map ivy-minibuffer-map
-         ("M-t" . ivy-partial-or-done))
+         (("C-w" . ivy-yank-word)
+          ("M-t" . ivy-partial-or-done)))
 
   :init (setq ivy-use-virtual-buffers t
               ivy-count-format "[%d/%d] ")
@@ -190,8 +190,14 @@ vertically."
   :demand t
   :ensure t)
 
+(use-package isearch
+  :config
+  (add-to-list 'display-buffer-alist
+               '("^\\*Occur\\*$" display-buffer-at-bottom))
+  :demand t)
+
 (use-package swiper
-  :bind ("M-s" . swiper)
+  :bind ("M-s o" . swiper)
   :demand t
   :ensure t)
 
