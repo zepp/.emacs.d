@@ -14,7 +14,17 @@
 (setq uniquify-buffer-name-style 'forward
       uniquify-ignore-buffers-re "^\\*")
 
-(add-to-list 'same-window-buffer-names "*grep*")
+(setq switch-to-buffer-obey-display-actions t)
+
+;; all this modes provide navigation capabilities
+(add-to-list 'display-buffer-alist
+             '((or (derived-mode . compilation-mode)
+                   (major-mode . occur-mode)
+                   (major-mode . Buffer-menu-mode))
+               (display-buffer-reuse-window
+                display-buffer-in-side-window)
+               (side . bottom)
+               (window-min-height . 0.25)))
 
 (add-hook 'kill-emacs-hook #'basic-save-buffer)
 
@@ -109,18 +119,15 @@ vertically."
       (add-to-list 'compilation-error-regexp-alist-alist cell)
       (add-to-list 'compilation-error-regexp-alist (car cell))))
 
-  (add-to-list 'display-buffer-alist
-               '("^\\*compilation: .*" display-buffer-at-bottom))
-
   (advice-add 'compile :around #'zeppa/compile-buf-name))
 
 (use-package ag
   :bind (("C-c g" . ag-project)
          ("C-c M-g" . ag-project-regexp)
          ("C-c f" . ag-project-files))
-  :config
-  (add-to-list 'display-buffer-alist
-               '("^\\*ag.*" display-buffer-at-bottom))
+  :init
+  (setq ag-reuse-buffers t)
+
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
@@ -189,12 +196,6 @@ vertically."
 
   :demand t
   :ensure t)
-
-(use-package isearch
-  :config
-  (add-to-list 'display-buffer-alist
-               '("^\\*Occur\\*$" display-buffer-at-bottom))
-  :demand t)
 
 (use-package swiper
   :bind ("M-s o" . swiper)
