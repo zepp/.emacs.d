@@ -301,6 +301,10 @@ vertically."
 (use-package magit
   :bind ("C-x f" . #'magit-file-dispatch)
 
+  :init
+  (add-to-list 'display-buffer-alist
+               '((major-mode . magit-status-mode)
+                 display-buffer-full-frame))
   :config
   ;; append to end of hook list
   (add-hook 'git-commit-setup-hook 'turn-off-auto-fill t)
