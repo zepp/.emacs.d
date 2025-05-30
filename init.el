@@ -426,8 +426,9 @@ quotation marks otherwise just inserts it"
 (global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
 (global-set-key (kbd "C-x M-f") #'find-file-other-window)
 (global-set-key (kbd "C-x M-d") #'dired-other-window)
+(global-set-key (kbd "C-x M-j") #'dired-jump-other-window)
 ;; originaly it was `write-file'
-(global-set-key (kbd "C-x C-w") #'delete-window)
+(global-set-key (kbd "C-x C-w") #'quit-window)
 
 ;;-------------------------------------------------------------------------------
 ;; os specific configuration
