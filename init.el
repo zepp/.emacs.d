@@ -392,6 +392,14 @@ quotation marks otherwise just inserts it"
    org-html-head-extra "<meta property=\"og:type\" content=\"article\" />"
    org-html-postamble nil)
 
+  (add-to-list 'display-buffer-alist
+               '((or
+                  ;; there is a whitespace at the beginning of the buffer name
+                  "\\*Agenda Commands\\*$"
+                  "\\*Org Export Dispatcher\\*$"
+                  (major-mode . calendar-mode))
+                 display-buffer-at-bottom
+                 (dedicated . t)))
   :config
   (add-to-list 'org-latex-packages-alist '("AUTO" "babel" t ("pdflatex")))
   (add-to-list 'org-latex-packages-alist '("" "tabularx"))
