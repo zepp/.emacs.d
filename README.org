@@ -1,6 +1,5 @@
 My Emacs configuration which I strive to keep /simple/ as much as possible:
 - [[https://github.com/jwiegley/use-package][use-package]] -- package configurations management
 - [[https://orgmode.org/][Org Mode]] -- for note-taking and task management
-- [[https://github.com/abo-abo/swiper][Ivy, Counsel, Swiper]] -- to switch buffers, complete file names and search strings
 - [[https://github.com/milkypostman/powerline][Powerline]] -- to make mode line look pretty
 - [[https://magit.vc/][Magit]] -- to work with git repositories

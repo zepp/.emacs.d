@@ -16,11 +16,12 @@
 
 (setq switch-to-buffer-obey-display-actions t)
 
-;; all this modes provide navigation capabilities
+;; some of this modes provide navigation capabilities
 (add-to-list 'display-buffer-alist
              '((or (derived-mode . compilation-mode)
                    (major-mode . occur-mode)
-                   (major-mode . Buffer-menu-mode))
+                   (major-mode . Buffer-menu-mode)
+                   (major-mode . completion-list-mode))
                (display-buffer-reuse-window
                 display-buffer-in-side-window)
                (side . bottom)
@@ -175,32 +176,30 @@ vertically."
   :demand t
   :ensure t)
 
-(use-package ivy
-  :bind (("C-c C-r" . ivy-resume)
-
-         :map ivy-minibuffer-map
-         (("C-w" . ivy-yank-word)
-          ("M-t" . ivy-partial-or-done)))
-
-  :init (setq ivy-use-virtual-buffers t
-              ivy-count-format "[%d/%d] ")
+(use-package ido
+  :init
+  (setq ido-enable-flex-matching t
+        ido-use-virtual-buffers t)
 
   :config
-  (dolist (buf '("magit-process: .*"
-                 "\\*vc-diff\\*.*"
-                 "\\*tide-server\\*"
+  (dolist (buf '("^magit-process: .*"
                  "\\*Quail Completions\\*"
+                 "\\*Completions\\*"
                  "\\*Buffer List\\*"))
-    (add-to-list 'ivy-ignore-buffers buf))
-  (ivy-mode 1)
+    (add-to-list 'ido-ignore-buffers buf))
 
-  :demand t
-  :ensure t)
+  (ido-mode 1)
 
-(use-package swiper
-  :bind ("M-s o" . swiper)
-  :demand t
-  :ensure t)
+  :demand t)
+
+(use-package isearch
+  :bind
+  (:map isearch-mode-map
+        ("M-o" . isearch-occur))
+  (:map search-map
+        ("s" . isearch-forward-thing-at-point))
+
+  :demand t)
 
 (use-package powerline
   :config (powerline-default-theme)
