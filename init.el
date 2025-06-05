@@ -400,6 +400,7 @@ quotation marks otherwise just inserts it"
                   ;; there is a whitespace at the beginning of the buffer name
                   "\\*Agenda Commands\\*$"
                   "\\*Org Export Dispatcher\\*$"
+                  "\\*Org Select\\*$"
                   (major-mode . calendar-mode))
                  display-buffer-at-bottom
                  (dedicated . t)))
