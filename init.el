@@ -20,12 +20,20 @@
 (add-to-list 'display-buffer-alist
              '((or (derived-mode . compilation-mode)
                    (major-mode . occur-mode)
-                   (major-mode . Buffer-menu-mode)
-                   (major-mode . completion-list-mode))
+                   (major-mode . Buffer-menu-mode))
                (display-buffer-reuse-window
                 display-buffer-in-side-window)
                (side . bottom)
                (window-min-height . 0.25)))
+
+(setq completion-styles '(basic substring)
+      completion-show-help nil
+      completion-auto-select 'second-tab
+      completion-auto-help 'visible
+      completions-format 'one-column
+      completions-sort 'historical
+      completions-max-height 10
+      completion-ignore-case t)
 
 (add-hook 'kill-emacs-hook #'basic-save-buffer)
 
