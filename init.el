@@ -63,13 +63,6 @@
 
 (advice-add 'async-shell-command :around #'form-shell-command-buffer-name)
 
-(defun dired-shell-command-popup (orig &rest args)
-  "Controls the fashion of window splitting. Splits window
-vertically."
-  (let ((split-height-threshold 0)
-        (split-width-threshold nil))
-    (apply orig args)))
-
 (use-package dired
   :bind (:map dired-mode-map
               (("C-t C-t" . nil)
@@ -83,10 +76,7 @@ vertically."
               ;; -l is mandatory
               ;; -G omit the group name
               ;; -h human-readable size
-              dired-listing-switches "-alGh")
-
-  :config
-  (advice-add 'dired-do-shell-command :around #'dired-shell-command-popup))
+              dired-listing-switches "-alGh"))
 
 (defun form-shell-buffer-name (orig &rest args)
   "it forms meaningful buffer name"
