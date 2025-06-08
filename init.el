@@ -177,6 +177,7 @@
 (use-package ido
   :init
   (setq ido-enable-flex-matching t
+        ido-cannot-complete-command 'ido-next-match
         ido-use-virtual-buffers t)
 
   :config
