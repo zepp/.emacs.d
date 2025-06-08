@@ -400,7 +400,6 @@ quotation marks otherwise just inserts it"
    org-html-head
    (concat "<link rel=\"stylesheet\" type=\"text/css\" href=\"dist/article.css\"/>\n"
            "<script src=\"dist/bundle.js\"></script>")
-   org-html-head-extra "<meta property=\"og:type\" content=\"article\" />"
    org-html-postamble nil)
 
   (add-to-list 'display-buffer-alist
