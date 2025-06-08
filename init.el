@@ -30,10 +30,10 @@
       completion-show-help nil
       completion-auto-select 'second-tab
       completion-auto-help 'visible
+      completion-ignore-case t
+      ;; minibuffer
       completions-format 'one-column
-      completions-sort 'historical
-      completions-max-height 10
-      completion-ignore-case t)
+      completions-max-height 10)
 
 (add-hook 'kill-emacs-hook #'basic-save-buffer)
 
