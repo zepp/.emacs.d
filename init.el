@@ -233,15 +233,16 @@
   :hook
   (prog-mode-hook . visual-line-mode)
   (prog-mode-hook . whitespace-mode)
-  (prog-mode-hook . auto-revert-mode)
-  (prog-mode-hook . company-mode))
+  (prog-mode-hook . auto-revert-mode))
 
 (use-package elisp-mode
   :hook (emacs-lisp-mode-hook . eldoc-mode))
 
 (use-package company
+  :after prog-mode
   :bind (:map company-mode-map
               ("M-t" . company-complete))
+  :hook (prog-mode-hook . company-mode)
   :ensure t)
 
 (defun zeppa/ts-install-grammars ()
