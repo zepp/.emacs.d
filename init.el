@@ -181,8 +181,7 @@
         ido-use-virtual-buffers t)
 
   :config
-  (dolist (buf '("^magit-process: .*"
-                 "\\*Quail Completions\\*"
+  (dolist (buf '("\\*Quail Completions\\*"
                  "\\*Completions\\*"
                  "\\*Buffer List\\*"))
     (add-to-list 'ido-ignore-buffers buf))
@@ -298,6 +297,7 @@
               ("C-m" . diff-goto-source)))
 
 (use-package magit
+  :after ido
   :bind ("C-x f" . #'magit-file-dispatch)
 
   :init
@@ -308,6 +308,7 @@
   ;; append to end of hook list
   (add-hook 'git-commit-setup-hook 'turn-off-auto-fill t)
   (add-hook 'git-commit-setup-hook #'zeppa/ws-long-lines)
+  (add-to-list 'ido-ignore-buffers "^magit-process: .*")
 
   :ensure t)
 
