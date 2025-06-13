@@ -240,7 +240,7 @@
 (use-package company
   :after prog-mode
   :bind (:map company-mode-map
-              ("M-t" . company-complete))
+              ("C-M-i" . company-complete))
   :hook (prog-mode-hook . company-mode)
   :ensure t)
 
@@ -334,10 +334,6 @@
   (unless (file-exists-p ispell-personal-dictionary)
     (write-region "" nil ispell-personal-dictionary nil 0)))
 
-(use-package flyspell
-  :bind (:map flyspell-mode-map
-              ("M-t" . flyspell-auto-correct-word)))
-
 (defun zeppa/double-q-marks ()
   "if region is active then it wraps marked text with double angle
 quotation marks otherwise just inserts it"
@@ -367,7 +363,6 @@ quotation marks otherwise just inserts it"
 (use-package org
   :bind (("C-x C-a" . org-agenda)
          (:map org-mode-map
-               ("M-t" . nil)
                ("M-m" . org-emphasize)
                ("C-c C-x C-s" . org-store-link)))
 
