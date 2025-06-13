@@ -380,15 +380,18 @@ quotation marks otherwise just inserts it"
    org-export-with-toc nil
    org-export-with-section-numbers nil
    org-export-initial-scope 'subtree
-   ;; https://orgmode.org/manual/CSS-support.html
+
+   ;; highlight.js to be used
+   org-html-htmlize-output-type nil
    org-html-self-link-headlines t
    org-html-head-include-default-style nil
    org-html-head-include-scripts nil
-   org-html-htmlize-output-type nil
    org-html-head
    (concat "<link rel=\"stylesheet\" type=\"text/css\" href=\"dist/article.css\"/>\n"
            "<script src=\"dist/bundle.js\"></script>")
-   org-html-postamble nil)
+   org-html-postamble t
+   org-html-postamble-format
+   '(("ru" "<p class=\"author\">%a</p><p class=\"timestamp\">%T</p>")))
 
   (add-to-list 'display-buffer-alist
                '((or
