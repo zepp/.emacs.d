@@ -196,6 +196,9 @@
         ("M-o" . isearch-occur))
   (:map search-map
         ("s" . isearch-forward-thing-at-point))
+  :init
+  (setq isearch-allow-motion t
+        isearch-motion-changes-direction t)
 
   :demand t)
 
