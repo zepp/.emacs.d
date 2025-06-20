@@ -175,6 +175,7 @@
   :ensure t)
 
 (use-package ido
+  :bind ("C-x C-d" . ido-dired)
   :init
   (setq ido-enable-flex-matching t
         ido-cannot-complete-command 'ido-next-match
@@ -301,7 +302,7 @@
 
 (use-package magit
   :after ido
-  :bind ("C-x f" . #'magit-file-dispatch)
+  :bind ("C-x f" . magit-file-dispatch)
 
   :init
   (setq magit-display-buffer-function
@@ -312,6 +313,7 @@
   (add-hook 'git-commit-setup-hook 'turn-off-auto-fill t)
   (add-hook 'git-commit-setup-hook #'zeppa/ws-long-lines)
   (add-to-list 'ido-ignore-buffers "^magit-process: .*")
+  (add-to-list 'ido-ignore-buffers ".*\\.~[[:alnum:]]+~$")
 
   :ensure t)
 
