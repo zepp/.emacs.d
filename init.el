@@ -398,19 +398,7 @@ quotation marks otherwise just inserts it"
 
    org-export-with-toc nil
    org-export-with-section-numbers nil
-   org-export-initial-scope 'subtree
-
-   ;; highlight.js to be used
-   org-html-htmlize-output-type nil
-   org-html-self-link-headlines t
-   org-html-head-include-default-style nil
-   org-html-head-include-scripts nil
-   org-html-head
-   (concat "<link rel=\"stylesheet\" type=\"text/css\" href=\"dist/article.css\"/>\n"
-           "<script src=\"dist/bundle.js\"></script>")
-   org-html-postamble t
-   org-html-postamble-format
-   '(("ru" "<p class=\"author\">%a</p><p class=\"timestamp\">%T</p>")))
+   org-export-initial-scope 'subtree)
 
   (add-to-list 'display-buffer-alist
                '((or
@@ -434,6 +422,33 @@ quotation marks otherwise just inserts it"
 
   :mode
   (("\\.org\\'" . org-mode)))
+
+(use-package ox-html
+  :after org
+  :defer t
+  :init
+  (setq
+   ;; highlight.js to be used
+   org-html-htmlize-output-type nil
+   org-html-self-link-headlines t
+   org-html-head-include-default-style nil
+   org-html-head-include-scripts nil
+   org-html-head
+   (concat "<link rel=\"stylesheet\" type=\"text/css\" href=\"dist/article.css\"/>\n"
+           "<script src=\"dist/bundle.js\"></script>")
+   org-html-postamble t)
+
+  :config
+  (add-to-list 'org-html-postamble-format
+               `("ru"
+                 ,(concat
+                   "<p class=\"author\">%a</p>"
+                   "<p class=\"timestamp\">%T</p>")))
+
+  (add-to-list 'org-html-special-string-regexps
+               '("—" . "&#x2014;"))
+  (add-to-list 'org-html-special-string-regexps
+               '("–" . "&#x2013;")))
 
 ;;-------------------------------------------------------------------------------
 
