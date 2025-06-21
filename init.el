@@ -354,11 +354,25 @@ quotation marks otherwise just inserts it"
       (insert "«»")
       (backward-char 1)))
 
+(defun zeppa/insert-dash ()
+  "inserts dash or hyphen character according to prefix argument"
+  (interactive)
+
+  (insert-char
+   (cond ((or (eq 3 current-prefix-arg)
+              (not current-prefix-arg))
+          (char-from-name "EM DASH"))
+         ((eq 2 current-prefix-arg)
+          (char-from-name "EN DASH"))
+         (t (char-from-name "HYPHEN")))
+   1 t))
+
 (use-package text-mode
   :bind (:map text-mode-map
-              ("M-q" . #'zeppa/double-q-marks)
-              ("C-c C-q" . #'fill-paragraph)
-              ("C-c C-o" . #'browse-url))
+              ("M-q" . zeppa/double-q-marks)
+              ("C-M--" . zeppa/insert-dash)
+              ("C-c C-q" . fill-paragraph)
+              ("C-c C-o" . browse-url))
   :hook
   (text-mode-hook . visual-line-mode)
   (text-mode-hook . whitespace-mode)
