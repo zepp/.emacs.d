@@ -1,7 +1,8 @@
 (setq
  calendar-week-start-day 1
  default-input-method 'russian-computer
- custom-file "~/.emacs.d/custom.el"
+
+ custom-file (locate-user-emacs-file "custom.el")
  use-package-always-defer t
  use-package-hook-name-suffix nil)
 
