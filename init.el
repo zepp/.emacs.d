@@ -66,14 +66,9 @@
 
 (use-package dired
   :bind (:map dired-mode-map
-              (("C-t C-t" . nil)
-               ("c" . dired-do-copy)
-               ("d" . dired-do-delete)
-               ("r" . dired-do-rename)
-               ("M-d" . dired-flag-file-deletion)))
+              ("C-t C-t" . nil))
 
-  :init (setq dired-recursive-deletes 'always
-              dired-deletion-confirmer #'y-or-n-p
+  :init (setq dired-deletion-confirmer #'y-or-n-p
               ;; -l is mandatory
               ;; -G omit the group name
               ;; -h human-readable size
