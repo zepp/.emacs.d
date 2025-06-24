@@ -448,8 +448,6 @@ quotation marks otherwise just inserts it"
 
 ;;-------------------------------------------------------------------------------
 
-(global-set-key (kbd "C-x C-x") #'server-edit)
-(global-set-key (kbd "C-x p") #'previous-buffer)
 (global-set-key (kbd "C-x M-s") #'write-file)
 (global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
 (global-set-key (kbd "C-x M-f") #'find-file-other-window)
