@@ -74,20 +74,9 @@
               ;; -h human-readable size
               dired-listing-switches "-alGh"))
 
-(defun form-shell-buffer-name (orig &rest args)
-  "it forms meaningful buffer name"
-
-  (let* ((dir (directory-file-name default-directory))
-         (name (concat (car (last (split-string dir "/")))
-                       ":shell")))
-    (apply orig
-           (if (not (nth 0 args))
-               (list name)
-             args))))
-
 (use-package shell
-  :config
-  (advice-add 'shell :around #'form-shell-buffer-name))
+  :hook
+  (shell-mode-hook . shell-dirtrack-mode))
 
 (defun zeppa/compile-buf-name (orig &rest args)
   "prettify name of compilation buffer"
