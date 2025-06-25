@@ -339,9 +339,10 @@ quotation marks otherwise just inserts it"
       (insert "«»")
       (backward-char 1)))
 
-(defun zeppa/insert-dash ()
-  "inserts dash or hyphen character according to prefix argument"
-  (interactive)
+(defun zeppa/insert-dash (arg)
+  "inserts em dash, en dash or hyphen character according to numeric
+prefix argument"
+  (interactive "p")
 
   (insert-char
    (cond ((or (eq 3 current-prefix-arg)
