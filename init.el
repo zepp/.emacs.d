@@ -188,11 +188,6 @@
 
   :demand t)
 
-(use-package powerline
-  :config (powerline-default-theme)
-  :demand t
-  :ensure t)
-
 ;;-------------------------------------------------------------------------------
 
 ;; disable tab indentation globally
