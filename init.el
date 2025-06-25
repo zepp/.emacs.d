@@ -433,13 +433,13 @@ prefix argument"
 
 ;;-------------------------------------------------------------------------------
 
-(global-set-key (kbd "C-x M-s") #'write-file)
-(global-set-key (kbd "C-x M-b") #'switch-to-buffer-other-window)
-(global-set-key (kbd "C-x M-f") #'find-file-other-window)
-(global-set-key (kbd "C-x M-d") #'dired-other-window)
-(global-set-key (kbd "C-x M-j") #'dired-jump-other-window)
+(define-key ctl-x-map (kbd "M-s") #'write-file)
+(define-key ctl-x-map (kbd "M-b") #'switch-to-buffer-other-window)
+(define-key ctl-x-map (kbd "M-f") #'find-file-other-window)
+(define-key ctl-x-map (kbd "M-d") #'dired-other-window)
+(define-key ctl-x-map (kbd "M-j") #'dired-jump-other-window)
 ;; originaly it was `write-file'
-(global-set-key (kbd "C-x C-w") #'quit-window)
+(define-key ctl-x-map (kbd "C-w") #'quit-window)
 
 ;;-------------------------------------------------------------------------------
 ;; os specific configuration
