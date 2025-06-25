@@ -21,7 +21,8 @@
 (add-to-list 'display-buffer-alist
              '((or (derived-mode . compilation-mode)
                    (major-mode . occur-mode)
-                   (major-mode . Buffer-menu-mode))
+                   (major-mode . Buffer-menu-mode)
+                   (major-mode . xref--xref-buffer-mode))
                (display-buffer-reuse-window
                 display-buffer-in-side-window)
                (side . bottom)
@@ -86,8 +87,6 @@
     (apply orig args)))
 
 (use-package compile
-  :bind ("C-c c" . compile)
-
   :init
   (setq
    compilation-auto-jump-to-first-error 'if-location-known
@@ -440,6 +439,10 @@ prefix argument"
 (define-key ctl-x-map (kbd "M-j") #'dired-jump-other-window)
 ;; originaly it was `write-file'
 (define-key ctl-x-map (kbd "C-w") #'quit-window)
+
+;; originally it was `mark-page'
+(define-key ctl-x-map (kbd "C-p") project-prefix-map)
+(define-key ctl-x-map (kbd "p") #'previous-buffer)
 
 ;;-------------------------------------------------------------------------------
 ;; os specific configuration
