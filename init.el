@@ -272,6 +272,12 @@
   :config
   (zeppa/ts-install-grammars))
 
+(use-package project
+  :bind-keymap ("C-x C-p" . project-prefix-map)
+  :bind (:map project-prefix-map
+              ("C-f" . project-find-file)
+              ("C-d" . project-find-dir)))
+
 ;;-------------------------------------------------------------------------------
 ;; version control
 
@@ -440,8 +446,7 @@ prefix argument"
 ;; originaly it was `write-file'
 (define-key ctl-x-map (kbd "C-w") #'quit-window)
 
-;; originally it was `mark-page'
-(define-key ctl-x-map (kbd "C-p") project-prefix-map)
+;; originally it was prefix key for project keymap
 (define-key ctl-x-map (kbd "p") #'previous-buffer)
 
 ;;-------------------------------------------------------------------------------
