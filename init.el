@@ -73,7 +73,16 @@
               ;; -l is mandatory
               ;; -G omit the group name
               ;; -h human-readable size
-              dired-listing-switches "-alGh"))
+              dired-listing-switches "-alGh")
+  (cond
+   ((string= system-type "gnu/linux")
+    (add-to-list 'dired-guess-shell-alist-user '("\\.pdf$" "xdg-open"))
+    (add-to-list 'dired-guess-shell-alist-user '("\\.odt$" "xdg-open")))))
+
+(use-package dired-aux
+  :config
+  (add-to-list 'dired-compress-files-alist
+               '("\\.7z$" . "7z a %o \"%i\"")))
 
 (use-package shell
   :hook
