@@ -285,7 +285,9 @@
   :bind-keymap ("C-x C-p" . project-prefix-map)
   :bind (:map project-prefix-map
               ("C-f" . project-find-file)
-              ("C-d" . project-find-dir)))
+              ("C-d" . project-find-dir)
+              ("C-j" . project-dired)
+              ("M-s" . project-eshell)))
 
 ;;-------------------------------------------------------------------------------
 ;; version control
