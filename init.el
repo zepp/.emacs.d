@@ -67,13 +67,17 @@
 
 (use-package dired
   :bind (:map dired-mode-map
-              ("C-t C-t" . nil))
+              ("C-t C-t" . nil)
+              ("M-*" . dired-mark-files-regexp))
 
-  :init (setq dired-deletion-confirmer #'y-or-n-p
-              ;; -l is mandatory
-              ;; -G omit the group name
-              ;; -h human-readable size
-              dired-listing-switches "-alGh")
+  :init
+  (setq dired-deletion-confirmer #'y-or-n-p
+        ;; -l is mandatory
+        ;; -G omit the group name
+        ;; -h human-readable size
+        dired-listing-switches "-alGh")
+
+  :config
   (cond
    ((string= system-type "gnu/linux")
     (add-to-list 'dired-guess-shell-alist-user '("\\.pdf$" "xdg-open"))
