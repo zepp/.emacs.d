@@ -1,10 +1,7 @@
 (setq
  calendar-week-start-day 1
  default-input-method 'russian-computer
-
- custom-file (locate-user-emacs-file "custom.el")
- use-package-always-defer t
- use-package-hook-name-suffix nil)
+ custom-file (locate-user-emacs-file "custom.el"))
 
 ;; prevent warning buffer from popping up in case of
 ;; `undo-outer-limit' is exceeded
@@ -46,6 +43,8 @@
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path))
 
+(setq  use-package-always-defer t
+       use-package-hook-name-suffix nil)
 (require 'package)
 (setq use-package-compute-statistics t)
 (add-to-list
