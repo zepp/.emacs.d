@@ -304,7 +304,7 @@
 
 (use-package magit
   :after ido
-  :bind ("C-x f" . magit-file-dispatch)
+  :bind ("C-x M-v" . magit-file-dispatch)
 
   :init
   (setq magit-display-buffer-function
