@@ -240,20 +240,25 @@
   :hook (prog-mode-hook . company-mode)
   :ensure t)
 
-(defun zeppa/ts-install-grammars ()
-  (dolist (grammar
-           '((css . ("https://github.com/tree-sitter/tree-sitter-css"))
-             (html . ("https://github.com/tree-sitter/tree-sitter-html"))
-             (json . ("https://github.com/tree-sitter/tree-sitter-json"))
-             (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1" "src"))
-             (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "tsx/src"))
-             (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "typescript/src"))
-             (python . ("https://github.com/tree-sitter/tree-sitter-python"))))
+(use-package tree-sitter-langs
+  :ensure t
+  :demand t)
 
-    (add-to-list 'treesit-language-source-alist grammar)
+(defun zeppa/install-ts-grammars ()
+  "installs tree-sitter language grammars"
 
-    (unless (treesit-language-available-p (car grammar))
-      (treesit-install-language-grammar (car grammar)))))
+  (interactive)
+  (let ((ts-path (expand-file-name "tree-sitter" user-emacs-directory))
+        (langs-path (tree-sitter-langs--bin-dir)))
+    (when (file-directory-p ts-path)
+      (rename-file ts-path (concat ts-path ".old")))
+    (make-directory ts-path)
+    (dolist (file (directory-files langs-path nil "\\.\\(so\\|dll\\|dylib\\)$"))
+      (copy-file (expand-file-name file langs-path)
+                 (expand-file-name (concat "libtree-sitter-" file) ts-path)
+                 t
+                 t)
+      (message "%s is installed" file))))
 
 (use-package treesit
   :mode
@@ -280,10 +285,7 @@
              (bash-mode . bash-ts-mode)
              (sh-mode . bash-ts-mode)
              (sh-base-mode . bash-ts-mode)))
-    (add-to-list 'major-mode-remap-alist mapping))
-
-  :config
-  (zeppa/ts-install-grammars))
+    (add-to-list 'major-mode-remap-alist mapping)))
 
 (use-package project
   :bind-keymap ("C-x C-p" . project-prefix-map)
