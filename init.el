@@ -435,9 +435,6 @@ prefix argument"
    org-html-self-link-headlines t
    org-html-head-include-default-style nil
    org-html-head-include-scripts nil
-   org-html-head
-   (concat "<link rel=\"stylesheet\" type=\"text/css\" href=\"dist/article.css\"/>\n"
-           "<script src=\"dist/bundle.js\"></script>")
    org-html-postamble t)
 
   :config
