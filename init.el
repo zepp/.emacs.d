@@ -384,21 +384,32 @@ prefix argument"
   (text-mode-hook . flyspell-mode)
   (text-mode-hook . abbrev-mode))
 
-(use-package org
+(use-package org-agenda
   :bind (("C-x C-a" . org-agenda)
-         (:map org-mode-map
-               ("C-M-f" . org-forward-element)
-               ("C-M-b" . org-backward-element)
-               ("C-M-u" . org-up-element)
-               ("C-M-d" . org-down-element)
-               ("C-M-n" . org-next-visible-heading)
-               ("C-M-p" . org-previous-visible-heading)
-               ("M-m" . org-emphasize)
-               ("C-c C-w" . org-cut-special)
-               ("C-c M-w" . org-copy-special)
-               ("C-c C-r" . org-refile)
-               ("C-c M-r" . org-refile-copy)
-               ("C-c C-x C-s" . org-store-link)))
+         (:map org-agenda-mode-map
+               ("C-x C-w" . nil)
+               ("C-c C-r" . org-agenda-refile)
+               ("C-c C-p" . org-agenda-set-property)))
+  :init
+  (setq
+   org-agenda-remove-tags t
+   org-agenda-window-setup 'current-window))
+
+(use-package org
+  :bind (:map org-mode-map
+              ("M-m" . org-emphasize)
+              ("C-M-f" . org-forward-element)
+              ("C-M-b" . org-backward-element)
+              ("C-M-u" . org-up-element)
+              ("C-M-d" . org-down-element)
+              ("C-M-n" . org-next-visible-heading)
+              ("C-M-p" . org-previous-visible-heading)
+              ("C-c C-w" . org-cut-special)
+              ("C-c M-w" . org-copy-special)
+              ("C-c C-r" . org-refile)
+              ("C-c M-r" . org-refile-copy)
+              ("C-c C-p" . org-set-property)
+              ("C-c C-x C-s" . org-store-link))
 
   :init
   (setq
@@ -407,8 +418,6 @@ prefix argument"
    org-log-into-drawer t
    org-fold-catch-invisible-edits 'show-and-error
    org-time-stamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
-   org-agenda-remove-tags t
-   org-agenda-window-setup 'current-window
    org-archive-subtree-save-file-p t
 
    org-export-with-toc nil
