@@ -67,6 +67,7 @@
 (use-package dired
   :bind (:map dired-mode-map
               ("C-t C-t" . nil)
+              ("TAB" . dired-hide-subdir)
               ("M-*" . dired-mark-files-regexp))
 
   :init
@@ -384,6 +385,12 @@ prefix argument"
 (use-package org
   :bind (("C-x C-a" . org-agenda)
          (:map org-mode-map
+               ("C-M-f" . org-forward-element)
+               ("C-M-b" . org-backward-element)
+               ("C-M-u" . org-up-element)
+               ("C-M-d" . org-down-element)
+               ("C-M-n" . org-next-visible-heading)
+               ("C-M-p" . org-previous-visible-heading)
                ("M-m" . org-emphasize)
                ("C-c C-x C-s" . org-store-link)))
 
