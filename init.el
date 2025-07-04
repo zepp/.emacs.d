@@ -387,7 +387,10 @@ prefix argument"
 (use-package org-agenda
   :bind (("C-x C-a" . org-agenda)
          (:map org-agenda-mode-map
-               ("C-x C-w" . nil)
+               ("C-M-n" . org-agenda-next-date-line)
+               ("C-M-p" . org-agenda-previous-date-line)
+               ("C-x C-w" . nil) ;; org-agenda-write
+               ("C-c C-w" . nil) ;; org-agenda-refile
                ("C-c C-r" . org-agenda-refile)
                ("C-c C-p" . org-agenda-set-property)))
   :init
@@ -402,14 +405,18 @@ prefix argument"
               ("C-M-b" . org-backward-element)
               ("C-M-u" . org-up-element)
               ("C-M-d" . org-down-element)
+              ("C-M-SPC" . org-mark-element)
               ("C-M-n" . org-next-visible-heading)
               ("C-M-p" . org-previous-visible-heading)
-              ("C-c C-w" . org-cut-special)
-              ("C-c M-w" . org-copy-special)
-              ("C-c C-r" . org-refile)
+              ("C-c C-w" . org-cut-special)   ;; org-refile
+              ("C-c M-w" . org-copy-special)  ;; org-refile-copy
+              ("C-c C-y" . org-paste-special) ;; org-evaluate-time-range
+              ("C-c C-r" . org-refile)        ;; org-reveal
               ("C-c M-r" . org-refile-copy)
               ("C-c C-p" . org-set-property)
-              ("C-c C-x C-s" . org-store-link))
+              ("C-c C-b" . org-mark-ring-goto)
+              ("C-c C-x C-r" . org-reveal)      ;; org-toggle-radio-button
+              ("C-c C-x C-s" . org-store-link)) ;; org-archive-subtree
 
   :init
   (setq
@@ -430,6 +437,8 @@ prefix argument"
                   "\\*Agenda Commands\\*$"
                   "\\*Org Export Dispatcher\\*$"
                   "\\*Org Select\\*$"
+                  "\\*Org Attach\\*$"
+                  "\\*Org Links\\*$"
                   (major-mode . calendar-mode))
                  display-buffer-at-bottom
                  (dedicated . t)))
