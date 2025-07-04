@@ -67,6 +67,8 @@
 (use-package dired
   :bind (:map dired-mode-map
               ("C-t C-t" . nil)
+              ("c" . nil)
+              ("z" . dired-do-compress-to)
               ("TAB" . dired-hide-subdir)
               ("M-*" . dired-mark-files-regexp))
 
