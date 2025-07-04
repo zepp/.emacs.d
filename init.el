@@ -392,6 +392,10 @@ prefix argument"
                ("C-M-n" . org-next-visible-heading)
                ("C-M-p" . org-previous-visible-heading)
                ("M-m" . org-emphasize)
+               ("C-c C-w" . org-cut-special)
+               ("C-c M-w" . org-copy-special)
+               ("C-c C-r" . org-refile)
+               ("C-c M-r" . org-refile-copy)
                ("C-c C-x C-s" . org-store-link)))
 
   :init
