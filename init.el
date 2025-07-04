@@ -388,6 +388,9 @@ prefix argument"
   :bind (("C-x C-a" . org-agenda)
          (:map org-agenda-mode-map
                ("C-x C-w" . nil)
+               ("C-M-n" . org-agenda-next-date-line)
+               ("C-M-p" . org-agenda-previous-date-line)
+               ("C-c C-a" . org-agenda-archive)
                ("C-c C-r" . org-agenda-refile)
                ("C-c C-p" . org-agenda-set-property)))
   :init
@@ -406,9 +409,12 @@ prefix argument"
               ("C-M-p" . org-previous-visible-heading)
               ("C-c C-w" . org-cut-special)
               ("C-c M-w" . org-copy-special)
+              ("C-c C-y" . org-paste-special)
               ("C-c C-r" . org-refile)
               ("C-c M-r" . org-refile-copy)
               ("C-c C-p" . org-set-property)
+              ("C-c C-a" . org-archive-subtree)
+              ("C-c C-b" . org-mark-ring-goto)
               ("C-c C-x C-s" . org-store-link))
 
   :init
