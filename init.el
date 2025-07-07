@@ -88,7 +88,7 @@
 (use-package dired-aux
   :config
   (add-to-list 'dired-compress-files-alist
-               '("\\.7z$" . "7z a %o \"%i\"")))
+               '("\\.7z$" . "7z a %o %i")))
 
 (use-package shell
   :hook
