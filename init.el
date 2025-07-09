@@ -94,7 +94,7 @@
   :hook
   (shell-mode-hook . shell-dirtrack-mode))
 
-(defun zeppa/compile-buf-name (orig &rest args)
+(defun pavel/compile-buf-name (orig &rest args)
   "prettify name of compilation buffer"
 
   (let* ((compilation-buffer-name-function
@@ -117,7 +117,7 @@
       (add-to-list 'compilation-error-regexp-alist-alist cell)
       (add-to-list 'compilation-error-regexp-alist (car cell))))
 
-  (advice-add 'compile :around #'zeppa/compile-buf-name))
+  (advice-add 'compile :around #'pavel/compile-buf-name))
 
 (use-package ag
   :bind (("C-c g" . ag-project)
@@ -145,7 +145,7 @@
 (toggle-scroll-bar -1)
 (column-number-mode 1)
 
-(defun zeppa/tab-bar-map ()
+(defun pavel/tab-bar-map ()
   "builds custom `tab-bar-mode' map"
 
   (let ((map (make-sparse-keymap)))
@@ -161,7 +161,7 @@
   :bind-keymap ("C-t" . tab-bar-mode-map)
 
   :config
-  (setq tab-bar-mode-map (zeppa/tab-bar-map)
+  (setq tab-bar-mode-map (pavel/tab-bar-map)
         tab-bar-new-tab-choice "*scratch*")
   (tab-bar-mode 1)
 
@@ -218,7 +218,7 @@
                                  space-after-tab
                                  space-before-tab)))
 
-(defun zeppa/ws-long-lines ()
+(defun pavel/ws-long-lines ()
   "highlights long lines using whitespace-mode"
 
   (setq-local whitespace-style (cons 'lines-char whitespace-style)))
@@ -246,7 +246,7 @@
   :ensure t
   :demand t)
 
-(defun zeppa/install-ts-grammars ()
+(defun pavel/install-ts-grammars ()
   "installs tree-sitter language grammars"
 
   (interactive)
@@ -315,7 +315,7 @@
   :config
   ;; append to end of hook list
   (add-hook 'git-commit-setup-hook 'turn-off-auto-fill t)
-  (add-hook 'git-commit-setup-hook #'zeppa/ws-long-lines)
+  (add-hook 'git-commit-setup-hook #'pavel/ws-long-lines)
   (add-to-list 'ido-ignore-buffers "^magit-process: .*")
   (add-to-list 'ido-ignore-buffers ".*\\.~[[:alnum:]]+~$")
 
@@ -343,7 +343,7 @@
   (unless (file-exists-p ispell-personal-dictionary)
     (write-region "" nil ispell-personal-dictionary nil 0)))
 
-(defun zeppa/double-q-marks ()
+(defun pavel/double-q-marks ()
   "if region is active then it wraps marked text with double angle
 quotation marks otherwise just inserts it"
   (interactive)
@@ -358,7 +358,7 @@ quotation marks otherwise just inserts it"
       (insert "«»")
       (backward-char 1)))
 
-(defun zeppa/insert-dash (arg)
+(defun pavel/insert-dash (arg)
   "inserts em dash, en dash or hyphen character according to numeric
 prefix argument"
   (interactive "p")
@@ -374,8 +374,8 @@ prefix argument"
 
 (use-package text-mode
   :bind (:map text-mode-map
-              ("M-q" . zeppa/double-q-marks)
-              ("C-M--" . zeppa/insert-dash)
+              ("M-q" . pavel/double-q-marks)
+              ("C-M--" . pavel/insert-dash)
               ("C-c C-q" . fill-paragraph)
               ("C-c C-o" . browse-url))
   :hook
@@ -496,7 +496,7 @@ prefix argument"
 ;;-------------------------------------------------------------------------------
 ;; os specific configuration
 
-(defun zeppa/list-dicts(directory)
+(defun pavel/list-dicts(directory)
   "builds dictionary path alist for hunspell"
 
   (let ((root (expand-file-name directory)))
@@ -508,7 +508,7 @@ prefix argument"
              nil
              "[[:lower:]]\\{2\\}_[[:upper:]]\\{2\\}\\.dic"))))
 
-(defun zeppa/fix-find-regexp (list)
+(defun pavel/fix-find-regexp (list)
   (mapcar #'(lambda(entry)
               (if (string-match "\\^find" (car entry))
                   (list (string-replace "^find" "find\\.exe" (car entry))
@@ -530,7 +530,7 @@ prefix argument"
 
   (with-eval-after-load 'grep
     (setq grep-mode-font-lock-keywords
-          (zeppa/fix-find-regexp grep-mode-font-lock-keywords)))
+          (pavel/fix-find-regexp grep-mode-font-lock-keywords)))
 
   ;; make `hunspell' work
   (let ((root (expand-file-name ".dicts"
@@ -538,7 +538,7 @@ prefix argument"
                                     (getenv "HOMEPATH")))))
     (setenv "DICPATH" root)
     (setenv "DICTIONARY" "en_US")
-    (setq ispell-hunspell-dict-paths-alist (zeppa/list-dicts root))))
+    (setq ispell-hunspell-dict-paths-alist (pavel/list-dicts root))))
 
  ((string= system-type "darwin")
   (setq mac-command-modifier 'meta
