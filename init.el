@@ -64,10 +64,25 @@
 
 (advice-add 'async-shell-command :around #'form-shell-command-buffer-name)
 
+(defun pavel/eshell-jump ()
+  "it starts eshell in a current directory or switches buffer to
+existing one"
+  (interactive)
+
+  (let* ((name (car (reverse
+                     (file-name-split
+                      (directory-file-name default-directory)))))
+         (eshell-buffer-name (format "*%s-eshell*" name))
+         (buf (get-buffer eshell-buffer-name)))
+    (if buf
+        (display-buffer buf '(display-buffer-same-window))
+      (eshell))))
+
 (use-package dired
   :bind (:map dired-mode-map
               ("C-t C-t" . nil)
               ("c" . nil)
+              ("$" . pavel/eshell-jump)
               ("z" . dired-do-compress-to)
               ("TAB" . dired-hide-subdir)
               ("M-*" . dired-mark-files-regexp))
@@ -295,7 +310,7 @@
               ("C-f" . project-find-file)
               ("C-d" . project-find-dir)
               ("C-j" . project-dired)
-              ("M-s" . project-eshell)))
+              ("$" . project-eshell)))
 
 ;;-------------------------------------------------------------------------------
 ;; version control
@@ -499,9 +514,9 @@ prefix argument"
 (define-key ctl-x-map (kbd "M-j") #'dired-jump-other-window)
 ;; originaly it was `write-file'
 (define-key ctl-x-map (kbd "C-w") #'quit-window)
-
 ;; originally it was prefix key for project keymap
 (define-key ctl-x-map (kbd "p") #'previous-buffer)
+(define-key ctl-x-map (kbd "$") #'pavel/eshell-jump)
 
 ;;-------------------------------------------------------------------------------
 ;; os specific configuration
