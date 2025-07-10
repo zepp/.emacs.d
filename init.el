@@ -64,15 +64,27 @@
 
 (advice-add 'async-shell-command :around #'form-shell-command-buffer-name)
 
+(defun pavel/eshell-buf-name (&optional directory)
+  "it provides eshell buffer name that includes directory name. Naming is
+simillar to the project one"
+
+  (let* ((dir-file-name (abbreviate-file-name
+                         (directory-file-name
+                          (or directory default-directory))))
+         (name (car
+                (reverse
+                 (file-name-split dir-file-name)))))
+    (format (if (string= "" name)
+                "*eshell*"
+              "*%s-eshell*")
+            name)))
+
 (defun pavel/eshell-jump ()
   "it starts eshell in a current directory or switches buffer to
 existing one"
   (interactive)
 
-  (let* ((name (car (reverse
-                     (file-name-split
-                      (directory-file-name default-directory)))))
-         (eshell-buffer-name (format "*%s-eshell*" name))
+  (let* ((eshell-buffer-name (pavel/eshell-buf-name))
          (buf (get-buffer eshell-buffer-name)))
     (if buf
         (display-buffer buf '(display-buffer-same-window))
@@ -108,6 +120,18 @@ existing one"
 (use-package shell
   :hook
   (shell-mode-hook . shell-dirtrack-mode))
+
+(defun pavel/rename-eshell-buf()
+  "hook that keeps eshell buffer name actual"
+
+  (let* ((name (pavel/eshell-buf-name))
+         (buf (get-buffer name)))
+    (unless buf
+      (rename-buffer name))))
+
+(use-package eshell
+  :hook
+  (eshell-directory-change-hook . pavel/rename-eshell-buf))
 
 (defun pavel/compile-buf-name (orig &rest args)
   "prettify name of compilation buffer"
