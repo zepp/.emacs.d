@@ -371,7 +371,7 @@ existing one"
 
 (use-package abbrev
   :bind (:map edit-abbrevs-mode-map
-              ("C-x C-w") . nil))
+              ("C-x C-w" . nil)))
 
 (use-package ispell
   :init
