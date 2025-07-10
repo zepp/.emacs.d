@@ -104,7 +104,10 @@ existing one"
         ;; -l is mandatory
         ;; -G omit the group name
         ;; -h human-readable size
-        dired-listing-switches "-alGh")
+        dired-listing-switches
+        (if (string= system-type "darwin")
+            "-aloh"
+          "-alGh"))
 
   :config
   (cond
