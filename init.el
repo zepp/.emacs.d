@@ -344,7 +344,9 @@ existing one"
 
 (use-package diff-mode
   :bind (:map diff-mode-map
-              ("C-m" . diff-goto-source)))
+              ("C-M-n" . diff-file-next)
+              ("C-M-p" . diff-file-prev)
+              ("C-j" . diff-goto-source)))
 
 (use-package magit
   :after ido
@@ -439,6 +441,8 @@ prefix argument"
 (use-package org-agenda
   :bind (("C-x C-a" . org-agenda)
          (:map org-agenda-mode-map
+               ("n" . org-agenda-next-item)
+               ("p" . org-agenda-previous-item)
                ("C-M-n" . org-agenda-next-date-line)
                ("C-M-p" . org-agenda-previous-date-line)
                ("C-x C-w" . nil) ;; org-agenda-write
