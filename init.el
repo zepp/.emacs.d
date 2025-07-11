@@ -350,7 +350,10 @@ existing one"
 
 (use-package magit
   :after ido
-  :bind ("C-x M-v" . magit-file-dispatch)
+  :bind (("C-x M-v" . magit-file-dispatch)
+         (:map magit-diff-mode-map
+               ("C-M-n" . magit-section-forward-sibling)
+               ("C-M-p" . magit-section-backward-sibling)))
 
   :init
   (setq magit-display-buffer-function
@@ -362,6 +365,10 @@ existing one"
   (add-hook 'git-commit-setup-hook #'pavel/ws-long-lines)
   (add-to-list 'ido-ignore-buffers "^magit-process: .*")
   (add-to-list 'ido-ignore-buffers ".*\\.~[[:alnum:]]+~$")
+  (add-to-list 'display-buffer-alist
+               '((derived-mode . magit-diff-mode)
+                 display-buffer-pop-up-window
+                 (dedicated . t)))
 
   :ensure t)
 
