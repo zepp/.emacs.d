@@ -362,7 +362,7 @@ existing one"
   (add-to-list 'ido-ignore-buffers ".*\\.~[[:alnum:]]+~$")
   (add-to-list 'display-buffer-alist
                '((derived-mode . magit-diff-mode)
-                 display-buffer-pop-up-window
+                 (display-buffer-reuse-window display-buffer-pop-up-window)
                  (dedicated . t)))
 
   :ensure t)
