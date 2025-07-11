@@ -144,11 +144,6 @@ existing one"
     (apply orig args)))
 
 (use-package compile
-  :init
-  (setq
-   compilation-auto-jump-to-first-error 'if-location-known
-   compilation-scroll-output t)
-
   :config
   (let ((alist
          '((tsl
