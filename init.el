@@ -484,6 +484,7 @@ prefix argument"
    org-fold-catch-invisible-edits 'show-and-error
    org-time-stamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
    org-archive-subtree-save-file-p t
+   org-goto-auto-isearch nil
 
    org-export-with-toc nil
    org-export-with-section-numbers nil
@@ -497,6 +498,8 @@ prefix argument"
                   "\\*Org Select\\*$"
                   "\\*Org Attach\\*$"
                   "\\*Org Links\\*$"
+                  "\\*Org Help\\*$"
+                  "\\*Select Link\\*$"
                   (major-mode . calendar-mode))
                  display-buffer-at-bottom
                  (dedicated . t)))
