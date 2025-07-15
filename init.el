@@ -451,11 +451,12 @@ prefix argument"
                ("C-x C-w" . nil) ;; org-agenda-write
                ("C-c C-w" . nil) ;; org-agenda-refile
                ("C-c C-r" . org-agenda-refile)
-               ("C-c C-p" . org-agenda-set-property)))
+               ("C-c C-p" . org-agenda-set-property)
+               ("C-x C-n" . org-agenda-capture)))
   :init
   (setq
    org-agenda-remove-tags t
-   org-agenda-window-setup 'current-window))
+   org-agenda-window-setup 'only-window))
 
 (use-package org
   :bind (("C-x C-n" . org-capture)
