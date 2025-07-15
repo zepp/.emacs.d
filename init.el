@@ -156,15 +156,6 @@ existing one"
 
   (advice-add 'compile :around #'pavel/compile-buf-name))
 
-(use-package ag
-  :bind (("C-c g" . ag-project)
-         ("C-c M-g" . ag-project-regexp)
-         ("C-c f" . ag-project-files))
-  :init
-  (setq ag-reuse-buffers t)
-
-  :ensure t)
-
 ;;-------------------------------------------------------------------------------
 ;; UI related
 
@@ -333,6 +324,16 @@ existing one"
               ("C-d" . project-find-dir)
               ("C-j" . project-dired)
               ("$" . project-eshell)))
+
+(use-package ag
+  :after prog-mode
+  :bind (:map prog-mode-map
+              ("C-c g" . ag-project-regexp)
+              ("C-c M-g" . ag-project-files))
+  :init
+  (setq ag-reuse-buffers t)
+
+  :ensure t)
 
 ;;-------------------------------------------------------------------------------
 ;; version control
@@ -551,6 +552,7 @@ prefix argument"
 
 ;;-------------------------------------------------------------------------------
 
+(keymap-global-set "C-c g" #'rgrep)
 (define-key ctl-x-map (kbd "M-s") #'write-file)
 (define-key ctl-x-map (kbd "M-b") #'switch-to-buffer-other-window)
 (define-key ctl-x-map (kbd "M-f") #'find-file-other-window)
