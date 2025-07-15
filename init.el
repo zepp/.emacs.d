@@ -432,6 +432,9 @@ prefix argument"
   (text-mode-hook . flyspell-mode)
   (text-mode-hook . abbrev-mode))
 
+(use-package visual-fill-column
+  :ensure t)
+
 (defun pavel/setup-org-directory (directory)
   "it setups Org-mode's root directory and agenda files"
   (interactive "D")
