@@ -38,9 +38,14 @@
 ;;-------------------------------------------------------------------------------
 ;; package management
 
-(let ((default-directory "~/.emacs.d/loadable/"))
-  (normal-top-level-add-to-load-path '("."))
-  (normal-top-level-add-subdirs-to-load-path))
+(let* ((loadable-directory "~/.emacs.d/loadable/")
+       (generated-autoload-file (expand-file-name
+				 "pavel-autoloads.el"
+				 loadable-directory)))
+  (normal-top-level-add-to-load-path `(,loadable-directory))
+  (unless (file-exists-p generated-autoload-file)
+    (loaddefs-generate loadable-directory generated-autoload-file))
+  (require 'pavel-autoloads))
 
 (setq  use-package-always-defer t
        use-package-hook-name-suffix nil)
@@ -52,8 +57,6 @@
  t)
 (package-initialize)
 
-(require 'pavel-compat)
-(require 'pavel-commands)
 ;;-------------------------------------------------------------------------------
 
 (defun form-shell-command-buffer-name (orig &rest args)

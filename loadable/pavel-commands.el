@@ -1,5 +1,6 @@
 ;; various auxiliary commands and utilities
 
+;;;###autoload
 (defun pavel/start-presentation ()
   "it closes other windows, increases window face and enables text wrapping"
   (interactive)

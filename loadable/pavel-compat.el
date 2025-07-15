@@ -1,5 +1,6 @@
 ;; various compatibility commands and functions
 
+;;;###autoload
 (defun pavel/list-dicts(directory)
   "builds dictionary path alist for hunspell"
 
@@ -12,6 +13,7 @@
              nil
              "[[:lower:]]\\{2\\}_[[:upper:]]\\{2\\}\\.dic"))))
 
+;;;###autoload
 (defun pavel/fix-find-regexp (list)
   (mapcar #'(lambda(entry)
               (if (string-match "\\^find" (car entry))
@@ -20,6 +22,7 @@
                 entry))
           list))
 
+;;;###autoload
 (defun zeppa/toggle-window-dedicated (arg)
   "Toggles window dedication in the selected window."
 
