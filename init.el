@@ -556,6 +556,8 @@ prefix argument"
 (define-key ctl-x-map (kbd "M-f") #'find-file-other-window)
 (define-key ctl-x-map (kbd "M-d") #'dired-other-window)
 (define-key ctl-x-map (kbd "M-j") #'dired-jump-other-window)
+(when (string-match "29\\.[0-9]+" emacs-version)
+  (define-key ctl-x-map (kbd "w d") #'zeppa/toggle-window-dedicated))
 ;; originaly it was `write-file'
 (define-key ctl-x-map (kbd "C-w") #'quit-window)
 ;; originally it was prefix key for project keymap
