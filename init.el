@@ -53,6 +53,7 @@
 (package-initialize)
 
 (require 'pavel-compat)
+(require 'pavel-commands)
 ;;-------------------------------------------------------------------------------
 
 (defun form-shell-command-buffer-name (orig &rest args)
