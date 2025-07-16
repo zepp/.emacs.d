@@ -496,6 +496,7 @@ prefix argument"
    org-time-stamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
    org-archive-subtree-save-file-p t
    org-goto-auto-isearch nil
+   org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
 
    org-export-with-toc nil
    org-export-with-section-numbers nil
