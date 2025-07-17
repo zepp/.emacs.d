@@ -351,7 +351,7 @@ existing one"
 (use-package magit
   :after ido
   :bind (("C-x M-v" . magit-file-dispatch)
-         (:map magit-diff-mode-map
+         (:map magit-section-mode-map
                ("C-M-n" . magit-section-forward-sibling)
                ("C-M-p" . magit-section-backward-sibling)))
 
