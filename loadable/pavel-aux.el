@@ -18,6 +18,37 @@
       (message "%s is installed" file))))
 
 ;;;###autoload
+(defun pavel/double-q-marks ()
+  "if region is active then it wraps marked text with double angle
+quotation marks otherwise just inserts it"
+  (interactive)
+
+  (if (use-region-p)
+        (let* ((start (region-beginning))
+               (end (region-end))
+               (text (buffer-substring start end)))
+          (delete-region start end)
+	  (insert (format "«%s»" text)))
+
+      (insert "«»")
+      (backward-char 1)))
+
+;;;###autoload
+(defun pavel/insert-dash (arg)
+  "inserts em dash, en dash or hyphen character according to numeric
+prefix argument"
+  (interactive "p")
+
+  (insert-char
+   (cond ((or (eq 3 current-prefix-arg)
+              (not current-prefix-arg))
+          (char-from-name "EM DASH"))
+         ((eq 2 current-prefix-arg)
+          (char-from-name "EN DASH"))
+         (t (char-from-name "HYPHEN")))
+   1 t))
+
+;;;###autoload
 (defun pavel/start-presentation ()
   "it closes other windows, increases window face and enables text wrapping"
   (interactive)

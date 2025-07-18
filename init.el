@@ -382,35 +382,6 @@ existing one"
   (unless (file-exists-p ispell-personal-dictionary)
     (write-region "" nil ispell-personal-dictionary nil 0)))
 
-(defun pavel/double-q-marks ()
-  "if region is active then it wraps marked text with double angle
-quotation marks otherwise just inserts it"
-  (interactive)
-
-  (if (use-region-p)
-        (let* ((start (region-beginning))
-               (end (region-end))
-               (text (buffer-substring start end)))
-          (delete-region start end)
-	  (insert (format "«%s»" text)))
-
-      (insert "«»")
-      (backward-char 1)))
-
-(defun pavel/insert-dash (arg)
-  "inserts em dash, en dash or hyphen character according to numeric
-prefix argument"
-  (interactive "p")
-
-  (insert-char
-   (cond ((or (eq 3 current-prefix-arg)
-              (not current-prefix-arg))
-          (char-from-name "EM DASH"))
-         ((eq 2 current-prefix-arg)
-          (char-from-name "EN DASH"))
-         (t (char-from-name "HYPHEN")))
-   1 t))
-
 (use-package text-mode
   :bind (:map text-mode-map
               ("M-q" . pavel/double-q-marks)
