@@ -49,6 +49,22 @@ prefix argument"
    1 t))
 
 ;;;###autoload
+(defun pavel/eshell-buf-name (&optional directory)
+  "it provides eshell buffer name that includes directory name. Naming is
+simillar to the project one"
+
+  (let* ((dir-file-name (abbreviate-file-name
+                         (directory-file-name
+                          (or directory default-directory))))
+         (name (car
+                (reverse
+                 (file-name-split dir-file-name)))))
+    (format (if (string= "" name)
+                "*eshell*"
+              "*%s-eshell*")
+            name)))
+
+;;;###autoload
 (defun pavel/start-presentation ()
   "it closes other windows, increases window face and enables text wrapping"
   (interactive)

@@ -68,21 +68,6 @@
 
 (advice-add 'async-shell-command :around #'form-shell-command-buffer-name)
 
-(defun pavel/eshell-buf-name (&optional directory)
-  "it provides eshell buffer name that includes directory name. Naming is
-simillar to the project one"
-
-  (let* ((dir-file-name (abbreviate-file-name
-                         (directory-file-name
-                          (or directory default-directory))))
-         (name (car
-                (reverse
-                 (file-name-split dir-file-name)))))
-    (format (if (string= "" name)
-                "*eshell*"
-              "*%s-eshell*")
-            name)))
-
 (defun pavel/eshell-jump ()
   "it starts eshell in a current directory or switches buffer to
 existing one"
