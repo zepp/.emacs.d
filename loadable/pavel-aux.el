@@ -65,6 +65,17 @@ simillar to the project one"
             name)))
 
 ;;;###autoload
+(defun pavel/setup-org-directory (directory)
+  "it setups Org-mode's root directory and agenda files"
+  (interactive "D")
+
+  (setq
+   org-directory directory
+   org-agenda-files `(,directory)
+   org-default-notes-file (expand-file-name "default.org" directory)
+   org-archive-location (expand-file-name "archive.org::" directory)))
+
+;;;###autoload
 (defun pavel/start-presentation ()
   "it closes other windows, increases window face and enables text wrapping"
   (interactive)
