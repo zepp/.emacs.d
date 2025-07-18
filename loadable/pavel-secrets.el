@@ -2,4 +2,4 @@
 
 (load-library "~/drive/keys/emacs.el.gpg")
 
-(provide 'secrets)
+(provide 'pavel-secrets)
