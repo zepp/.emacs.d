@@ -96,8 +96,8 @@ existing one"
 
 (use-package dired
   :bind (:map dired-mode-map
-              ("C-t C-t" . nil)
-              ("c" . nil)
+              ("C-t C-t")
+              ("c")
               ("$" . pavel/eshell-jump)
               ("z" . dired-do-compress-to)
               ("TAB" . dired-hide-subdir)
@@ -336,6 +336,9 @@ existing one"
   :after ido
   :bind (("C-x M-v" . magit-file-dispatch)
          (:map magit-section-mode-map
+               ("M-1")
+               ("M-2")
+               ("M-3")
                ("C-M-n" . magit-section-forward-sibling)
                ("C-M-p" . magit-section-backward-sibling)))
 
@@ -365,7 +368,7 @@ existing one"
 
 (use-package abbrev
   :bind (:map edit-abbrevs-mode-map
-              ("C-x C-w" . nil)))
+              ("C-x C-w")))
 
 (use-package ispell
   :init
@@ -440,8 +443,8 @@ prefix argument"
                ("p" . org-agenda-previous-item)
                ("C-M-n" . org-agenda-next-date-line)
                ("C-M-p" . org-agenda-previous-date-line)
-               ("C-x C-w" . nil) ;; org-agenda-write
-               ("C-c C-w" . nil) ;; org-agenda-refile
+               ("C-x C-w") ;; org-agenda-write
+               ("C-c C-w") ;; org-agenda-refile
                ("C-c C-r" . org-agenda-refile)
                ("C-c C-p" . org-agenda-set-property)
                ("C-x C-n" . org-agenda-capture)))
