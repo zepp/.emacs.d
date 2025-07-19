@@ -375,6 +375,7 @@ existing one"
               ("C-c C-o" . browse-url))
   :hook
   (text-mode-hook . visual-line-mode)
+  (text-mode-hook . visual-line-fill-column-mode)
   (text-mode-hook . whitespace-mode)
   (text-mode-hook . flyspell-mode)
   (text-mode-hook . abbrev-mode))
