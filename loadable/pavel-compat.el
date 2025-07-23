@@ -23,7 +23,7 @@
           list))
 
 ;;;###autoload
-(defun zeppa/toggle-window-dedicated (arg)
+(defun pavel/toggle-window-dedicated (arg)
   "Toggles window dedication in the selected window."
 
   (interactive "P")
@@ -32,5 +32,11 @@
          (flag (if arg (/= arg 0) (not (window-dedicated-p window)))))
     (set-window-dedicated-p window flag)
     (message "set window dedicated - %s" flag)))
+
+;;;###autoload
+(defun pavel/emacs-29-p ()
+  "Predicate to check Emacs version"
+
+  (string-match "29\\.[0-9]+" emacs-version))
 
 (provide 'pavel-compat)
