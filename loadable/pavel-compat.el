@@ -33,10 +33,4 @@
     (set-window-dedicated-p window flag)
     (message "set window dedicated - %s" flag)))
 
-;;;###autoload
-(defun pavel/emacs-29-p ()
-  "Predicate to check Emacs version"
-
-  (string-match "29\\.[0-9]+" emacs-version))
-
 (provide 'pavel-compat)

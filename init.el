@@ -38,13 +38,17 @@
 ;;-------------------------------------------------------------------------------
 ;; package management
 
+(defun pavel/emacs-29-p ()
+  "Predicate to check Emacs version"
+
+  (string-match "29\\.[0-9]+" emacs-version))
+
 (let* ((loadable-directory "~/.emacs.d/loadable/")
        (generated-autoload-file (expand-file-name
 				 "pavel-autoloads.el"
 				 loadable-directory)))
   (normal-top-level-add-to-load-path `(,loadable-directory))
-  (unless (file-exists-p generated-autoload-file)
-    (loaddefs-generate loadable-directory generated-autoload-file))
+  (loaddefs-generate loadable-directory generated-autoload-file)
   (require 'pavel-autoloads))
 
 (setq  use-package-always-defer t
