@@ -82,7 +82,7 @@ simillar to the project one"
 
   (delete-other-windows)
   (text-scale-set 2.2)
-  (visual-fill-column-mode)
+  (visual-fill-column-mode 1)
   (set-fill-column 30))
 
 (provide 'pavel-aux)
