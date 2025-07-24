@@ -402,7 +402,9 @@ existing one"
   :init
   (setq
    org-agenda-remove-tags t
-   org-agenda-window-setup 'only-window))
+   org-agenda-window-setup 'only-window
+   org-agenda-bulk-custom-functions
+   '((?a org-agenda-archive-default))))
 
 (use-package org
   :bind (("C-x C-n" . org-capture)
