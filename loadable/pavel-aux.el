@@ -33,20 +33,36 @@ quotation marks otherwise just inserts it"
       (insert "«»")
       (backward-char 1)))
 
-;;;###autoload
-(defun pavel/insert-dash (arg)
-  "inserts em dash, en dash or hyphen character according to numeric
-prefix argument"
-  (interactive "p")
+(defun pavel/insert-dash-character (length)
+  "inserts em dash, en dash or hyphen character according to `length'"
 
   (insert-char
-   (cond ((or (eq 3 current-prefix-arg)
-              (not current-prefix-arg))
+   (cond ((eq 3 length)
           (char-from-name "EM DASH"))
-         ((eq 2 current-prefix-arg)
+         ((eq 2 length)
           (char-from-name "EN DASH"))
-         (t (char-from-name "HYPHEN")))
+         (t
+          (char-from-name "HYPHEN")))
    1 t))
+
+;;;###autoload
+(defun pavel/smart-dash (arg)
+  "inserts em dash, en dash or hyphen character according to numeric
+prefix argument or replaces current region with dash in case of it is
+sequence of hyphens"
+  (interactive "p")
+
+  (if (use-region-p)
+      (let* ((start (region-beginning))
+             (end (region-end))
+             (text (buffer-substring start end)))
+        (when (string-match "[-]+" text)
+          (delete-region start end)
+	  (pavel/insert-dash-character
+           (length text))))
+
+    (pavel/insert-dash-character
+     (if current-prefix-arg current-prefix-arg 3))))
 
 ;;;###autoload
 (defun pavel/eshell-buf-name (&optional directory)
