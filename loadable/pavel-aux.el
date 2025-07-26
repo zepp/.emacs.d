@@ -58,11 +58,9 @@ sequence of hyphens"
              (text (buffer-substring start end)))
         (when (string-match "[-]+" text)
           (delete-region start end)
-	  (pavel/insert-dash-character
-           (length text))))
+	  (pavel/insert-dash-character (length text))))
 
-    (pavel/insert-dash-character
-     (if current-prefix-arg current-prefix-arg 3))))
+    (pavel/insert-dash-character (if arg arg 3))))
 
 ;;;###autoload
 (defun pavel/eshell-buf-name (&optional directory)
