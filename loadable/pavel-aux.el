@@ -56,7 +56,7 @@ sequence of hyphens"
       (let* ((start (region-beginning))
              (end (region-end))
              (text (buffer-substring start end)))
-        (when (string-match "[-]+" text)
+        (when (string-match "^[-]+$" text)
           (delete-region start end)
 	  (pavel/insert-dash-character (length text))))
 
