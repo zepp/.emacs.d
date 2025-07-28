@@ -17,21 +17,65 @@
                  t)
       (message "%s is installed" file))))
 
-;;;###autoload
-(defun pavel/double-q-marks ()
-  "if region is active then it wraps marked text with double angle
-quotation marks otherwise just inserts it"
-  (interactive)
+(defvar pavel/quotation-marks-alist
+  '((primary . ((start . "«")
+                (end . "»")))
+    (secondary . ((start . "„")
+                  (end . "“")))
+    (plain . ((start . "\"")
+              (end . "\"")))))
 
-  (if (use-region-p)
+(defun pavel/build-q-regexp (type)
+  (let* ((marks (cdr (assoc type pavel/quotation-marks-alist)))
+         (start (cdr (assoc 'start marks)))
+         (end (cdr (assoc 'end marks))))
+    (format "^%s[^%s]+%s$" start end end)))
+
+(defun pavel/quote (type &optional text)
+  (let* ((marks (cdr (assoc type pavel/quotation-marks-alist)))
+         (start (cdr (assoc 'start marks)))
+         (end (cdr (assoc 'end marks))))
+    (format "%s%s%s" start (or text "") end)))
+
+(defun pavel/check-quotes (text)
+  (cond
+   ((string-match (pavel/build-q-regexp 'primary) text)
+    'primary)
+   ((string-match (pavel/build-q-regexp 'secondary) text)
+    'secondary)
+   ((string-match (pavel/build-q-regexp 'plain) text)
+    'plain)))
+
+;;;###autoload
+(defun pavel/smart-q-marks (arg)
+  "if region is active then text is wrapped with quotation marks
+otherwise ones are just inserted"
+  (interactive "p")
+
+  (let ((new-type (if (or (not arg) (eq arg 1))
+                      'primary
+                    'secondary)))
+
+    (if (use-region-p)
         (let* ((start (region-beginning))
                (end (region-end))
-               (text (buffer-substring start end)))
-          (delete-region start end)
-	  (insert (format "«%s»" text)))
+               (text (buffer-substring start end))
+               (type (pavel/check-quotes text)))
+          (when (or
+                 (and (eq type 'primary)
+                      (eq new-type 'secondary))
+                 (and (eq type 'secondary)
+                      (eq new-type 'primary))
+                 (or (not type) (eq type 'plain)))
+            (delete-region start end)
+	    (insert (pavel/quote
+                     new-type
+                     (if type
+                         (substring text 1 -1)
+                       text)))))
 
-      (insert "«»")
-      (backward-char 1)))
+      (insert (pavel/quote new-type))
+      (backward-char 1))))
 
 (defun pavel/insert-dash-character (length)
   "inserts em dash, en dash or hyphen character according to `length'"

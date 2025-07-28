@@ -373,7 +373,7 @@ existing one"
 
 (use-package text-mode
   :bind (:map text-mode-map
-              ("M-q" . pavel/double-q-marks)
+              ("M-q" . pavel/smart-q-marks)
               ("C-M--" . pavel/smart-dash)
               ("C-c C-q" . fill-paragraph)
               ("C-c C-o" . browse-url))
