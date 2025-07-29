@@ -52,7 +52,7 @@
 otherwise ones are just inserted"
   (interactive "p")
 
-  (let ((new-type (if (or (not arg) (eq arg 1))
+  (let ((new-type (if (= arg 1)
                       'primary
                     'secondary)))
 
@@ -81,12 +81,11 @@ otherwise ones are just inserted"
   "inserts em dash, en dash or hyphen character according to `length'"
 
   (insert-char
-   (cond ((eq 3 length)
+   (cond ((= 3 length)
           (char-from-name "EM DASH"))
-         ((eq 2 length)
+         ((= 2 length)
           (char-from-name "EN DASH"))
-         (t
-          (char-from-name "HYPHEN")))
+         (t ?-))
    1 t))
 
 ;;;###autoload
@@ -104,7 +103,11 @@ sequence of hyphens"
           (delete-region start end)
 	  (pavel/insert-dash-character (length text))))
 
-    (pavel/insert-dash-character (if arg arg 3))))
+    ;; if `arg' is not specified then default value is 1 but it is not
+    ;; suitable
+    (pavel/insert-dash-character (if (numberp current-prefix-arg)
+                                     current-prefix-arg
+                                   3))))
 
 ;;;###autoload
 (defun pavel/eshell-buf-name (&optional directory)
