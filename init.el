@@ -373,8 +373,6 @@ existing one"
 
 (use-package text-mode
   :bind (:map text-mode-map
-              ("M-q" . pavel/smart-q-marks)
-              ("C-M--" . pavel/smart-dash)
               ("C-c C-q" . fill-paragraph)
               ("C-c C-o" . browse-url))
   :hook
@@ -382,7 +380,8 @@ existing one"
   (text-mode-hook . visual-line-fill-column-mode)
   (text-mode-hook . whitespace-mode)
   (text-mode-hook . flyspell-mode)
-  (text-mode-hook . abbrev-mode))
+  (text-mode-hook . abbrev-mode)
+  (text-mode-hook . typography-mode))
 
 (use-package visual-fill-column
   :ensure t)
