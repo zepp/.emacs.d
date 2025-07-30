@@ -13,8 +13,6 @@
 (define-minor-mode typography-mode
   "Minor mode to insert various typographic characters (quotes, dashes and
 so on)"
-  nil
-  :global nil
   ;; The indicator for the mode line.
   :lighter " ¶"
   ;; The minor mode bindings.
@@ -39,15 +37,15 @@ so on)"
 Anything else is hyphen.")
 
 (defun typography-build-regexp (type)
-  (let* ((marks (cdr (assoc type typography-quotation-marks-alist)))
-         (start (cdr (assoc 'start marks)))
-         (end (cdr (assoc 'end marks))))
+  (let* ((marks (alist-get type typography-quotation-marks-alist))
+         (start (alist-get 'start marks))
+         (end (alist-get 'end marks)))
     (format "^%s[^%s]+%s$" start end end)))
 
 (defun typography-quote (type &optional text)
-  (let* ((marks (cdr (assoc type typography-quotation-marks-alist)))
-         (start (cdr (assoc 'start marks)))
-         (end (cdr (assoc 'end marks))))
+  (let* ((marks (alist-get type typography-quotation-marks-alist))
+         (start (alist-get 'start marks))
+         (end (alist-get 'end marks)))
     (format "%s%s%s" start (or text "") end)))
 
 (defun typography-check-quotes (text)
