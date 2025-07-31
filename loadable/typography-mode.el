@@ -23,15 +23,20 @@ so on)"
 
 (defgroup typography nil "Main group")
 
+(defun typography-quotes (symbol start-character end-character)
+  "utility function to build `typography-quotation-marks-alist' entry"
+  `(,symbol . ((start . ,start-character)
+               (end . ,end-character))))
+
 (defcustom typography-quotation-marks-alist
-  '((primary . ((start . "«")
-                (end . "»")))
-    (secondary . ((start . "„")
-                  (end . "“")))
-    (plain . ((start . "\"")
-              (end . "\""))))
+  (list (typography-quotes 'primary ?« ?»)
+        (typography-quotes 'secondary ?\„ ?\“)
+        (typography-quotes 'plain ?\" ?\"))
+
   "Alist that keeps definition of quotation marks types: primary, secondary
-and plain. It is utilized by `typography-smart-quote' command."
+and plain. It is utilized by `typography-smart-quote' command.
+
+`typography-quotes' helper function builds entry for this alist."
 
   :type '(sexp)
   :group 'typography)
@@ -52,13 +57,13 @@ Description:
   (let* ((marks (alist-get type typography-quotation-marks-alist))
          (start (alist-get 'start marks))
          (end (alist-get 'end marks)))
-    (format "^%s[^%s]+%s$" start end end)))
+    (format "^%c[^%c]+%c$" start end end)))
 
 (defun typography-quote (type &optional text)
   (let* ((marks (alist-get type typography-quotation-marks-alist))
          (start (alist-get 'start marks))
          (end (alist-get 'end marks)))
-    (format "%s%s%s" start (or text "") end)))
+    (format "%c%s%c" start (or text "") end)))
 
 (defun typography-check-quotes (text)
   (cond
