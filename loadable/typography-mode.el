@@ -18,7 +18,10 @@ so on)"
   ;; The minor mode bindings.
   :keymap
   `((,(kbd "M-q") . typography-smart-quote)
+    (,(kbd "\"") . typography-smart-quote)
     (,(kbd "C-M--") . typography-smart-dash)))
+
+(defgroup typography nil "Main group")
 
 (defcustom typography-quotation-marks-alist
   '((primary . ((start . "«")
@@ -27,14 +30,23 @@ so on)"
                   (end . "“")))
     (plain . ((start . "\"")
               (end . "\""))))
-  "definition of quotation marks types")
+  "Alist that keeps definition of quotation marks types: primary, secondary
+and plain. It is utilized by `typography-smart-quote' command."
+
+  :type '(sexp)
+  :group 'typography)
 
 (defcustom typography-dash-length 3
-  "length of default dash:
-3 - Em dash,
-2 - En dash.
+  "Default dash length for `typography-smart-dash' command if prefix
+argument is not specified.
 
-Anything else is hyphen.")
+Description:
+- 3 is em dash,
+- 2 is en dash,
+- anything else is short dash."
+
+  :type '(natnum)
+  :group 'typography)
 
 (defun typography-build-regexp (type)
   (let* ((marks (alist-get type typography-quotation-marks-alist))
@@ -60,7 +72,9 @@ Anything else is hyphen.")
 ;;;###autoload
 (defun typography-smart-quote (arg)
   "if region is active then text is wrapped with quotation marks
-otherwise ones are just inserted"
+otherwise ones are just inserted. Numeric prefix argument specifies
+quotation marks type: 1 stands for primary, 2 stands for secondary."
+
   (interactive "p")
 
   (let ((new-type (if (= arg 1) 'primary 'secondary)))
@@ -87,7 +101,7 @@ otherwise ones are just inserted"
       (backward-char 1))))
 
 (defun typography-insert-dash-character (length)
-  "inserts em dash, en dash or hyphen character according to `length'"
+  "inserts em dash, en dash or short dash character according to `length'"
 
   (insert-char
    (cond ((= 3 length)
@@ -99,9 +113,9 @@ otherwise ones are just inserted"
 
 ;;;###autoload
 (defun typography-smart-dash (arg)
-  "inserts em dash, en dash or hyphen character according to numeric
-prefix argument or replaces current region with dash in case of it is
-sequence of hyphens"
+  "inserts dash character according to numeric prefix argument or replaces
+current region with dash in case of it is sequence of hyphens"
+
   (interactive "p")
 
   (if (use-region-p)
@@ -113,9 +127,9 @@ sequence of hyphens"
 	  (typography-insert-dash-character (length text))))
 
     ;; if `arg' is not specified then default value is 1 but it is not
-    ;; suitable
+    ;; suitable. `typography-dash-length' specifies default value.
     (typography-insert-dash-character
-     (if (numberp current-prefix-arg)
+     (if (integerp current-prefix-arg)
          current-prefix-arg
        typography-dash-length))))
 
