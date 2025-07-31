@@ -118,10 +118,14 @@ quotation marks type: 1 stands for primary, 2 stands for secondary."
 
 ;;;###autoload
 (defun typography-smart-dash (arg)
-  "inserts dash character according to numeric prefix argument or replaces
-current region with dash in case of it is sequence of hyphens"
+  "inserts dash character according to prefix argument or replaces
+current region with dash in case of it is sequence of
+hyphens.
 
-  (interactive "p")
+`typography-dash-length' specifies default argument value in case if it
+is not specified."
+
+  (interactive "P")
 
   (if (use-region-p)
       (let* ((start (region-beginning))
@@ -131,11 +135,9 @@ current region with dash in case of it is sequence of hyphens"
           (delete-region start end)
 	  (typography-insert-dash-character (length text))))
 
-    ;; if `arg' is not specified then default value is 1 but it is not
-    ;; suitable. `typography-dash-length' specifies default value.
     (typography-insert-dash-character
-     (if (integerp current-prefix-arg)
-         current-prefix-arg
+     (if (integerp arg)
+         arg
        typography-dash-length))))
 
 (provide 'typograpy-mode)
