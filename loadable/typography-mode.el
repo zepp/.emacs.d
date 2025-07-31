@@ -77,12 +77,16 @@ Description:
 ;;;###autoload
 (defun typography-smart-quote (arg)
   "if region is active then text is wrapped with quotation marks
-otherwise ones are just inserted. Numeric prefix argument specifies
-quotation marks type: 1 stands for primary, 2 stands for secondary."
+otherwise ones are just inserted. Numeric prefix argument
+specifies quotation marks type: 1 stands for primary, 2 stands
+for secondary and anything else for plain quotes."
 
   (interactive "p")
 
-  (let ((new-type (if (= arg 1) 'primary 'secondary)))
+  (let ((new-type (cond
+                   ((= arg 1) 'primary)
+                   ((= arg 2) 'secondary)
+                   (t 'plain))))
 
     (if (use-region-p)
         (let* ((start (region-beginning))
