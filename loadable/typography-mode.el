@@ -31,10 +31,10 @@ so on)"
 (defcustom typography-quotation-marks-alist
   (list (typography-quotes 'primary ?« ?»)
         (typography-quotes 'secondary ?\„ ?\“)
-        (typography-quotes 'plain ?\" ?\"))
+        (typography-quotes 'neutral ?\" ?\"))
 
   "Alist that keeps definition of quotation marks types: primary, secondary
-and plain. It is utilized by `typography-smart-quote' command.
+and neutral. It is utilized by `typography-smart-quote' command.
 
 `typography-quotes' helper function builds entry for this alist."
 
@@ -71,22 +71,22 @@ Description:
     'primary)
    ((string-match (typography-build-regexp 'secondary) text)
     'secondary)
-   ((string-match (typography-build-regexp 'plain) text)
-    'plain)))
+   ((string-match (typography-build-regexp 'neutral) text)
+    'neutral)))
 
 ;;;###autoload
 (defun typography-smart-quote (arg)
   "if region is active then text is wrapped with quotation marks
 otherwise ones are just inserted. Numeric prefix argument
 specifies quotation marks type: 1 stands for primary, 2 stands
-for secondary and anything else for plain quotes."
+for secondary and anything else for neutral quotes."
 
   (interactive "p")
 
   (let ((new-type (cond
                    ((= arg 1) 'primary)
                    ((= arg 2) 'secondary)
-                   (t 'plain))))
+                   (t 'neutral))))
 
     (if (use-region-p)
         (let* ((start (region-beginning))
@@ -98,7 +98,7 @@ for secondary and anything else for plain quotes."
                       (eq new-type 'secondary))
                  (and (eq type 'secondary)
                       (eq new-type 'primary))
-                 (or (not type) (eq type 'plain)))
+                 (or (not type) (eq type 'neutral)))
             (delete-region start end)
 	    (insert (typography-quote
                      new-type
