@@ -17,16 +17,16 @@ so on)"
   :lighter " ¶"
   ;; The minor mode bindings.
   :keymap
-  `((,(kbd "M-q") . typography-smart-quote)
-    (,(kbd "\"") . typography-smart-quote)
+  `((,(kbd "M-q") . typography-smart-quotes)
+    (,(kbd "\"") . typography-smart-quotes)
     (,(kbd "C-M--") . typography-smart-dash)))
 
 (defgroup typography nil "Main group")
 
-(defun typography-quotes (symbol start-character end-character)
+(defun typography-quotes (symbol opening-character closing-character)
   "utility function to build `typography-quotation-marks-alist' entry"
-  `(,symbol . ((start . ,start-character)
-               (end . ,end-character))))
+  `(,symbol . ((opening . ,opening-character)
+               (closing . ,closing-character))))
 
 (defcustom typography-quotation-marks-alist
   (list (typography-quotes 'primary ?« ?»)
@@ -34,7 +34,7 @@ so on)"
         (typography-quotes 'neutral ?\" ?\"))
 
   "Alist that keeps definition of quotation marks types: primary, secondary
-and neutral. It is utilized by `typography-smart-quote' command.
+and neutral. It is utilized by `typography-smart-quotes' command.
 
 `typography-quotes' helper function builds entry for this alist."
 
@@ -53,29 +53,29 @@ Description:
   :type '(natnum)
   :group 'typography)
 
-(defun typography-build-regexp (type)
+(defun typography-quotes-regexp (type)
   (let* ((marks (alist-get type typography-quotation-marks-alist))
-         (start (alist-get 'start marks))
-         (end (alist-get 'end marks)))
-    (format "^%c[^%c]+%c$" start end end)))
+         (opening (alist-get 'opening marks))
+         (closing (alist-get 'closing marks)))
+    (format "^%c[^%c]+%c$" opening closing closing)))
 
 (defun typography-quote (type &optional text)
   (let* ((marks (alist-get type typography-quotation-marks-alist))
-         (start (alist-get 'start marks))
-         (end (alist-get 'end marks)))
-    (format "%c%s%c" start (or text "") end)))
+         (opening (alist-get 'opening marks))
+         (closing (alist-get 'closing marks)))
+    (format "%c%s%c" opening (or text "") closing)))
 
 (defun typography-check-quotes (text)
   (cond
-   ((string-match (typography-build-regexp 'primary) text)
+   ((string-match (typography-quotes-regexp 'primary) text)
     'primary)
-   ((string-match (typography-build-regexp 'secondary) text)
+   ((string-match (typography-quotes-regexp 'secondary) text)
     'secondary)
-   ((string-match (typography-build-regexp 'neutral) text)
+   ((string-match (typography-quotes-regexp 'neutral) text)
     'neutral)))
 
 ;;;###autoload
-(defun typography-smart-quote (arg)
+(defun typography-smart-quotes (arg)
   "if region is active then text is wrapped with quotation marks
 otherwise ones are just inserted. Numeric prefix argument
 specifies quotation marks type: 1 stands for primary, 2 stands
@@ -83,7 +83,7 @@ for secondary and anything else for neutral quotes."
 
   (interactive "p")
 
-  (let ((new-type (cond
+  (let ((arg-type (cond
                    ((= arg 1) 'primary)
                    ((= arg 2) 'secondary)
                    (t 'neutral))))
@@ -95,21 +95,23 @@ for secondary and anything else for neutral quotes."
                (type (typography-check-quotes text)))
           (when (or
                  (and (eq type 'primary)
-                      (eq new-type 'secondary))
+                      (eq arg-type 'secondary))
                  (and (eq type 'secondary)
-                      (eq new-type 'primary))
-                 (or (not type) (eq type 'neutral)))
+                      (eq arg-type 'primary))
+                 (or (not type)
+                     (and (eq type 'neutral)
+                          (not (eq arg-type 'neutral)))))
             (delete-region start end)
 	    (insert (typography-quote
-                     new-type
+                     arg-type
                      (if type
                          (substring text 1 -1)
                        text)))))
 
-      (insert (typography-quote new-type))
+      (insert (typography-quote arg-type))
       (backward-char 1))))
 
-(defun typography-insert-dash-character (length)
+(defun typography-insert-dash (length)
   "inserts em dash, en dash or short dash character according to `length'"
 
   (insert-char
@@ -137,9 +139,9 @@ is not specified."
              (text (buffer-substring start end)))
         (when (string-match "^[-]+$" text)
           (delete-region start end)
-	  (typography-insert-dash-character (length text))))
+	  (typography-insert-dash (length text))))
 
-    (typography-insert-dash-character
+    (typography-insert-dash
      (if (integerp arg)
          arg
        typography-dash-length))))
