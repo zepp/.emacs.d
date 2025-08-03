@@ -59,12 +59,6 @@ Description:
          (closing (alist-get 'closing marks)))
     (format "^%c[^%c]+%c$" opening closing closing)))
 
-(defun typography-quote (type &optional text)
-  (let* ((marks (alist-get type typography-quotation-marks-alist))
-         (opening (alist-get 'opening marks))
-         (closing (alist-get 'closing marks)))
-    (format "%c%s%c" opening (or text "") closing)))
-
 (defun typography-check-quotes (text)
   (cond
    ((string-match (typography-quotes-regexp 'primary) text)
@@ -73,6 +67,13 @@ Description:
     'secondary)
    ((string-match (typography-quotes-regexp 'neutral) text)
     'neutral)))
+
+(defun typography-insert-quoted (text type)
+  (insert
+   (let* ((marks (alist-get type typography-quotation-marks-alist))
+          (opening (alist-get 'opening marks))
+          (closing (alist-get 'closing marks)))
+     (format "%c%s%c" opening text closing))))
 
 ;;;###autoload
 (defun typography-smart-quotes (arg)
@@ -93,22 +94,30 @@ for secondary and anything else for neutral quotes."
                (end (region-end))
                (text (buffer-substring start end))
                (type (typography-check-quotes text)))
-          (when (or
-                 (and (eq type 'primary)
-                      (eq arg-type 'secondary))
-                 (and (eq type 'secondary)
-                      (eq arg-type 'primary))
-                 (or (not type)
-                     (and (eq type 'neutral)
-                          (not (eq arg-type 'neutral)))))
+          (cond
+           ((or
+             (and (eq type 'primary)
+                  (eq arg-type 'secondary))
+             (and (eq type 'secondary)
+                  (eq arg-type 'primary))
+             (and (eq type 'neutral)
+                  (not (eq arg-type 'neutral))))
             (delete-region start end)
-	    (insert (typography-quote
-                     arg-type
-                     (if type
-                         (substring text 1 -1)
-                       text)))))
+            (typography-insert-quoted
+             (substring text 1 -1)
+             arg-type))
 
-      (insert (typography-quote arg-type))
+           ((not type)
+            (delete-region start end)
+            (typography-insert-quoted
+             text
+             arg-type))
+
+           (t (user-error
+               "typography: pointless conversion from %s to %s quotation marks"
+               type arg-type))))
+
+      (typography-insert-quoted "" arg-type)
       (backward-char 1))))
 
 (defun typography-insert-dash (length)
@@ -119,7 +128,8 @@ for secondary and anything else for neutral quotes."
           (char-from-name "EM DASH"))
          ((= 2 length)
           (char-from-name "EN DASH"))
-         (t ?-))
+         ((= 1 length) ?-)
+         (t (user-error "typography: incorrect dash length")))
    1 t))
 
 ;;;###autoload
@@ -137,7 +147,8 @@ is not specified."
       (let* ((start (region-beginning))
              (end (region-end))
              (text (buffer-substring start end)))
-        (when (string-match "^[-]+$" text)
+        (if (not (string-match "^[-]+$" text))
+            (user-error "typography: region is not sequence of hyphens")
           (delete-region start end)
 	  (typography-insert-dash (length text))))
 
