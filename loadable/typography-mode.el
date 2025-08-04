@@ -23,15 +23,21 @@ so on)"
 
 (defgroup typography nil "Main group")
 
-(defun typography-quotes (symbol opening-character closing-character)
+(defun typography-quotes (method primary &optional secondary)
   "utility function to build `typography-quotation-marks-alist' entry"
-  `(,symbol . ((opening . ,opening-character)
-               (closing . ,closing-character))))
+
+  `(,method . ,(if secondary
+                    `((primary . ,primary)
+                      (secondary . ,secondary))
+                  `((primary . ,primary)))))
 
 (defcustom typography-quotation-marks-alist
-  (list (typography-quotes 'primary ?« ?»)
-        (typography-quotes 'secondary ?\„ ?\“)
-        (typography-quotes 'neutral ?\" ?\"))
+  (list (typography-quotes 'default
+                              (cons ?\“ ?\”) (cons ?\‘ ?\’))
+        (typography-quotes 'russian-computer
+                              (cons ?« ?») (cons ?\„ ?\“))
+        (typography-quotes 'neutral
+                              (cons ?\" ?\")))
 
   "Alist that keeps definition of quotation marks types: primary, secondary
 and neutral. It is utilized by `typography-smart-quotes' command.
@@ -39,6 +45,18 @@ and neutral. It is utilized by `typography-smart-quotes' command.
 `typography-quotes' helper function builds entry for this alist."
 
   :type '(sexp)
+  :group 'typography)
+
+(defcustom typography-default-method "default"
+  "Default input method name"
+
+  :type '(string)
+  :group 'typography)
+
+(defcustom typography-neutral-method "neutral"
+  "Neutral input method name"
+
+  :type '(string)
   :group 'typography)
 
 (defcustom typography-dash-length 3
@@ -53,10 +71,18 @@ Description:
   :type '(natnum)
   :group 'typography)
 
-(defun typography-quotes-regexp (type)
-  (let* ((marks (alist-get type typography-quotation-marks-alist))
-         (opening (alist-get 'opening marks))
-         (closing (alist-get 'closing marks)))
+(defun typograpy-method-marks (&optional method)
+
+  (let ((im (or method
+                (if current-input-method
+                    (intern current-input-method)
+                  'default))))
+    (alist-get im typography-quotation-marks-alist)))
+
+(defun typography-quotes-regexp (type &optional method)
+  (let* ((marks (alist-get type (typograpy-method-marks method)))
+         (opening (car marks))
+         (closing (cdr marks)))
     (format "^%c[^%c]+%c$" opening closing closing)))
 
 (defun typography-check-quotes (text)
@@ -64,15 +90,13 @@ Description:
    ((string-match (typography-quotes-regexp 'primary) text)
     'primary)
    ((string-match (typography-quotes-regexp 'secondary) text)
-    'secondary)
-   ((string-match (typography-quotes-regexp 'neutral) text)
-    'neutral)))
+    'secondary)))
 
 (defun typography-insert-quoted (text type)
   (insert
-   (let* ((marks (alist-get type typography-quotation-marks-alist))
-          (opening (alist-get 'opening marks))
-          (closing (alist-get 'closing marks)))
+   (let* ((marks (alist-get type (typograpy-method-marks)))
+          (opening (car marks))
+          (closing (cdr marks)))
      (format "%c%s%c" opening text closing))))
 
 ;;;###autoload
@@ -87,7 +111,7 @@ for secondary and anything else for neutral quotes."
   (let ((arg-type (cond
                    ((= arg 1) 'primary)
                    ((= arg 2) 'secondary)
-                   (t 'neutral))))
+                   (t 'primary))))
 
     (if (use-region-p)
         (let* ((start (region-beginning))
