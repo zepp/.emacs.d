@@ -384,6 +384,9 @@ existing one"
   (text-mode-hook . typography-mode))
 
 (use-package visual-fill-column
+  :init
+  (setq-default fill-column 80)
+
   :ensure t)
 
 (use-package org-agenda
