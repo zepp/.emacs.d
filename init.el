@@ -91,6 +91,7 @@ existing one"
               ("M-$" . shell)
               ("z" . dired-do-compress-to)
               ("TAB" . dired-hide-subdir)
+              ("<backtab>" . dired-hide-all)
               ("M-*" . dired-mark-files-regexp))
 
   :init
