@@ -373,17 +373,24 @@ existing one"
   (unless (file-exists-p ispell-personal-dictionary)
     (write-region "" nil ispell-personal-dictionary nil 0)))
 
+(defun pavel/minor-text-modes ()
+  "checks current buffer major mode then enables addtional minor modes
+usefull for text editing"
+
+  (unless (derived-mode-p 'html-mode 'nxml-mode)
+    (flyspell-mode 1)
+    (abbrev-mode 1)
+    (typography-mode 1)
+    (visual-line-fill-column-mode 1)))
+
 (use-package text-mode
   :bind (:map text-mode-map
               ("C-c C-q" . fill-paragraph)
               ("C-c C-o" . browse-url))
   :hook
   (text-mode-hook . visual-line-mode)
-  (text-mode-hook . visual-line-fill-column-mode)
   (text-mode-hook . whitespace-mode)
-  (text-mode-hook . flyspell-mode)
-  (text-mode-hook . abbrev-mode)
-  (text-mode-hook . typography-mode))
+  (text-mode-hook . pavel/minor-text-modes))
 
 (use-package visual-fill-column
   :init
