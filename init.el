@@ -323,6 +323,17 @@ existing one"
               ("C-M-p" . diff-file-prev)
               ("C-j" . diff-goto-source)))
 
+(use-package smerge-mode
+  :bind (:map smerge-mode-map
+              ("C-c C-p" . smerge-prev)
+              ("C-c C-n" . smerge-next)
+              ("C-c C-c" . smerge-keep-current)
+              ;; enlarge current conflict
+              ("C-c C-e" . smerge-combine-with-next)
+              ("C-c C-d" . smerge-ediff)
+              ("C-c C-r" . smerge-resolve)
+              ("C-c C-f" . smerge-refine)))
+
 (use-package magit
   :after ido
   :bind (("C-x M-v" . magit-file-dispatch)
