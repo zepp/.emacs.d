@@ -1,5 +1,6 @@
 /*~
-/loadable/
+/loadable/*~
+/loadable/*-autoloads.el
 /elpa/
 /eln-cache/
 /.cache/
