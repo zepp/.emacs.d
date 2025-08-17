@@ -336,7 +336,7 @@ existing one"
 
 (use-package magit
   :after ido
-  :bind (("C-x M-v" . magit-file-dispatch)
+  :bind (("C-x C-v" . magit-file-dispatch) ;; find-alternate-file
          (:map magit-section-mode-map
                ("M-1")
                ("M-2")
