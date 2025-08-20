@@ -428,26 +428,30 @@ usefull for text editing"
    org-agenda-bulk-custom-functions
    '((?a org-agenda-archive-default))))
 
-(use-package org
+(use-package org-capture
   :bind (("C-x C-n" . org-capture)
-         (:map org-mode-map
-               ("M-m" . org-emphasize)
-               ("C-M-f" . org-forward-element)
-               ("C-M-b" . org-backward-element)
-               ("C-M-u" . org-up-element)
-               ("C-M-d" . org-down-element)
-               ("C-M-SPC" . org-mark-element)
-               ("C-M-n" . org-next-visible-heading)
-               ("C-M-p" . org-previous-visible-heading)
-               ("C-c C-w" . org-cut-special)   ;; org-refile
-               ("C-c M-w" . org-copy-special)  ;; org-refile-copy
-               ("C-c C-y" . org-paste-special) ;; org-evaluate-time-range
-               ("C-c C-r" . org-refile)        ;; org-reveal
-               ("C-c M-r" . org-refile-copy)
-               ("C-c C-p" . org-set-property)
-               ("C-c C-b" . org-mark-ring-goto)
-               ("C-c C-x C-r" . org-reveal)       ;; org-toggle-radio-button
-               ("C-c C-x C-s" . org-store-link))) ;; org-archive-subtree
+         (:map org-capture-mode-map
+               ("C-c C-r" . org-capture-refile))))
+
+(use-package org
+  :bind (:map org-mode-map
+              ("M-m" . org-emphasize)
+              ("C-M-f" . org-forward-element)
+              ("C-M-b" . org-backward-element)
+              ("C-M-u" . org-up-element)
+              ("C-M-d" . org-down-element)
+              ("C-M-n" . org-next-visible-heading)
+              ("C-M-p" . org-previous-visible-heading)
+              ("C-M-SPC" . org-mark-element)
+              ("C-c C-w" . org-cut-special)   ;; org-refile
+              ("C-c M-w" . org-copy-special)  ;; org-refile-copy
+              ("C-c C-y" . org-paste-special) ;; org-evaluate-time-range
+              ("C-c C-r" . org-refile)        ;; org-reveal
+              ("C-c M-r" . org-refile-copy)
+              ("C-c C-p" . org-set-property)
+              ("C-c C-b" . org-mark-ring-goto)
+              ("C-c C-x C-r" . org-reveal)      ;; org-toggle-radio-button
+              ("C-c C-x C-s" . org-store-link)) ;; org-archive-subtree
 
   :init
   (setq
