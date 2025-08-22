@@ -431,7 +431,12 @@ usefull for text editing"
 (use-package org-capture
   :bind (("C-x C-n" . org-capture)
          (:map org-capture-mode-map
-               ("C-c C-r" . org-capture-refile))))
+               ("C-c C-r" . org-capture-refile)))
+  :init
+  (add-to-list 'display-buffer-alist
+               '("CAPTURE-\\w+\\.org$"
+                 display-buffer-pop-up-window
+                 (dedicated . t))))
 
 (use-package org
   :bind (:map org-mode-map
@@ -482,10 +487,6 @@ usefull for text editing"
                  display-buffer-at-bottom
                  (dedicated . t)))
 
-  (add-to-list 'display-buffer-alist
-               '("CAPTURE-\\w+\\.org$"
-                 display-buffer-pop-up-window
-                 (dedicated . t)))
   :config
   (add-to-list 'org-latex-packages-alist '("AUTO" "babel" t ("pdflatex")))
   (add-to-list 'org-latex-packages-alist '("" "tabularx"))
