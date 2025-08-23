@@ -216,9 +216,13 @@ existing one"
 (use-package isearch
   :bind
   (:map isearch-mode-map
-        ("M-o" . isearch-occur))
+        ("M-o" . isearch-occur)
+        ("M-@" . isearch-yank-word-or-char)
+        ("M-f" . isearch-repeat-forward)
+        ("M-b" . isearch-repeat-backward))
   (:map search-map
-        ("s" . isearch-forward-thing-at-point))
+        ("t" . isearch-forward-thing-at-point)
+        ("s" . isearch-forward-symbol-at-point))
   :init
   (setq isearch-allow-motion t
         isearch-motion-changes-direction t)
