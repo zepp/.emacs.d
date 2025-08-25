@@ -300,19 +300,26 @@ existing one"
              (sh-base-mode . bash-ts-mode)))
     (add-to-list 'major-mode-remap-alist mapping)))
 
+(defun project-grep-symbol-at-point ()
+  "Searches symbol at the point using `ag-project' as backend"
+
+  (interactive)
+
+  (let ((default-directory (project-root (project-current t))))
+    (ag-project (ag/dwim-at-point))))
+
 (use-package project
-  :bind-keymap ("C-x C-p" . project-prefix-map)
   :bind (:map project-prefix-map
-              ("C-f" . project-find-file)
-              ("C-d" . project-find-dir)
-              ("C-j" . project-dired)
-              ("$" . project-eshell)))
+              ("$" . project-eshell)
+              ("j" . project-dired)
+              ("m" . magit-project-status)
+              ("v" . magit-file-dispatch)
+              ("g" . project-grep-symbol-at-point)))
 
 (use-package ag
   :after prog-mode
   :bind (:map prog-mode-map
-              ("C-c g" . ag-project-regexp)
-              ("C-c M-g" . ag-project-files))
+              ("C-x g" . ag-project-regexp))
   :init
   (setq ag-reuse-buffers t)
 
@@ -349,8 +356,10 @@ existing one"
                ("C-M-p" . magit-section-backward-sibling)))
 
   :init
-  (setq magit-display-buffer-function
-        'magit-display-buffer-fullframe-status-v1)
+  (setq
+   magit-define-global-key-bindings nil
+   magit-display-buffer-function
+   'magit-display-buffer-fullframe-status-v1)
 
   :config
   ;; append to end of hook list
@@ -531,7 +540,7 @@ usefull for text editing"
 
 ;;-------------------------------------------------------------------------------
 
-(keymap-global-set "C-c g" #'rgrep)
+(define-key ctl-x-map (kbd "g") #'rgrep)
 (define-key ctl-x-map (kbd "M-s") #'write-file)
 (define-key ctl-x-map (kbd "M-b") #'switch-to-buffer-other-window)
 (define-key ctl-x-map (kbd "M-f") #'find-file-other-window)
@@ -541,8 +550,8 @@ usefull for text editing"
   (define-key ctl-x-map (kbd "w d") #'pavel/toggle-window-dedicated))
 ;; originaly it was `write-file'
 (define-key ctl-x-map (kbd "C-w") #'quit-window)
-;; originally it was prefix key for project keymap
-(define-key ctl-x-map (kbd "p") #'previous-buffer)
+;; mark-page
+(define-key ctl-x-map (kbd "C-p") #'previous-buffer)
 (define-key ctl-x-map (kbd "$") #'pavel/eshell-jump)
 
 ;;-------------------------------------------------------------------------------
