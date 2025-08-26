@@ -86,10 +86,10 @@ existing one"
 (use-package dired
   :bind (:map dired-mode-map
               ("C-t C-t")
-              ("c") ;; dired-do-compress-to
+              ("c")
               ("$" . pavel/eshell-jump)
               ("M-$" . shell)
-              ("z" . dired-do-compress-to)
+              ("Z" . dired-do-compress-to) ;; dired-do-compress
               ("TAB" . dired-hide-subdir)
               ("<backtab>" . dired-hide-all)
               ("M-*" . dired-mark-files-regexp))
