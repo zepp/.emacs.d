@@ -300,6 +300,15 @@ existing one"
              (sh-base-mode . bash-ts-mode)))
     (add-to-list 'major-mode-remap-alist mapping)))
 
+(use-package ag
+  :after prog-mode
+  :bind (:map prog-mode-map
+              ("C-x g" . ag-project-regexp))
+  :init
+  (setq ag-reuse-buffers t)
+
+  :ensure t)
+
 (defun project-grep-symbol-at-point ()
   "Searches symbol at the point using `ag-project' as backend"
 
@@ -315,15 +324,6 @@ existing one"
               ("m" . magit-project-status)
               ("v" . magit-file-dispatch)
               ("g" . project-grep-symbol-at-point)))
-
-(use-package ag
-  :after prog-mode
-  :bind (:map prog-mode-map
-              ("C-x g" . ag-project-regexp))
-  :init
-  (setq ag-reuse-buffers t)
-
-  :ensure t)
 
 ;;-------------------------------------------------------------------------------
 ;; version control
