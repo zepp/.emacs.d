@@ -452,24 +452,26 @@ usefull for text editing"
                  (dedicated . t))))
 
 (use-package org
-  :bind (:map org-mode-map
-              ("M-m" . org-emphasize)
-              ("C-M-f" . org-forward-element)
-              ("C-M-b" . org-backward-element)
-              ("C-M-u" . org-up-element)
-              ("C-M-d" . org-down-element)
-              ("C-M-n" . org-next-visible-heading)
-              ("C-M-p" . org-previous-visible-heading)
-              ("C-M-SPC" . org-mark-element)
-              ("C-c C-w" . org-cut-special)   ;; org-refile
-              ("C-c M-w" . org-copy-special)  ;; org-refile-copy
-              ("C-c C-y" . org-paste-special) ;; org-evaluate-time-range
-              ("C-c C-r" . org-refile)        ;; org-reveal
-              ("C-c M-r" . org-refile-copy)
-              ("C-c C-p" . org-set-property)
-              ("C-c C-b" . org-mark-ring-goto)
-              ("C-c C-x C-r" . org-reveal)      ;; org-toggle-radio-button
-              ("C-c C-x C-s" . org-store-link)) ;; org-archive-subtree
+  :bind (("C-x &" . org-store-link)
+         (:map org-mode-map
+               ("M-m" . org-emphasize)
+               ("C-M-f" . org-forward-element)
+               ("C-M-b" . org-backward-element)
+               ("C-M-u" . org-up-element)
+               ("C-M-d" . org-down-element)
+               ("C-M-n" . org-next-visible-heading)
+               ("C-M-p" . org-previous-visible-heading)
+               ("C-M-SPC" . org-mark-element)
+               ("C-c C-w" . org-cut-special)    ;; org-refile
+               ("C-c M-w" . org-copy-special)   ;; org-refile-copy
+               ("C-c C-y" . org-paste-special)  ;; org-evaluate-time-range
+               ("C-c C-r" . org-refile)         ;; org-reveal
+               ("C-c M-r" . org-refile-copy)
+               ("C-c C-p" . org-set-property)
+               ("C-c C-b" . org-mark-ring-goto)
+               ("C-c &" . org-store-link)       ;; org-mark-ring-goto
+               ("C-c C-x C-r" . org-reveal)       ;; org-toggle-radio-button
+               ("C-c C-x C-s" . org-store-link))) ;; org-archive-subtree
 
   :init
   (setq
