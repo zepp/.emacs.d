@@ -454,6 +454,7 @@ usefull for text editing"
 (use-package org
   :bind (("C-x &" . org-store-link)
          (:map org-mode-map
+               ("C-x C-n" . org-insert-heading-respect-content)
                ("M-m" . org-emphasize)
                ("C-M-f" . org-forward-element)
                ("C-M-b" . org-backward-element)
@@ -469,9 +470,8 @@ usefull for text editing"
                ("C-c M-r" . org-refile-copy)
                ("C-c C-p" . org-set-property)
                ("C-c C-b" . org-mark-ring-goto)
-               ("C-c &" . org-store-link)       ;; org-mark-ring-goto
-               ("C-c C-x C-r" . org-reveal)       ;; org-toggle-radio-button
-               ("C-c C-x C-s" . org-store-link))) ;; org-archive-subtree
+               ("C-c &")                        ;; org-mark-ring-goto
+               ("C-c C-x C-r" . org-reveal)))   ;; org-toggle-radio-button
 
   :init
   (setq
