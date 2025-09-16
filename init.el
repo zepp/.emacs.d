@@ -300,6 +300,11 @@ existing one"
              (sh-base-mode . bash-ts-mode)))
     (add-to-list 'major-mode-remap-alist mapping)))
 
+(use-package json-ts-mode
+  :after prog-mode
+  :bind (:map json-ts-mode-map
+              ("C-c C-p" . json-pretty-print)))
+
 (use-package ag
   :after prog-mode
   :bind (:map prog-mode-map
