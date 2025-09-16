@@ -425,15 +425,19 @@ usefull for text editing"
 (use-package org-agenda
   :bind (("C-x C-a" . org-agenda)
          (:map org-agenda-mode-map
+               ("C-x C-n" . org-agenda-capture)
+               ("C-x C-w") ;; org-agenda-write
+
                ("n" . org-agenda-next-item)
                ("p" . org-agenda-previous-item)
                ("C-M-n" . org-agenda-next-date-line)
                ("C-M-p" . org-agenda-previous-date-line)
-               ("C-x C-w") ;; org-agenda-write
+
+               ("d" . org-agenda-deadline)
+               ("s" . org-agenda-schedule)
                ("C-c C-w") ;; org-agenda-refile
                ("C-c C-r" . org-agenda-refile)
-               ("C-c C-p" . org-agenda-set-property)
-               ("C-x C-n" . org-agenda-capture)))
+               ("C-c C-p" . org-agenda-set-property)))
   :init
   (setq
    org-agenda-remove-tags t
