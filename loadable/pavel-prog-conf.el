@@ -76,9 +76,12 @@
 
 (defun pavel/compose-ag-args (thing scope)
   (let ((pattern
-         (if (search/is thing 'symbol)
-             (format "\\b%s\\b" (search/quote thing))
-           (cdr thing)))
+         (cond
+          ((search/is thing 'symbol)
+           (format "\\b%s\\b" (search/quote thing)))
+          ((search/is thing 'filename)
+           (format "%s\\b" (search/quote thing)))
+          (t (cdr thing))))
         (ext (alist-get 'ext scope)))
     (list pattern (alist-get 'root scope)
           :regexp (search/is thing 'symbol)

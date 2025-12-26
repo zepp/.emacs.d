@@ -25,18 +25,54 @@ engine for a current major mode and perform a search in a directory tree"
   "list of functions to provide a root of a directory tree for a
 buffer. Function is executed in the context of the buffer and must
 return nonempty string or nil"
-  :type 'list)
+  :type '(repeat function))
+
+;;;###autoload
+(defcustom search/prog-modes '(prog-mode sgml-mode nxml-mode)
+  "modes those considered as programming modes"
+  :type '(repeat function))
+
+;;;###autoload
+(defcustom search/word-trim-alist
+  '(("[a-zA-Z’'\\-]+" . "[’'s]+")
+    ("[а-яА-Я\\-]" . "\\(с[ья]\\)\\|\\([тш][ье]\\)\\|\\([аяеыо]?ми?\\)\
+\\|\\(ов\\)\\|\\([аяы]х\\)\\|\\([ауоыийэяюёеь]+\\)"))
+  "regular expressions to trim a word ending for better text search"
+  :type '(repeat (cons regexp regexp)))
 
 (defvar-local search/scope nil
   "buffer local variable that keeps scope for `search/thing-dir-tree'")
+
+;;;###autoload
+(defun search/trim-word (word)
+  "trims WORD ending for better text search. It returns original
+WORD in case of `string-trim-right' returns empty string."
+
+  (let ((regexp (seq-some
+               #'(lambda (cell)
+                   (when (string-match (car cell) word)
+                     (cdr cell)))
+               search/word-trim-alist)))
+    (if regexp
+        (let ((base (string-trim-right word regexp)))
+          (if (string-empty-p base)
+              word
+            base))
+      word)))
 
 (defun search/compose-rgrep-args (thing scope)
   "Composes an argument list for `rgrep' and `rzgrep' commands"
 
   (let ((regexp
          (format
-          (if (search/is thing 'symbol) "\\b%s\\b" "%s")
-          (search/quote thing)))
+          (cond
+           ((search/is thing 'symbol) "\\b%s\\b")
+           ((search/is thing 'word) "\\b%s\\w*\\b")
+           ((search/is thing 'filename) "%s\\b")
+           (t "%s"))
+          (if (search/is thing 'word)
+              (search/trim-word (cdr thing))
+            (search/quote thing))))
         (ext (alist-get 'ext scope "*")))
     (list regexp
           (concat "*." ext)
@@ -64,6 +100,26 @@ return nonempty string or nil"
                   search/dir-tree-engines)
         fallback)))
 
+(defun search/get-thing (thing &optional overlay-secs trim)
+  "returns thing at point as `cons'"
+
+  (let ((bounds (bounds-of-thing-at-point thing)))
+    (when overlay-secs
+      (let ((overlay (make-overlay (car bounds) (cdr bounds))))
+        (overlay-put overlay 'face 'region)
+        (overlay-put overlay 'evaporate t)
+        (run-at-time overlay-secs
+                     nil
+                     #'(lambda ()
+                         (delete-overlay overlay)))))
+    (cons thing
+          (let ((string (buffer-substring-no-properties
+                         (car bounds)
+                         (cdr bounds))))
+            (if trim
+                (string-trim string trim trim)
+              string)))))
+
 (defun search/thing-at-point (&optional no-input)
   "Intends to pick a symbol at point or something else if there is
 an active region. Initiates minibuffer input if NO-INPUT is nil
@@ -73,15 +129,30 @@ as a last resort."
    ;; check region at first in case of only part of a thing at point should be
    ;; searched.
    ((use-region-p)
-    (let* ((substring (buffer-substring-no-properties
-                       (region-beginning) (region-end)))
-           (thing (cons 'string substring))
-           (deactivate-mark 'dont-save))
+    (let ((substring (buffer-substring-no-properties
+                      (region-beginning) (region-end)))
+          (deactivate-mark 'dont-save))
       (deactivate-mark)
-      thing))
+      (cons 'string substring)))
 
-   ((thing-at-point 'symbol)
-    (cons 'symbol (thing-at-point 'symbol t)))
+   ((thing-at-point 'email)
+    (search/get-thing 'email 1 "[<>]"))
+
+   ((thing-at-point 'uuid)
+    (search/get-thing 'uuid 1))
+
+   ((and (derived-mode-p 'dired-mode)
+         (thing-at-point 'filename))
+    (search/get-thing 'filename 1))
+
+   ;; `apply' is for compatibility reasons
+   ((and (apply #'derived-mode-p search/prog-modes)
+         (thing-at-point 'symbol))
+    (search/get-thing 'symbol 1))
+
+   ((and (derived-mode-p 'text-mode)
+         (thing-at-point 'word))
+    (search/get-thing 'word 1))
 
    ((not no-input)
     (let* ((line (string-trim (thing-at-point 'line t)))
@@ -111,9 +182,11 @@ as a last resort."
       (user-error "Rename of '%s' is aborted since buffer '%s' is modified"
                   (cdr thing) (buffer-name (current-buffer)))
     (save-excursion
-      (let ((thing-regexp (if (search/is thing 'symbol)
-                              (format "\\_<%s\\_>" (cdr thing))
-                            (format "\\b%s\\b" (search/quote thing)))))
+      (let ((thing-regexp (cond ((search/is thing 'symbol)
+                                 (format "\\_<%s\\_>" (cdr thing)))
+                                ((search/is thing 'word)
+                                 (format "\\b%s" (cdr thing)))
+                                (t (format "\\b%s\\b" (search/quote thing))))))
         (goto-char (point-min))
         (query-replace-regexp thing-regexp new-name)))))
 
@@ -121,10 +194,13 @@ as a last resort."
   "iterates over `search/dir-tree-root-providers' to find root
 directory."
 
-  (or (seq-some #'(lambda (fun)
-                    (funcall fun path))
-                search/dir-tree-root-providers)
-      fallback))
+  (let ((result (or (seq-some
+                     #'(lambda (fun)
+                         (funcall fun path))
+                     search/dir-tree-root-providers)
+                    fallback)))
+    (when result
+      (expand-file-name result))))
 
 (defun search/get-scope (buffer)
   "finds BUFFER scope out and caches one to `search/scope'"
@@ -132,21 +208,21 @@ directory."
   (with-current-buffer buffer
     (if search/scope
         search/scope
-      (let* ((file-name (buffer-file-name))
+      (let* ((file-path (buffer-file-name))
+             (dir-path (expand-file-name default-directory))
              (root (search/root-dir
-                    (or file-name
-                        default-directory)
-                    default-directory))
-             (len (length (expand-file-name root)))
-             (local (if (string= root default-directory)
+                    (or file-path
+                        dir-path)
+                    dir-path))
+             (local (if (string= root dir-path)
                         nil
-                      (substring default-directory len))))
+                      (substring dir-path (length root)))))
         (setq search/scope
-              (let ((scope `((root . ,root)(type . root))))
+              (let ((scope `((root . ,root))))
                 (when local
                   (push `(local . ,local) scope))
-                (when file-name
-                  (push `(ext . ,(file-name-extension file-name))
+                (when file-path
+                  (push `(ext . ,(file-name-extension file-path))
                         scope))
                 scope))))))
 
