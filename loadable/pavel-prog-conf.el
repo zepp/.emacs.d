@@ -76,55 +76,23 @@
   :bind (:map json-ts-mode-map
               ("C-c C-p" . json-pretty-print)))
 
-(defun pavel/compose-ag-args (thing scope)
-  (let ((pattern
-         (if (search/is thing 'symbol)
-             (format "\\b%s\\b" (search/quote thing))
-           (cdr thing)))
-        (ext (alist-get 'ext scope)))
-    (list pattern (alist-get 'root scope)
-          :regexp (search/is thing 'symbol)
-          :file-regex (when ext (format "\\.%s$" ext)))))
-
-(defun pavel/ag-grep-thing-in-project (project thing is-regexp)
-  "Searches THING in PROJECT using `ag/search' as a engine. If IS-REGEXP
-is non nil then THING is regular expression."
-
-  (interactive
-   (let* ((proj (project-current t))
-          (is-regexp current-prefix-arg)
-          (prompt (format "Grep %s in %s"
-                          (if is-regexp "regexp" "literal")
-                          (project-root proj))))
-     (list
-      proj
-      (ag/read-from-minibuffer prompt)
-      is-regexp)))
-
-  (let ((default-directory (project-root project))
-        (current-prefix-arg))
-    (ag/search thing default-directory :regexp is-regexp)))
-
 (use-package ag
-  :autoload (ag/read-from-minibuffer ag/search)
+  :autoload (ag/search)
 
   :init
   (setq ag-reuse-buffers t)
-  (let ((e '(ag/search . pavel/compose-ag-args)))
-    (dolist (mode '(prog-mode html-mode nxml-mode))
-      (add-to-list 'search/dir-tree-engines (cons mode e))))
 
   :ensure t)
 
 (use-package project
-  :bind (:map project-prefix-map
-              ("$" . project-eshell)
-              ("%" . project-query-replace-regexp)
-              ("j" . project-dired)
-              ("4" . project-other-window-command)
-              ("m" . magit-project-status)
-              ("v" . magit-file-dispatch)
-              ("g" . pavel/ag-grep-thing-in-project)))
+  :bind
+  (:map project-prefix-map
+        ("$" . project-eshell)
+        ("%" . project-query-replace-regexp)
+        ("j" . project-dired)
+        ("4" . project-other-window-command)
+        ("g" . ag-project-at-point)
+        ("v" . magit-project-status)))
 
 ;;-------------------------------------------------------------------------------
 ;; version control
