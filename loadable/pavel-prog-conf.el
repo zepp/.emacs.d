@@ -75,17 +75,28 @@
               ("C-c C-p" . json-pretty-print)))
 
 (defun pavel/compose-ag-args (thing scope)
-  (let ((pattern
-         (cond
-          ((search/is thing 'symbol)
-           (format "\\b%s\\b" (search/quote thing)))
-          ((search/is thing 'filename)
-           (format "%s\\b" (search/quote thing)))
-          (t (cdr thing))))
+  (let ((local (alist-get 'local scope))
         (ext (alist-get 'ext scope)))
-    (list pattern (alist-get 'root scope)
-          :regexp (search/is thing 'symbol)
-          :file-regex (when ext (format "\\.%s$" ext)))))
+    (list
+     (cond
+      ((search/is thing 'symbol)
+       (format "\\b%s\\b" (search/quote thing)))
+      ((search/is thing 'filename)
+       (format "%s\\b" (search/quote thing)))
+      (t (cdr thing)))
+
+     (alist-get 'root scope)
+
+     :regexp (or (search/is thing 'symbol)
+                 (search/is thing 'filename))
+
+     :file-regex (cond
+                  ((and local ext)
+                   (format "%s.*\\.%s$" local ext))
+                  (local
+                   (format "%s.*" local))
+                  (ext
+                   (format "\\.%s$" ext))))))
 
 (defun pavel/ag-grep-thing-in-project (project thing is-regexp)
   "Searches THING in PROJECT using `ag/search' as a engine. If IS-REGEXP
@@ -112,7 +123,7 @@ is non nil then THING is regular expression."
   :init
   (setq ag-reuse-buffers t)
   (let ((e '(ag/search . pavel/compose-ag-args)))
-    (dolist (mode '(prog-mode html-mode nxml-mode))
+    (dolist (mode search/symbol-modes)
       (add-to-list 'search/dir-tree-engines (cons mode e))))
 
   :ensure t)

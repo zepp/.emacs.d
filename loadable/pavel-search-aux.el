@@ -28,37 +28,27 @@ return nonempty string or nil"
   :type '(repeat function))
 
 ;;;###autoload
-(defcustom search/prog-modes '(prog-mode sgml-mode nxml-mode)
-  "modes those considered as programming modes"
+(defcustom search/symbol-modes '(prog-mode sgml-mode nxml-mode conf-mode)
+  "modes to search symbols rather then words"
   :type '(repeat function))
 
 ;;;###autoload
 (defcustom search/word-trim-alist
-  '(("[a-zA-Z’'\\-]+" . "[’'s]+")
-    ("[а-яА-Я\\-]" . "\\(с[ья]\\)\\|\\([тш][ье]\\)\\|\\([аяеыо]?ми?\\)\
-\\|\\(ов\\)\\|\\([аяы]х\\)\\|\\([ауоыийэяюёеь]+\\)"))
+  `(("[a-zA-Z’'\\-]+" . ,(string-join '("[’']?s" "y" "ship" "ment")
+                                      "\\|"))
+    ("[а-яА-Я\\-]" . ,(string-join '("с[ья]" "[тш][ье]" "[аяеыо]?ми?"
+                                     "ов" "[аяы]х"
+                                     "[ауоыийэяюёеь]+")
+                                   "\\|")))
   "regular expressions to trim a word ending for better text search"
   :type '(repeat (cons regexp regexp)))
 
+(defcustom search/word-min-length 3
+  "It specifies minimal word length to be trimmed"
+  :type 'integer)
+
 (defvar-local search/scope nil
   "buffer local variable that keeps scope for `search/thing-dir-tree'")
-
-;;;###autoload
-(defun search/trim-word (word)
-  "trims WORD ending for better text search. It returns original
-WORD in case of `string-trim-right' returns empty string."
-
-  (let ((regexp (seq-some
-               #'(lambda (cell)
-                   (when (string-match (car cell) word)
-                     (cdr cell)))
-               search/word-trim-alist)))
-    (if regexp
-        (let ((base (string-trim-right word regexp)))
-          (if (string-empty-p base)
-              word
-            base))
-      word)))
 
 (defun search/compose-rgrep-args (thing scope)
   "Composes an argument list for `rgrep' and `rzgrep' commands"
@@ -76,7 +66,29 @@ WORD in case of `string-trim-right' returns empty string."
         (ext (alist-get 'ext scope "*")))
     (list regexp
           (concat "*." ext)
-          (alist-get 'root scope))))
+          (expand-file-name
+           (alist-get 'local scope ".")
+           (alist-get 'root scope)))))
+
+;;;###autoload
+(defun search/trim-word (word)
+  "trims WORD ending for better text search. It returns original
+WORD in case of original WORD length or trimmed WORD length is less then
+`search/word-min-length'"
+
+  (if (< (length word) search/word-min-length)
+      word
+    (let ((regexp (seq-some
+                   #'(lambda (cell)
+                       (when (string-match (car cell) word)
+                         (cdr cell)))
+                   search/word-trim-alist)))
+      (if regexp
+          (let ((trimmed (string-trim-right word regexp)))
+            (if (< (length trimmed) search/word-min-length)
+                word
+              trimmed))
+        word))))
 
 (defun search/project-root (path)
   "Looks for a root of a directory tree using `project-root'"
@@ -146,7 +158,7 @@ as a last resort."
     (search/get-thing 'filename 1))
 
    ;; `apply' is for compatibility reasons
-   ((and (apply #'derived-mode-p search/prog-modes)
+   ((and (apply #'derived-mode-p search/symbol-modes)
          (thing-at-point 'symbol))
     (search/get-thing 'symbol 1))
 
@@ -213,42 +225,66 @@ directory."
              (root (search/root-dir
                     (or file-path
                         dir-path)
-                    dir-path))
-             (local (if (string= root dir-path)
-                        nil
-                      (substring dir-path (length root)))))
+                    dir-path)))
         (setq search/scope
               (let ((scope `((root . ,root))))
-                (when local
-                  (push `(local . ,local) scope))
                 (when file-path
                   (push `(ext . ,(file-name-extension file-path))
                         scope))
                 scope))))))
 
-(defun search/modify (scope strategy)
-  "modifies SCOPE according to STRATEGY"
+(defun search/adjust (scope &optional dwim)
+  "adjusts SCOPE according to user input"
 
-  (if (not (eq strategy 'same-files))
+  (if dwim
       (assq-delete-all 'ext scope)
-    scope))
+    (let* ((root (alist-get 'root scope))
+           (local (alist-get 'local scope))
+           (path (if local
+                     (expand-file-name local root)
+                   (expand-file-name default-directory)))
+           (local-path (file-relative-name
+                        (read-directory-name "Local scope: " path path t)
+                        root)))
+      (if (string= root (expand-file-name local-path root))
+          (setf scope (assq-delete-all 'local scope))
+        (setf (alist-get 'local scope) local-path))
+
+      (if (eq (intern (completing-read
+                       "Search strategy: "
+                       '(default same-files) nil t "default"))
+              'default)
+          (assq-delete-all 'ext scope)
+        scope))))
+
+(defun search/merge-local (orig new)
+  "merges scopes and returns new alist"
+
+  (let ((scope (copy-alist orig))
+        (new-local (assq 'local new)))
+    (if new-local
+        (let ((alist (assq-delete-all 'local scope)))
+          (push new-local alist))
+      (assq-delete-all 'local scope))))
 
 ;;;###autoload
 (defun search/thing-dir-tree (thing scope)
-  "searches THING in the SCOPE using a engine from
-`search/dir-tree-engines' alist. If prefix argument is not nil then
-search only files with a same extension."
+  "searches THING in SCOPE using an engine from
+`search/dir-tree-engines' alist. If prefix argument is not nil then user
+is queried to adjust local scope and searching strategy. New local scope
+is merged into `search/scope'"
 
   (interactive
    (list (search/thing-at-point)
-         (search/modify
+         (search/adjust
           (copy-alist (search/get-scope (current-buffer)))
-          (when current-prefix-arg 'same-files))))
+          (not current-prefix-arg))))
 
   (let* ((engine (search/dir-tree-engine))
          (args (funcall (cdr engine)
                         thing
                         scope)))
+    (setf search/scope (search/merge-local search/scope scope))
     ;; special variables to be overridden since they affect execution context
     (let ((default-directory (alist-get 'root scope))
           (current-prefix-arg nil))
