@@ -22,7 +22,7 @@ engine for a current major mode and perform a search in a directory tree"
 
 ;;;###autoload
 (defcustom search/dir-tree-root-providers '(search/project-root vc-git-root)
-  "list of functions to provide a root of a directory tree for a
+  "set of functions to provide a root of a directory tree for a
 buffer. Function is executed in the context of the buffer and must
 return nonempty string or nil"
   :type '(repeat function))
@@ -46,6 +46,13 @@ return nonempty string or nil"
 (defcustom search/word-min-length 3
   "It specifies minimal word length to be trimmed"
   :type 'integer)
+
+(defcustom search/local-dir-providers '(search/project-local-dirs)
+  "set of functions to provide a directory list of a
+scope. `search/local-dirs' sequentially calls entries until non-empty
+list is returned. Provider receives a root and a regular expression to
+filter result and returns the list of relative paths or nil."
+  :type '(repeat function))
 
 (defvar-local search/scope nil
   "buffer local variable that keeps scope for `search/thing-dir-tree'")
@@ -93,8 +100,60 @@ WORD in case of original WORD length or trimmed WORD length is less then
 (defun search/project-root (path)
   "Looks for a root of a directory tree using `project-root'"
 
-  (let ((proj (project-current)))
+  (let ((proj (project-current nil (file-name-directory path))))
     (when proj (project-root proj))))
+
+(defun search/project-local-dirs (root &optional regexp)
+  "Returns a directory list inside a project in ROOT."
+
+  (let ((proj (project-current nil root)))
+    (when proj
+      (let* ((dirs (delete-dups
+                    (mapcar #'file-name-directory
+                            (project-files proj))))
+             (relatives (mapcar
+                         #'(lambda (dir)
+                             (file-relative-name dir root))
+                         dirs)))
+        (sort
+         (remove
+          "./"
+          (if regexp
+              (seq-filter
+               #'(lambda (dir)
+                   (string-match regexp dir))
+               relatives)
+            relatives)))))))
+
+(defun search/local-dirs (scope &optional regexp)
+  "Returns a directory list inside of the SCOPE using providers
+from the `search/local-dir-providers'. List contains relative paths
+filtered using REGEXP."
+  (let ((root (alist-get 'root scope)))
+    (seq-some #'(lambda (provider)
+                  (funcall provider root regexp))
+              search/local-dir-providers)))
+
+(defun search/read-relative-dir (root &optional dirs initial)
+  "Reads a relative directory path. If DIRS is not empty then read is
+completing."
+
+  (let* ((dir (expand-file-name (or initial "./") root))
+         (relative-dir
+          (if (length> dirs 0)
+              (completing-read
+               (format "Specify directory (%i): " (length dirs))
+               dirs nil t initial)
+            (file-relative-name
+             (read-directory-name
+              "Specify directory: "
+              dir dir t)
+             root))))
+    (setf dir (expand-file-name relative-dir root))
+    (if (and (not (string= root dir))
+             (string-match-p (regexp-quote root) dir))
+        relative-dir
+      nil)))
 
 (defun search/dir-tree-engine (&optional mode)
   "Searches engine for MODE. If one is not specified then
@@ -111,6 +170,18 @@ WORD in case of original WORD length or trimmed WORD length is less then
                         (cdr entry)))
                   search/dir-tree-engines)
         fallback)))
+
+(defun search/root-dir (path &optional fallback)
+  "iterates over `search/dir-tree-root-providers' to find root
+directory."
+
+  (let ((result (or (seq-some
+                     #'(lambda (fun)
+                         (funcall fun path))
+                     search/dir-tree-root-providers)
+                    fallback)))
+    (when result
+      (expand-file-name result))))
 
 (defun search/get-thing (thing &optional overlay-secs trim)
   "returns thing at point as `cons'"
@@ -202,18 +273,6 @@ as a last resort."
         (goto-char (point-min))
         (query-replace-regexp thing-regexp new-name)))))
 
-(defun search/root-dir (path &optional fallback)
-  "iterates over `search/dir-tree-root-providers' to find root
-directory."
-
-  (let ((result (or (seq-some
-                     #'(lambda (fun)
-                         (funcall fun path))
-                     search/dir-tree-root-providers)
-                    fallback)))
-    (when result
-      (expand-file-name result))))
-
 (defun search/get-scope (buffer)
   "finds BUFFER scope out and caches one to `search/scope'"
 
@@ -240,15 +299,16 @@ directory."
       (assq-delete-all 'ext scope)
     (let* ((root (alist-get 'root scope))
            (local (alist-get 'local scope))
-           (path (if local
-                     (expand-file-name local root)
-                   (expand-file-name default-directory)))
-           (local-path (file-relative-name
-                        (read-directory-name "Local scope: " path path t)
-                        root)))
-      (if (string= root (expand-file-name local-path root))
-          (setf scope (assq-delete-all 'local scope))
-        (setf (alist-get 'local scope) local-path))
+           (path (search/read-relative-dir
+                  root
+                  (search/local-dirs scope)
+                  (or local
+                      (file-relative-name
+                       default-directory
+                       root)))))
+      (if path
+          (setf (alist-get 'local scope) path)
+        (setf scope (assq-delete-all 'local scope)))
 
       (if (eq (intern (completing-read
                        "Search strategy: "
