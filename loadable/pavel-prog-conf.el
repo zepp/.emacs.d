@@ -75,28 +75,15 @@
               ("C-c C-p" . json-pretty-print)))
 
 (defun pavel/compose-ag-args (thing scope)
-  (let ((local (alist-get 'local scope))
-        (ext (alist-get 'ext scope)))
+  (let ((regexp (search/thing-to-regexp thing)))
     (list
-     (cond
-      ((search/is thing 'symbol)
-       (format "\\b%s\\b" (search/quote thing)))
-      ((search/is thing 'filename)
-       (format "%s\\b" (search/quote thing)))
-      (t (cdr thing)))
+     (if regexp regexp (regexp-quote (cdr thing)))
 
      (alist-get 'root scope)
 
-     :regexp (or (search/is thing 'symbol)
-                 (search/is thing 'filename))
+     :regexp (not (string-empty-p regexp))
 
-     :file-regex (cond
-                  ((and local ext)
-                   (format "%s.*\\.%s$" local ext))
-                  (local
-                   (format "%s.*" local))
-                  (ext
-                   (format "\\.%s$" ext))))))
+     :file-regex (search/scope-to-path-regexp scope))))
 
 (defun pavel/ag-grep-thing-in-project (project thing is-regexp)
   "Searches THING in PROJECT using `ag/search' as a engine. If IS-REGEXP

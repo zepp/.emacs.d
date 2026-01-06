@@ -60,24 +60,45 @@ filter result and returns the list of relative paths or nil."
 (defun search/compose-rgrep-args (thing scope)
   "Composes an argument list for `rgrep' and `rzgrep' commands"
 
-  (let ((regexp
-         (format
-          (cond
-           ((search/is thing 'symbol) "\\b%s\\b")
-           ((search/is thing 'word) "\\b%s\\w*\\b")
-           ((search/is thing 'filename) "%s\\b")
-           (t "%s"))
-          (if (search/is thing 'word)
-              (search/trim-word (cdr thing))
-            (search/quote thing))))
+  (let ((regexp (search/thing-to-regexp thing t))
         (ext (alist-get 'ext scope "*")))
-    (list regexp
+    (list (if regexp regexp (regexp-quote (cdr thing)))
           (concat "*." ext)
           (expand-file-name
            (alist-get 'local scope ".")
            (alist-get 'root scope)))))
 
 ;;;###autoload
+(defun search/thing-to-regexp (thing &optional trim-word)
+  "forms a regexp to perform a search of THING"
+
+  (let ((template (cond
+                   ((search/is thing 'symbol) "\\b%s\\b")
+                   ((search/is thing 'word)
+                    (if trim-word "\\b%s\\w*\\b" "\\b%s\\b"))
+                   ((search/is thing 'filename) "%s\\b"))))
+    (when template
+      (format
+       template
+       (if (and (search/is thing 'word) trim-word)
+           (search/trim-word (cdr thing))
+         (search/quote thing))))))
+
+;;;###autoload
+(defun search/scope-to-path-regexp (scope)
+  "forms a relative path regexp to perform a search in SCOPE"
+
+  (let ((path (alist-get 'local scope))
+        (ext (alist-get 'ext scope))
+        (strategy (alist-get 'strategy scope)))
+    (cond
+     ((and (eq strategy 'same-files) path ext)
+      (format "%s.*\\.%s$" (regexp-quote path) (regexp-quote ext)))
+     ((and (eq strategy 'same-files) ext)
+      (format "\\.%s$" (regexp-quote ext)))
+     (path
+      (format "%s" (regexp-quote path))))))
+
 (defun search/trim-word (word)
   "trims WORD ending for better text search. It returns original
 WORD in case of original WORD length or trimmed WORD length is less then
@@ -123,7 +144,8 @@ WORD in case of original WORD length or trimmed WORD length is less then
                #'(lambda (dir)
                    (string-match regexp dir))
                relatives)
-            relatives)))))))
+            relatives))
+         #'string>)))))
 
 (defun search/local-dirs (scope &optional regexp)
   "Returns a directory list inside of the SCOPE using providers
@@ -286,46 +308,39 @@ as a last resort."
                         dir-path)
                     dir-path)))
         (setq search/scope
-              (let ((scope `((root . ,root))))
+              (let ((scope `((root . ,root)
+                             (strategy . default))))
                 (when file-path
                   (push `(ext . ,(file-name-extension file-path))
                         scope))
                 scope))))))
 
 (defun search/adjust (scope &optional dwim)
-  "adjusts SCOPE according to user input"
+  "adjusts a copy of SCOPE according to user input."
 
-  (if dwim
-      (assq-delete-all 'ext scope)
-    (let* ((root (alist-get 'root scope))
-           (local (alist-get 'local scope))
-           (path (search/read-relative-dir
-                  root
-                  (search/local-dirs scope)
-                  (or local
-                      (file-relative-name
-                       default-directory
-                       root)))))
-      (if path
-          (setf (alist-get 'local scope) path)
-        (setf scope (assq-delete-all 'local scope)))
+  (let ((scope (copy-alist scope)))
+    (if dwim
+        scope
+      (let* ((root (alist-get 'root scope))
+             (local (alist-get 'local scope))
+             (path (search/read-relative-dir
+                    root
+                    (search/local-dirs scope)
+                    (or local
+                        (file-relative-name
+                         default-directory
+                         root)))))
+        (if path
+            (setf (alist-get 'local scope) path)
+          (setf scope (assq-delete-all 'local scope)))
 
-      (if (eq (intern (completing-read
+        (setf (alist-get 'strategy scope)
+              (intern (completing-read
                        "Search strategy: "
-                       '(default same-files) nil t "default"))
-              'default)
-          (assq-delete-all 'ext scope)
-        scope))))
-
-(defun search/merge-local (orig new)
-  "merges scopes and returns new alist"
-
-  (let ((scope (copy-alist orig))
-        (new-local (assq 'local new)))
-    (if new-local
-        (let ((alist (assq-delete-all 'local scope)))
-          (push new-local alist))
-      (assq-delete-all 'local scope))))
+                       '(default same-files) nil t
+                       (substring (symbol-name
+                                   (alist-get 'strategy scope))))))))
+    scope))
 
 ;;;###autoload
 (defun search/thing-dir-tree (thing scope)
@@ -337,14 +352,14 @@ is merged into `search/scope'"
   (interactive
    (list (search/thing-at-point)
          (search/adjust
-          (copy-alist (search/get-scope (current-buffer)))
+          (search/get-scope (current-buffer))
           (not current-prefix-arg))))
 
   (let* ((engine (search/dir-tree-engine))
          (args (funcall (cdr engine)
                         thing
                         scope)))
-    (setf search/scope (search/merge-local search/scope scope))
+    (setf search/scope scope)
     ;; special variables to be overridden since they affect execution context
     (let ((default-directory (alist-get 'root scope))
           (current-prefix-arg nil))
