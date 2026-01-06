@@ -56,12 +56,25 @@
 (toggle-scroll-bar -1)
 (column-number-mode 1)
 
+(use-package windmove
+  :bind (:map ctl-x-map
+              ("<up>" . windmove-up)
+              ("<right>" . windmove-right)
+              ("<down>" . windmove-down)
+              ("<left>" . windmove-left))
+  :demand t)
+
+;; It replicates a common keybinding to switch between windows on different
+;; OS. It must be placed here to prevent overriding by `tab-bar-mode'.
+(global-set-key [(control tab)] #'other-window)
+
 (use-package tab-bar
   :bind (:map tab-prefix-map
               ("n" . tab-new)
               ("M-n" . tab-duplicate)
               ("k" . tab-close)
-              ("M-o" . tab-previous))
+              ("<left>" . tab-previous)
+              ("<right>" . tab-next))
 
   :config
   (setq tab-bar-new-tab-choice "*scratch*")
@@ -82,17 +95,8 @@
                (side . bottom)
                (window-min-height . 0.25)))
 
-;; window management
-(defun pavel/reverse-other-window (&optional count)
-  "wrapper around `other-window' that negates `count' and passes a result
-to the original function"
-
-  (interactive "p")
-  (other-window (- count)))
-
 (when (pavel/emacs-29-p)
   (define-key ctl-x-map (kbd "w d") #'pavel/toggle-window-dedicated))
-(define-key ctl-x-map (kbd "M-o") #'pavel/reverse-other-window)
 (define-key ctl-x-map (kbd "M-b") #'switch-to-buffer-other-window)
 (define-key ctl-x-map (kbd "M-f") #'find-file-other-window)
 (define-key ctl-x-map (kbd "M-0") #'quit-window)

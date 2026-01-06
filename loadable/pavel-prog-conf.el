@@ -156,6 +156,7 @@ is non nil then THING is regular expression."
                ("M-1")
                ("M-2")
                ("M-3")
+               ("C-<tab>")
                ;; familiar keybindings
                ("C-M-u" . magit-section-up)
                ("C-M-f" . magit-section-forward-sibling)
