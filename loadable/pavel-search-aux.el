@@ -13,11 +13,14 @@
 (require 'vc-git)
 (require 'project)
 
+(defgroup pavel-search-aux nil "Search auxiliaries")
+
 ;;;###autoload
 (defcustom search/dir-tree-engines
   '((fundamental-mode . (rgrep . search/compose-rgrep-args)))
   "alist to be used by `search/thing-dir-tree' to find a
 engine for a current major mode and perform a search in a directory tree"
+  :group 'pavel-search-aux
   :type 'sexp)
 
 ;;;###autoload
@@ -25,11 +28,13 @@ engine for a current major mode and perform a search in a directory tree"
   "set of functions to provide a root of a directory tree for a
 buffer. Function is executed in the context of the buffer and must
 return nonempty string or nil"
+  :group 'pavel-search-aux
   :type '(repeat function))
 
 ;;;###autoload
 (defcustom search/symbol-modes '(prog-mode sgml-mode nxml-mode conf-mode)
   "modes to search symbols rather then words"
+  :group 'pavel-search-aux
   :type '(repeat function))
 
 ;;;###autoload
@@ -41,17 +46,20 @@ return nonempty string or nil"
                                      "[ауоыийэяюёеь]+")
                                    "\\|")))
   "regular expressions to trim a word ending for better text search"
+  :group 'pavel-search-aux
   :type '(repeat (cons regexp regexp)))
 
 (defcustom search/word-min-length 3
   "It specifies minimal word length to be trimmed"
-  :type 'integer)
+  :group 'pavel-search-aux
+  :type 'natnum)
 
 (defcustom search/local-dir-providers '(search/project-local-dirs)
   "set of functions to provide a directory list of a
 scope. `search/local-dirs' sequentially calls entries until non-empty
 list is returned. Provider receives a root and a regular expression to
 filter result and returns the list of relative paths or nil."
+  :group 'pavel-search-aux
   :type '(repeat function))
 
 (defvar-local search/scope nil
@@ -64,9 +72,7 @@ filter result and returns the list of relative paths or nil."
         (ext (alist-get 'ext scope "*")))
     (list (if regexp regexp (regexp-quote (cdr thing)))
           (concat "*." ext)
-          (expand-file-name
-           (alist-get 'local scope ".")
-           (alist-get 'root scope)))))
+          (search/absolute-dir-path scope))))
 
 ;;;###autoload
 (defun search/thing-to-regexp (thing &optional trim-word)
@@ -104,7 +110,7 @@ filter result and returns the list of relative paths or nil."
 WORD in case of original WORD length or trimmed WORD length is less then
 `search/word-min-length'"
 
-  (if (< (length word) search/word-min-length)
+  (if (length< word search/word-min-length)
       word
     (let ((regexp (seq-some
                    #'(lambda (cell)
@@ -113,7 +119,7 @@ WORD in case of original WORD length or trimmed WORD length is less then
                    search/word-trim-alist)))
       (if regexp
           (let ((trimmed (string-trim-right word regexp)))
-            (if (< (length trimmed) search/word-min-length)
+            (if (length< trimmed search/word-min-length)
                 word
               trimmed))
         word))))
@@ -160,7 +166,7 @@ filtered using REGEXP."
   "Reads a relative directory path. If DIRS is not empty then read is
 completing."
 
-  (let* ((dir (expand-file-name (or initial "./") root))
+  (let* ((dir (expand-file-name (or initial "") root))
          (relative-dir
           (if (length> dirs 0)
               (completing-read
@@ -204,6 +210,13 @@ directory."
                     fallback)))
     (when result
       (expand-file-name result))))
+
+(defun search/absolute-dir-path (scope)
+  "Returns an absolute directory path of SCOPE"
+
+  (let ((root (alist-get 'root scope))
+        (local (alist-get 'local scope ".")))
+    (expand-file-name local root)))
 
 (defun search/get-thing (thing &optional overlay-secs trim)
   "returns thing at point as `cons'"
@@ -326,20 +339,31 @@ as a last resort."
              (path (search/read-relative-dir
                     root
                     (search/local-dirs scope)
-                    (or local
-                        (file-relative-name
-                         default-directory
-                         root)))))
+                    (cond (local local)
+                          ((not (string= default-directory root))
+                           (file-relative-name
+                            default-directory
+                            root))))))
         (if path
             (setf (alist-get 'local scope) path)
           (setf scope (assq-delete-all 'local scope)))
 
-        (setf (alist-get 'strategy scope)
-              (intern (completing-read
-                       "Search strategy: "
-                       '(default same-files) nil t
-                       (substring (symbol-name
-                                   (alist-get 'strategy scope))))))))
+        (let* ((strategies '(default same-files))
+               (strategy (alist-get 'strategy scope 'default))
+               (ext (alist-get 'ext scope))
+               ;; `substring' is to copy a name of symbol
+               (initial (substring (symbol-name strategy))))
+          (setf strategy (intern
+                          (completing-read
+                           "Search strategy: "
+                           strategies nil t
+                           initial)))
+          (setf (alist-get 'strategy scope)
+                strategy)
+          (when (and (eq strategy 'same-files)
+                     (not ext))
+            (setf (alist-get 'ext scope)
+                  (read-string "File extension: "))))))
     scope))
 
 ;;;###autoload
