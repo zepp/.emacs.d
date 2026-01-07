@@ -81,7 +81,7 @@
 
      (alist-get 'root scope)
 
-     :regexp (not (string-empty-p regexp))
+     :regexp (and regexp (string> regexp ""))
 
      :file-regex (search/scope-to-path-regexp scope))))
 

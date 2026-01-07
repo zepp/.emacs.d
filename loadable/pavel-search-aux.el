@@ -37,6 +37,11 @@ return nonempty string or nil"
   :group 'pavel-search-aux
   :type '(repeat function))
 
+(defcustom search/thing-flash-seconds 1
+  "number of seconds to flash a thing at point using overlay"
+  :group 'pavel-search-aux
+  :type 'natnum)
+
 ;;;###autoload
 (defcustom search/word-trim-alist
   `(("[a-zA-Z’'\\-]+" . ,(string-join '("[’']?s" "y" "ship" "ment")
@@ -61,6 +66,9 @@ list is returned. Provider receives a root and a regular expression to
 filter result and returns the list of relative paths or nil."
   :group 'pavel-search-aux
   :type '(repeat function))
+
+(defvar search/thing-history '()
+  "history list to keep searched things")
 
 (defvar-local search/scope nil
   "buffer local variable that keeps scope for `search/thing-dir-tree'")
@@ -218,25 +226,33 @@ directory."
         (local (alist-get 'local scope ".")))
     (expand-file-name local root)))
 
-(defun search/get-thing (thing &optional overlay-secs trim)
+(defun search/add-to-history (thing-value)
+  "records THING to `search/thing-history'"
+
+  (let ((history-delete-duplicates t))
+    (add-to-history 'search/thing-history thing-value 32)))
+
+(defun search/get-thing (thing &optional trim)
   "returns thing at point as `cons'"
 
   (let ((bounds (bounds-of-thing-at-point thing)))
-    (when overlay-secs
+    (when search/thing-flash-seconds
       (let ((overlay (make-overlay (car bounds) (cdr bounds))))
         (overlay-put overlay 'face 'region)
         (overlay-put overlay 'evaporate t)
-        (run-at-time overlay-secs
+        (run-at-time search/thing-flash-seconds
                      nil
                      #'(lambda ()
                          (delete-overlay overlay)))))
     (cons thing
-          (let ((string (buffer-substring-no-properties
-                         (car bounds)
-                         (cdr bounds))))
-            (if trim
-                (string-trim string trim trim)
-              string)))))
+          (let* ((string (buffer-substring-no-properties
+                          (car bounds)
+                          (cdr bounds)))
+                 (trimmed (if trim
+                              (string-trim string trim trim)
+                            string)))
+            (search/add-to-history trimmed)
+            trimmed))))
 
 (defun search/thing-at-point (&optional no-input)
   "Intends to pick a symbol at point or something else if there is
@@ -251,33 +267,43 @@ as a last resort."
                       (region-beginning) (region-end)))
           (deactivate-mark 'dont-save))
       (deactivate-mark)
+      (search/add-to-history substring)
       (cons 'string substring)))
 
    ((thing-at-point 'email)
-    (search/get-thing 'email 1 "[<>]"))
+    (search/get-thing 'email "[<>]"))
 
    ((thing-at-point 'uuid)
-    (search/get-thing 'uuid 1))
+    (search/get-thing 'uuid))
 
    ((and (derived-mode-p 'dired-mode)
          (thing-at-point 'filename))
-    (search/get-thing 'filename 1))
+    (search/get-thing 'filename))
 
    ;; `apply' is for compatibility reasons
    ((and (apply #'derived-mode-p search/symbol-modes)
          (thing-at-point 'symbol))
-    (search/get-thing 'symbol 1))
+    (search/get-thing 'symbol))
 
    ((and (derived-mode-p 'text-mode)
          (thing-at-point 'word))
-    (search/get-thing 'word 1))
+    (search/get-thing 'word))
 
    ((not no-input)
-    (let* ((line (string-trim (thing-at-point 'line t)))
-           (string (read-string "Specify thing from line: " line nil nil t)))
-      (if (string-empty-p string)
-          (user-error "Thing lookup is failed and input is not provided")
-        (cons 'string string))))))
+    (search/read-string-thing
+     "Specify a thing from line: "
+     (string-trim (thing-at-point 'line t))))))
+
+(defun search/read-string-thing (prompt &optional initial)
+  "reads a string thing from minibuffer"
+
+  (let ((string (completing-read
+                 prompt
+                 search/thing-history
+                 nil nil initial 'search/thing-history)))
+    (if (string-empty-p string)
+        (user-error "no input is provided")
+      (cons 'string (string-trim string)))))
 
 (defmacro search/is (thing type)
   `(equal (car ,thing) ,type))
@@ -374,10 +400,14 @@ is queried to adjust local scope and searching strategy. New local scope
 is merged into `search/scope'"
 
   (interactive
-   (list (search/thing-at-point)
-         (search/adjust
-          (search/get-scope (current-buffer))
-          (not current-prefix-arg))))
+   (list
+    ;; double universal prefix argument
+    (if (= (prefix-numeric-value current-prefix-arg) 16)
+        (search/read-string-thing "Specify a string: ")
+      (search/thing-at-point))
+    (search/adjust
+     (search/get-scope (current-buffer))
+     (not current-prefix-arg))))
 
   (let* ((engine (search/dir-tree-engine))
          (args (funcall (cdr engine)
