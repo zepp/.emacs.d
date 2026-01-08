@@ -75,15 +75,15 @@
               ("C-c C-p" . json-pretty-print)))
 
 (defun pavel/compose-ag-args (thing scope)
-  (let ((regexp (search/thing-to-regexp thing)))
+  (let ((regexp (search-scope-thing-to-regexp thing)))
     (list
-     (if regexp regexp (regexp-quote (cdr thing)))
+     (if regexp regexp (search-scope-quote thing))
 
      (alist-get 'root scope)
 
      :regexp (and regexp (string> regexp ""))
 
-     :file-regex (search/scope-to-path-regexp scope))))
+     :file-regex (search-scope-to-path-regexp scope))))
 
 (defun pavel/ag-grep-thing-in-project (project thing is-regexp)
   "Searches THING in PROJECT using `ag/search' as a engine. If IS-REGEXP
@@ -110,8 +110,8 @@ is non nil then THING is regular expression."
   :init
   (setq ag-reuse-buffers t)
   (let ((e '(ag/search . pavel/compose-ag-args)))
-    (dolist (mode search/symbol-modes)
-      (add-to-list 'search/dir-tree-engines (cons mode e))))
+    (dolist (mode search-scope-symbol-modes)
+      (add-to-list 'search-scope-grep-engines (cons mode e))))
 
   :ensure t)
 

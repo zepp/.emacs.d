@@ -1,4 +1,4 @@
-;;; search-aux.el --- search, replace and grep symbols -*- lexical-binding: t; -*-
+;;; search-scope-mode.el --- grep and replace things in a scope -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 Pavel Sokolov
 ;; All rights reserved.
@@ -13,37 +13,38 @@
 (require 'vc-git)
 (require 'project)
 
-(defgroup pavel-search-aux nil "Search auxiliaries")
+(defgroup search-scope nil "Main group")
 
 ;;;###autoload
-(defcustom search/dir-tree-engines
-  '((fundamental-mode . (rgrep . search/compose-rgrep-args)))
-  "alist to be used by `search/thing-dir-tree' to find a
-engine for a current major mode and perform a search in a directory tree"
-  :group 'pavel-search-aux
+(defcustom search-scope-grep-engines
+  '((fundamental-mode . (rgrep . search-scope-compose-rgrep-args)))
+  "alist to be used by `search-scope-grep' to find a engine for a
+current major mode and perform a search in a directory tree"
+  :group 'search-scope
   :type 'sexp)
 
 ;;;###autoload
-(defcustom search/dir-tree-root-providers '(search/project-root vc-git-root)
-  "set of functions to provide a root of a directory tree for a
+(defcustom search-scope-root-functions '(search-scope-project-root vc-git-root)
+  "set of functions to discover a root of a directory tree for a
 buffer. Function is executed in the context of the buffer and must
 return nonempty string or nil"
-  :group 'pavel-search-aux
+  :group 'search-scope
   :type '(repeat function))
 
 ;;;###autoload
-(defcustom search/symbol-modes '(prog-mode sgml-mode nxml-mode conf-mode)
+(defcustom search-scope-symbol-modes '(prog-mode sgml-mode nxml-mode conf-mode)
   "modes to search symbols rather then words"
-  :group 'pavel-search-aux
+  :group 'search-scope
   :type '(repeat function))
 
-(defcustom search/thing-flash-seconds 1
+;;;###autoload
+(defcustom search-scope-thing-flash-seconds 1
   "number of seconds to flash a thing at point using overlay"
-  :group 'pavel-search-aux
+  :group 'search-scope
   :type 'natnum)
 
 ;;;###autoload
-(defcustom search/word-trim-alist
+(defcustom search-scope-word-trim-alist
   `(("[a-zA-Z’'\\-]+" . ,(string-join '("[’']?s" "y" "ship" "ment")
                                       "\\|"))
     ("[а-яА-Я\\-]" . ,(string-join '("с[ья]" "[тш][ье]" "[аяеыо]?ми?"
@@ -51,55 +52,58 @@ return nonempty string or nil"
                                      "[ауоыийэяюёеь]+")
                                    "\\|")))
   "regular expressions to trim a word ending for better text search"
-  :group 'pavel-search-aux
+  :group 'search-scope
   :type '(repeat (cons regexp regexp)))
 
-(defcustom search/word-min-length 3
-  "It specifies minimal word length to be trimmed"
-  :group 'pavel-search-aux
+;;;###autoload
+(defcustom search-scope-word-min-length 3
+  "It specifies a minimal length of a word to be trimmed"
+  :group 'search-scope
   :type 'natnum)
 
-(defcustom search/local-dir-providers '(search/project-local-dirs)
-  "set of functions to provide a directory list of a
-scope. `search/local-dirs' sequentially calls entries until non-empty
-list is returned. Provider receives a root and a regular expression to
-filter result and returns the list of relative paths or nil."
-  :group 'pavel-search-aux
+;;;###autoload
+(defcustom search-scope-dir-indexers '(search-scope-project-dirs)
+  "set of functions to build a directory list of a
+scope. `search-scope-index-dirs' sequentially calls entries until
+non-empty list is returned. Indexer receives a root and a regular
+expression to filter result and returns the list of relative
+paths or nil."
+  :group 'search-scope
   :type '(repeat function))
 
-(defvar search/thing-history '()
+(defvar search-scope-thing-history '()
   "history list to keep searched things")
 
-(defvar-local search/scope nil
-  "buffer local variable that keeps scope for `search/thing-dir-tree'")
+(defvar-local search-scope nil
+  "buffer local variable that keeps scope for `search-scope-grep-thing'")
 
-(defun search/compose-rgrep-args (thing scope)
+(defun search-scope-compose-rgrep-args (thing scope)
   "Composes an argument list for `rgrep' and `rzgrep' commands"
 
-  (let ((regexp (search/thing-to-regexp thing t))
+  (let ((regexp (search-scope-thing-to-regexp thing t))
         (ext (alist-get 'ext scope "*")))
     (list (if regexp regexp (regexp-quote (cdr thing)))
           (concat "*." ext)
-          (search/absolute-dir-path scope))))
+          (search-scope-absolute-dir-path scope))))
 
 ;;;###autoload
-(defun search/thing-to-regexp (thing &optional trim-word)
+(defun search-scope-thing-to-regexp (thing &optional trim-word)
   "forms a regexp to perform a search of THING"
 
   (let ((template (cond
-                   ((search/is thing 'symbol) "\\b%s\\b")
-                   ((search/is thing 'word)
+                   ((search-scope-is thing 'symbol) "\\b%s\\b")
+                   ((search-scope-is thing 'word)
                     (if trim-word "\\b%s\\w*\\b" "\\b%s\\b"))
-                   ((search/is thing 'filename) "%s\\b"))))
+                   ((search-scope-is thing 'filename) "%s\\b"))))
     (when template
       (format
        template
-       (if (and (search/is thing 'word) trim-word)
-           (search/trim-word (cdr thing))
-         (search/quote thing))))))
+       (if (and (search-scope-is thing 'word) trim-word)
+           (search-scope-trim-word (cdr thing))
+         (search-scope-quote thing))))))
 
 ;;;###autoload
-(defun search/scope-to-path-regexp (scope)
+(defun search-scope-to-path-regexp (scope)
   "forms a relative path regexp to perform a search in SCOPE"
 
   (let ((path (alist-get 'local scope))
@@ -113,32 +117,32 @@ filter result and returns the list of relative paths or nil."
      (path
       (format "%s" (regexp-quote path))))))
 
-(defun search/trim-word (word)
+(defun search-scope-trim-word (word)
   "trims WORD ending for better text search. It returns original
-WORD in case of original WORD length or trimmed WORD length is less then
-`search/word-min-length'"
+WORD in case of original WORD length or trimmed WORD length is
+less then `search-scope-word-min-length'"
 
-  (if (length< word search/word-min-length)
+  (if (length< word search-scope-word-min-length)
       word
     (let ((regexp (seq-some
                    #'(lambda (cell)
                        (when (string-match (car cell) word)
                          (cdr cell)))
-                   search/word-trim-alist)))
+                   search-scope-word-trim-alist)))
       (if regexp
           (let ((trimmed (string-trim-right word regexp)))
-            (if (length< trimmed search/word-min-length)
+            (if (length< trimmed search-scope-word-min-length)
                 word
               trimmed))
         word))))
 
-(defun search/project-root (path)
+(defun search-scope-project-root (path)
   "Looks for a root of a directory tree using `project-root'"
 
   (let ((proj (project-current nil (file-name-directory path))))
     (when proj (project-root proj))))
 
-(defun search/project-local-dirs (root &optional regexp)
+(defun search-scope-project-dirs (root &optional regexp)
   "Returns a directory list inside a project in ROOT."
 
   (let ((proj (project-current nil root)))
@@ -161,18 +165,18 @@ WORD in case of original WORD length or trimmed WORD length is less then
             relatives))
          #'string>)))))
 
-(defun search/local-dirs (scope &optional regexp)
-  "Returns a directory list inside of the SCOPE using providers
-from the `search/local-dir-providers'. List contains relative paths
-filtered using REGEXP."
+(defun search-scope-index-dirs (scope &optional regexp)
+  "Returns a directory list inside of the SCOPE using functions
+from the `search-scope-dir-indexers'. List contains relative
+paths filtered using REGEXP."
   (let ((root (alist-get 'root scope)))
-    (seq-some #'(lambda (provider)
-                  (funcall provider root regexp))
-              search/local-dir-providers)))
+    (seq-some #'(lambda (fun)
+                  (funcall fun root regexp))
+              search-scope-dir-indexers)))
 
-(defun search/read-relative-dir (root &optional dirs initial)
-  "Reads a relative directory path. If DIRS is not empty then read is
-completing."
+(defun search-scope-read-relative-dir (root &optional dirs initial)
+  "Reads a relative directory path. If DIRS is not empty then read
+is completing."
 
   (let* ((dir (expand-file-name (or initial "") root))
          (relative-dir
@@ -191,56 +195,56 @@ completing."
         relative-dir
       nil)))
 
-(defun search/dir-tree-engine (&optional mode)
+(defun search-scope-get-engine (&optional mode)
   "Searches engine for MODE. If one is not specified then
 `major-mode' is used"
 
   (let ((effective-mode (or mode major-mode))
         (fallback (alist-get
                    'fundamental-mode
-                   search/dir-tree-engines)))
+                   search-scope-grep-engines)))
     (or (seq-some #'(lambda (entry)
                       (when (provided-mode-derived-p
                              effective-mode
                              (car entry))
                         (cdr entry)))
-                  search/dir-tree-engines)
+                  search-scope-grep-engines)
         fallback)))
 
-(defun search/root-dir (path &optional fallback)
-  "iterates over `search/dir-tree-root-providers' to find root
+(defun search-scope-discover-root (path &optional fallback)
+  "iterates over `search-scope-root-functions' to find a root
 directory."
 
   (let ((result (or (seq-some
                      #'(lambda (fun)
                          (funcall fun path))
-                     search/dir-tree-root-providers)
+                     search-scope-root-functions)
                     fallback)))
     (when result
       (expand-file-name result))))
 
-(defun search/absolute-dir-path (scope)
+(defun search-scope-absolute-dir-path (scope)
   "Returns an absolute directory path of SCOPE"
 
   (let ((root (alist-get 'root scope))
         (local (alist-get 'local scope ".")))
     (expand-file-name local root)))
 
-(defun search/add-to-history (thing-value)
-  "records THING to `search/thing-history'"
+(defun search-scope-add-to-history (thing-value)
+  "records THING to `search-scope-thing-history'"
 
   (let ((history-delete-duplicates t))
-    (add-to-history 'search/thing-history thing-value 32)))
+    (add-to-history 'search-scope-thing-history thing-value 32)))
 
-(defun search/get-thing (thing &optional trim)
+(defun search-scope-get-thing (thing &optional trim)
   "returns thing at point as `cons'"
 
   (let ((bounds (bounds-of-thing-at-point thing)))
-    (when search/thing-flash-seconds
+    (when search-scope-thing-flash-seconds
       (let ((overlay (make-overlay (car bounds) (cdr bounds))))
         (overlay-put overlay 'face 'region)
         (overlay-put overlay 'evaporate t)
-        (run-at-time search/thing-flash-seconds
+        (run-at-time search-scope-thing-flash-seconds
                      nil
                      #'(lambda ()
                          (delete-overlay overlay)))))
@@ -251,10 +255,10 @@ directory."
                  (trimmed (if trim
                               (string-trim string trim trim)
                             string)))
-            (search/add-to-history trimmed)
+            (search-scope-add-to-history trimmed)
             trimmed))))
 
-(defun search/thing-at-point (&optional no-input)
+(defun search-scope-thing-at-point (&optional no-input)
   "Intends to pick a symbol at point or something else if there is
 an active region. Initiates minibuffer input if NO-INPUT is nil
 as a last resort."
@@ -267,86 +271,86 @@ as a last resort."
                       (region-beginning) (region-end)))
           (deactivate-mark 'dont-save))
       (deactivate-mark)
-      (search/add-to-history substring)
+      (search-scope-add-to-history substring)
       (cons 'string substring)))
 
    ((thing-at-point 'email)
-    (search/get-thing 'email "[<>]"))
+    (search-scope-get-thing 'email "[<>]"))
 
    ((thing-at-point 'uuid)
-    (search/get-thing 'uuid))
+    (search-scope-get-thing 'uuid))
 
    ((and (derived-mode-p 'dired-mode)
          (thing-at-point 'filename))
-    (search/get-thing 'filename))
+    (search-scope-get-thing 'filename))
 
    ;; `apply' is for compatibility reasons
-   ((and (apply #'derived-mode-p search/symbol-modes)
+   ((and (apply #'derived-mode-p search-scope-symbol-modes)
          (thing-at-point 'symbol))
-    (search/get-thing 'symbol))
+    (search-scope-get-thing 'symbol))
 
    ((and (derived-mode-p 'text-mode)
          (thing-at-point 'word))
-    (search/get-thing 'word))
+    (search-scope-get-thing 'word))
 
    ((not no-input)
-    (search/read-string-thing
+    (search-scope-read-thing
      "Specify a thing from line: "
      (string-trim (thing-at-point 'line t))))))
 
-(defun search/read-string-thing (prompt &optional initial)
+(defun search-scope-read-thing (prompt &optional initial)
   "reads a string thing from minibuffer"
 
   (let ((string (completing-read
                  prompt
-                 search/thing-history
-                 nil nil initial 'search/thing-history)))
+                 search-scope-thing-history
+                 nil nil initial 'search-scope-thing-history)))
     (if (string-empty-p string)
         (user-error "no input is provided")
       (cons 'string (string-trim string)))))
 
-(defmacro search/is (thing type)
+(defmacro search-scope-is (thing type)
   `(equal (car ,thing) ,type))
 
-(defmacro search/quote (thing)
+(defmacro search-scope-quote (thing)
   `(regexp-quote (cdr ,thing)))
 
 ;;;###autoload
-(defun search/thing-replace (thing new-name)
+(defun search-scope-replace (thing new-name)
   "it renames THING to NEW-NAME in a current buffer using
 `query-replace-regexp'"
 
   (interactive
-   (let ((thing (search/thing-at-point)))
+   (let ((thing (search-scope-thing-at-point)))
      (list thing
            (read-string (format "Rename '%s' to: " (cdr thing))
-                        (cdr thing) nil nil t))))
+                        (cdr thing) 'search-scope-thing-history nil t))))
 
   (if (buffer-modified-p)
       (user-error "Rename of '%s' is aborted since buffer '%s' is modified"
                   (cdr thing) (buffer-name (current-buffer)))
     (save-excursion
-      (let ((thing-regexp (cond ((search/is thing 'symbol)
+      (let ((thing-regexp (cond ((search-scope-is thing 'symbol)
                                  (format "\\_<%s\\_>" (cdr thing)))
-                                ((search/is thing 'word)
+                                ((search-scope-is thing 'word)
                                  (format "\\b%s" (cdr thing)))
-                                (t (format "\\b%s\\b" (search/quote thing))))))
+                                (t (format "\\b%s\\b" (search-scope-quote thing))))))
         (goto-char (point-min))
         (query-replace-regexp thing-regexp new-name)))))
 
-(defun search/get-scope (buffer)
-  "finds BUFFER scope out and caches one to `search/scope'"
+(defun search-scope-get (buffer)
+  "finds BUFFER scope out and caches one to `search-scope'"
 
   (with-current-buffer buffer
-    (if search/scope
-        search/scope
+    (if search-scope
+        search-scope
       (let* ((file-path (buffer-file-name))
              (dir-path (expand-file-name default-directory))
-             (root (search/root-dir
+             (root (search-scope-discover-root
                     (or file-path
                         dir-path)
                     dir-path)))
-        (setq search/scope
+        (setq search-scope
               (let ((scope `((root . ,root)
                              (strategy . default))))
                 (when file-path
@@ -354,7 +358,7 @@ as a last resort."
                         scope))
                 scope))))))
 
-(defun search/adjust (scope &optional dwim)
+(defun search-scope-adjust (scope &optional dwim)
   "adjusts a copy of SCOPE according to user input."
 
   (let ((scope (copy-alist scope)))
@@ -362,9 +366,9 @@ as a last resort."
         scope
       (let* ((root (alist-get 'root scope))
              (local (alist-get 'local scope))
-             (path (search/read-relative-dir
+             (path (search-scope-read-relative-dir
                     root
-                    (search/local-dirs scope)
+                    (search-scope-index-dirs scope)
                     (cond (local local)
                           ((not (string= default-directory root))
                            (file-relative-name
@@ -393,30 +397,30 @@ as a last resort."
     scope))
 
 ;;;###autoload
-(defun search/thing-dir-tree (thing scope)
+(defun search-scope-grep (thing scope)
   "searches THING in SCOPE using an engine from
-`search/dir-tree-engines' alist. If prefix argument is not nil then user
-is queried to adjust local scope and searching strategy. New local scope
-is merged into `search/scope'"
+`search-scope-grep-engines' alist. If prefix argument is not nil
+then user is queried to adjust local scope and searching
+strategy. `search-scope' is updated with a new value."
 
   (interactive
    (list
     ;; double universal prefix argument
     (if (= (prefix-numeric-value current-prefix-arg) 16)
-        (search/read-string-thing "Specify a string: ")
-      (search/thing-at-point))
-    (search/adjust
-     (search/get-scope (current-buffer))
+        (search-scope-read-thing "Specify a string: ")
+      (search-scope-thing-at-point))
+    (search-scope-adjust
+     (search-scope-get (current-buffer))
      (not current-prefix-arg))))
 
-  (let* ((engine (search/dir-tree-engine))
+  (let* ((engine (search-scope-get-engine))
          (args (funcall (cdr engine)
                         thing
                         scope)))
-    (setf search/scope scope)
+    (setf search-scope scope)
     ;; special variables to be overridden since they affect execution context
     (let ((default-directory (alist-get 'root scope))
           (current-prefix-arg nil))
       (apply (car engine) args))))
 
-(provide 'pavel-search-aux)
+(provide 'search-scope-mode)

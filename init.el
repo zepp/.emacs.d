@@ -162,9 +162,9 @@
         ;; "r" – find a symbol references, "j" – jump to a symbol definition
         ;;
         ;; extra commands
-        ("g" . search/thing-dir-tree)
+        ("g" . search-scope-grep)
         ;; common key, infrequently used
-        ("%" . search/thing-replace))
+        ("%" . search-scope-replace))
   :init
   (setq isearch-allow-motion t
         isearch-motion-changes-direction t)
