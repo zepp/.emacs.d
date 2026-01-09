@@ -12,6 +12,7 @@
 (require 'thingatpt)
 (require 'vc-git)
 (require 'project)
+(require 'cl-seq)
 
 (defgroup search-scope nil "Main group")
 
@@ -73,6 +74,9 @@ paths or nil."
 
 (defvar search-scope-thing-history '()
   "history list to keep searched things")
+
+(defvar search-scope-thing-type (make-hash-table :test #'equal)
+  "hash table to keep a type of searched things")
 
 (defvar-local search-scope nil
   "buffer local variable that keeps scope for `search-scope-grep-thing'")
@@ -230,11 +234,18 @@ directory."
         (local (alist-get 'local scope ".")))
     (expand-file-name local root)))
 
-(defun search-scope-add-to-history (thing-value)
+(defun search-scope-add-to-history (thing)
   "records THING to `search-scope-thing-history'"
 
   (let ((history-delete-duplicates t))
-    (add-to-history 'search-scope-thing-history thing-value 32)))
+    (add-to-history 'search-scope-thing-history (cdr thing) 32)
+    (puthash (cdr thing) (car thing) search-scope-thing-type)
+    (let ((keys (cl-nset-difference
+                 (hash-table-keys search-scope-thing-type)
+                 search-scope-thing-history)))
+      (dolist (key keys)
+        (remhash key search-scope-thing-type))))
+  thing)
 
 (defun search-scope-get-thing (thing &optional trim)
   "returns thing at point as `cons'"
@@ -251,63 +262,65 @@ directory."
     (cons thing
           (let* ((string (buffer-substring-no-properties
                           (car bounds)
-                          (cdr bounds)))
-                 (trimmed (if trim
-                              (string-trim string trim trim)
-                            string)))
-            (search-scope-add-to-history trimmed)
-            trimmed))))
+                          (cdr bounds))))
+            (if trim
+                (string-trim string trim trim)
+              string)))))
 
 (defun search-scope-thing-at-point (&optional no-input)
   "Intends to pick a symbol at point or something else if there is
 an active region. Initiates minibuffer input if NO-INPUT is nil
 as a last resort."
 
-  (cond
-   ;; check region at first in case of only part of a thing at point should be
-   ;; searched.
-   ((use-region-p)
-    (let ((substring (buffer-substring-no-properties
-                      (region-beginning) (region-end)))
-          (deactivate-mark 'dont-save))
-      (deactivate-mark)
-      (search-scope-add-to-history substring)
-      (cons 'string substring)))
+  (let ((thing
+         (cond
+          ;; check region at first in case of only part of a thing at point should be
+          ;; searched.
+          ((use-region-p)
+           (let ((substring (buffer-substring-no-properties
+                             (region-beginning) (region-end)))
+                 (deactivate-mark 'dont-save))
+             (deactivate-mark)
+             (cons 'string substring)))
 
-   ((thing-at-point 'email)
-    (search-scope-get-thing 'email "[<>]"))
+          ((thing-at-point 'email)
+           (search-scope-get-thing 'email "[<>]"))
 
-   ((thing-at-point 'uuid)
-    (search-scope-get-thing 'uuid))
+          ((thing-at-point 'uuid)
+           (search-scope-get-thing 'uuid))
 
-   ((and (derived-mode-p 'dired-mode)
-         (thing-at-point 'filename))
-    (search-scope-get-thing 'filename))
+          ((and (derived-mode-p 'dired-mode)
+                (thing-at-point 'filename))
+           (search-scope-get-thing 'filename))
 
-   ;; `apply' is for compatibility reasons
-   ((and (apply #'derived-mode-p search-scope-symbol-modes)
-         (thing-at-point 'symbol))
-    (search-scope-get-thing 'symbol))
+          ;; `apply' is for compatibility reasons
+          ((and (apply #'derived-mode-p search-scope-symbol-modes)
+                (thing-at-point 'symbol))
+           (search-scope-get-thing 'symbol))
 
-   ((and (derived-mode-p 'text-mode)
-         (thing-at-point 'word))
-    (search-scope-get-thing 'word))
+          ((and (derived-mode-p 'text-mode)
+                (thing-at-point 'word))
+           (search-scope-get-thing 'word))
 
-   ((not no-input)
-    (search-scope-read-thing
-     "Specify a thing from line: "
-     (string-trim (thing-at-point 'line t))))))
+          ((not no-input)
+           (search-scope-read-thing
+            "Specify a thing from line: "
+            (string-trim (thing-at-point 'line t)))))))
+    (search-scope-add-to-history thing)))
 
 (defun search-scope-read-thing (prompt &optional initial)
   "reads a string thing from minibuffer"
 
-  (let ((string (completing-read
-                 prompt
-                 search-scope-thing-history
-                 nil nil initial 'search-scope-thing-history)))
+  (let ((string
+         (string-trim
+          (completing-read
+           prompt
+           search-scope-thing-history
+           nil nil initial 'search-scope-thing-history))))
     (if (string-empty-p string)
         (user-error "no input is provided")
-      (cons 'string (string-trim string)))))
+      (cons (gethash string search-scope-thing-type 'string)
+            string))))
 
 (defmacro search-scope-is (thing type)
   `(equal (car ,thing) ,type))
