@@ -18,8 +18,10 @@
 
 (use-package company
   :after prog-mode
-  :bind (:map company-mode-map
-              ("C-M-i" . company-complete))
+  :bind ((:map company-mode-map
+               ("C-M-i" . company-complete))
+         (:map company-active-map
+               ("M-i" . company-complete-selection)))
   :hook (prog-mode-hook . company-mode)
   :ensure t)
 

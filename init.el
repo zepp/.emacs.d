@@ -131,6 +131,23 @@
 ;; similar to isearch
 (define-key completion-list-mode-map (kbd "M-e") #'switch-to-minibuffer)
 
+(unless (pavel/emacs-29-p)
+  (use-package completion-preview
+    :bind (:map completion-preview-active-mode-map
+                ("M-p" . completion-preview-prev-candidate)
+                ("M-n" . completion-preview-next-candidate)
+                ("M-i" . completion-preview-insert))
+    :config
+    ;; TODO: refile to `pavel-org-conf' after a full migration to Emacs 3X
+    (add-to-list 'completion-preview-commands 'org-self-insert-command)
+
+    :hook
+    (comint-mode-hook . completion-preview-mode)
+    (eshell-mode-hook . completion-preview-mode)
+    (text-mode-hook . completion-preview-mode)
+
+    :demand t))
+
 ;; alternative completion that uses minibuffer
 (use-package ido
   :init
