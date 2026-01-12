@@ -70,11 +70,13 @@
 
 (use-package tab-bar
   :bind (:map tab-prefix-map
-              ("n" . tab-new)
-              ("M-n" . tab-duplicate)
+              ("t" . tab-new)
+              ("M-t" . other-tab-prefix)
               ("k" . tab-close)
               ("<left>" . tab-previous)
-              ("<right>" . tab-next))
+              ("<right>" . tab-next)
+              ("M-<left>" . tab-bar-move-tab-backward)
+              ("M-<right>" . tab-bar-move-tab))
 
   :config
   (setq tab-bar-new-tab-choice "*scratch*")
