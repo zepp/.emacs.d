@@ -37,7 +37,7 @@
 (setq use-package-compute-statistics t)
 (add-to-list
  'package-archives
- '("melpa" . "http://stable.melpa.org/packages/")
+ '("melpa" . "https://stable.melpa.org/packages/")
  t)
 (package-initialize)
 
