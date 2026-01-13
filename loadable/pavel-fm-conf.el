@@ -64,30 +64,41 @@
     (shell-command-mode-hook . read-only-mode)))
 
 (defun pavel/eshell-buf-name (&optional directory)
-  "it provides eshell buffer name that includes directory
-name. Format is simillar to the `project-eshell'"
+  "it forms a name of `eshell' buffer that includes name of
+DIRECTORY and a host name in case of a remote file
+editing. Format is simillar to `project-eshell'."
 
-  (let* ((dir-file-name (abbreviate-file-name
-                         (directory-file-name
-                          (or directory default-directory))))
-         (name (car
-                (reverse
-                 (file-name-split dir-file-name)))))
-    (format (if (string= "" name)
-                "*eshell*"
-              "*%s-eshell*")
-            name)))
+  (let* ((dir (abbreviate-file-name (or directory default-directory)))
+         (name (file-name-nondirectory (directory-file-name dir)))
+         (tramp-info (when (and (fboundp 'tramp-tramp-file-p)
+                                (tramp-tramp-file-p dir))
+                       (tramp-dissect-file-name dir))))
+    (cond
+     (tramp-info
+      (let ((host (tramp-file-name-host tramp-info)))
+        (if (string-empty-p name)
+            (format "*%s:eshell*" host)
+          (format "*%s:%s-eshell*" host name))))
+     ((string-empty-p name)
+      "*eshell*")
+     (t (format "*%s-eshell*" name)))))
 
-(defun pavel/eshell-jump ()
-  "it starts eshell in a current directory or switches buffer to
-existing one"
-  (interactive)
+(defun pavel/eshell-jump (&optional directory)
+  "it starts `eshell' in a current directory or switches buffer to
+an existing one"
+  (interactive
+   (list default-directory))
 
-  (let* ((eshell-buffer-name (pavel/eshell-buf-name))
+  ;; do a module autoload otherwise `eshell-buffer-name' is not defined
+  (autoload-do-load (symbol-function 'eshell))
+  (let* ((eshell-buffer-name (pavel/eshell-buf-name directory))
          (buf (get-buffer eshell-buffer-name)))
-    (if buf
-        (display-buffer buf '(display-buffer-same-window))
-      (eshell))))
+    (cond
+     (buf (display-buffer buf))
+     (directory
+      (let ((default-directory directory))
+        (eshell)))
+     (t (eshell)))))
 
 (defun pavel/rename-eshell-buf()
   "hook that keeps eshell buffer name actual"
@@ -103,11 +114,6 @@ existing one"
   ;; '$' is a last part of eshell prompt. It is similar to Magit keybinding that
   ;; shows git command history.
   :bind ("C-x $" . pavel/eshell-jump)
-  :init
-  ;; this special variable is not marked as auto-loadable, so to avoid condition
-  ;; when one is already defined in a lexical scope I have to make this hack to
-  ;; make `pavel/eshell-jump' work.
-  (defvar eshell-buffer-name "*eshell*")
   :hook
   (eshell-directory-change-hook . pavel/rename-eshell-buf))
 
