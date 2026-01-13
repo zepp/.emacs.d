@@ -64,19 +64,25 @@
     (shell-command-mode-hook . read-only-mode)))
 
 (defun pavel/eshell-buf-name (&optional directory)
-  "it provides eshell buffer name that includes directory
-name. Format is simillar to the `project-eshell'"
+  "it forms a name of `eshell' buffer that includes name of
+DIRECTORY and a host name in case of a remote file
+editing. Format is simillar to `project-eshell'."
 
-  (let* ((dir-file-name (abbreviate-file-name
-                         (directory-file-name
-                          (or directory default-directory))))
-         (name (car
-                (reverse
-                 (file-name-split dir-file-name)))))
-    (format (if (string= "" name)
-                "*eshell*"
-              "*%s-eshell*")
-            name)))
+  (let* ((dir (or directory default-directory))
+         (dir-file-name (directory-file-name
+                         (abbreviate-file-name dir)))
+         (name (file-name-nondirectory dir-file-name))
+         (tramp-info (when (and (fboundp 'tramp-tramp-file-p)
+                                (tramp-tramp-file-p dir))
+                       (tramp-dissect-file-name dir))))
+    (if tramp-info
+        (let ((host (tramp-file-name-host tramp-info)))
+          (if (string-empty-p name)
+              (format "*%s:eshell*" host)
+            (format "*%s:%s-eshell*" host name)))
+      (if (string-empty-p name)
+          "*eshell*"
+        (format "*%s-eshell*" name)))))
 
 (defun pavel/eshell-jump ()
   "it starts eshell in a current directory or switches buffer to
