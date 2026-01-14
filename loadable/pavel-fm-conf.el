@@ -85,10 +85,12 @@ editing. Format is simillar to `project-eshell'."
         (format "*%s-eshell*" name)))))
 
 (defun pavel/eshell-jump ()
-  "it starts eshell in a current directory or switches buffer to
-existing one"
+  "it starts `eshell' in a current directory or switches buffer to
+an existing one"
   (interactive)
 
+  ;; do a module autoload otherwise `eshell-buffer-name' is not defined
+  (autoload-do-load (symbol-function 'eshell))
   (let* ((eshell-buffer-name (pavel/eshell-buf-name))
          (buf (get-buffer eshell-buffer-name)))
     (if buf
@@ -109,11 +111,6 @@ existing one"
   ;; '$' is a last part of eshell prompt. It is similar to Magit keybinding that
   ;; shows git command history.
   :bind ("C-x $" . pavel/eshell-jump)
-  :init
-  ;; this special variable is not marked as auto-loadable, so to avoid condition
-  ;; when one is already defined in a lexical scope I have to make this hack to
-  ;; make `pavel/eshell-jump' work.
-  (defvar eshell-buffer-name "*eshell*")
   :hook
   (eshell-directory-change-hook . pavel/rename-eshell-buf))
 
