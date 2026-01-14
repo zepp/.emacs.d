@@ -79,7 +79,8 @@
 (defun pavel/compose-ag-args (thing scope)
   (let ((regexp (search-scope-thing-to-regexp thing)))
     (list
-     (if regexp regexp (search-scope-quote thing))
+     ;; do not quote thing since a literal search to be done
+     (if regexp regexp (cdr thing))
 
      (alist-get 'root scope)
 
