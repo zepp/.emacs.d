@@ -80,7 +80,7 @@
   (let ((regexp (search-scope-thing-to-regexp thing)))
     (list
      ;; do not quote thing since a literal search to be done
-     (if regexp regexp (cdr thing))
+     (if regexp regexp (car thing))
 
      (alist-get 'root scope)
 

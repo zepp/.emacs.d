@@ -65,11 +65,13 @@ paths or nil."
   :group 'search-scope
   :type '(repeat function))
 
-(defvar search-scope-thing-history '()
-  "history list to keep searched things")
+(defvar search-scope-searched-things '()
+  "alist to keep a history of searched things")
 
-(defvar search-scope-thing-type (make-hash-table :test #'equal)
-  "hash table to keep a type of searched things")
+(defconst search-scope-history '()
+  "special variable to be overridden in a lexical scope to hold a
+simple history for minibuffer functions. See also
+`search-scope-simple-history'.")
 
 (defvar-local search-scope nil
   "buffer local variable that keeps scope for `search-scope-grep-thing'")
@@ -107,7 +109,7 @@ major mode or a list of modes is expected"
 
   (let ((regexp (search-scope-thing-to-regexp thing t))
         (ext (alist-get 'ext scope "*")))
-    (list (if regexp regexp (regexp-quote (cdr thing)))
+    (list (if regexp regexp (search-scope-quote thing))
           (concat "*." ext)
           (search-scope-absolute-dir-path scope))))
 
@@ -124,7 +126,7 @@ major mode or a list of modes is expected"
       (format
        template
        (if (and (search-scope-is thing 'word) trim-word)
-           (search-scope-trim-word (cdr thing))
+           (search-scope-trim-word (car thing))
          (search-scope-quote thing))))))
 
 ;;;###autoload
@@ -256,22 +258,30 @@ directory."
     (expand-file-name local root)))
 
 (defun search-scope-add-to-history (thing)
-  "records THING to `search-scope-thing-history'"
+  "records THING to `search-scope-searched-things'"
 
-  (let ((history-delete-duplicates t))
-    (add-to-history 'search-scope-thing-history (cdr thing) 32)
-    (puthash (cdr thing) (car thing) search-scope-thing-type)
-    (let ((keys (cl-nset-difference
-                 (hash-table-keys search-scope-thing-type)
-                 search-scope-thing-history)))
-      (dolist (key keys)
-        (remhash key search-scope-thing-type))))
+  (let ((alist search-scope-searched-things)
+        (length (length search-scope-searched-things))
+        (max-alist-size 30))
+    (when (>= length max-alist-size)
+      (setf alist (nbutlast alist (- (1+ length) max-alist-size))))
+    (setf search-scope-searched-things
+          (assoc-delete-all (car thing) alist)))
+  (push thing search-scope-searched-things)
   thing)
 
-(defun search-scope-get-thing (thing &optional trim)
+(defun search-scope-simple-history (&optional omit-first-thing)
+  "It transforms `search-scope-searched-things' to a simple list of
+thing names"
+
+  (if omit-first-thing
+      (cdr (mapcar #'car search-scope-searched-things))
+    (mapcar #'car search-scope-searched-things)))
+
+(defun search-scope-get-thing (thing-type &optional trim)
   "returns thing at point as `cons'"
 
-  (let ((bounds (bounds-of-thing-at-point thing)))
+  (let ((bounds (bounds-of-thing-at-point thing-type)))
     (when search-scope-thing-flash-seconds
       (let ((overlay (make-overlay (car bounds) (cdr bounds))))
         (overlay-put overlay 'face 'region)
@@ -280,13 +290,14 @@ directory."
                      nil
                      #'(lambda ()
                          (delete-overlay overlay)))))
-    (cons thing
-          (let* ((string (buffer-substring-no-properties
-                          (car bounds)
-                          (cdr bounds))))
-            (if trim
-                (string-trim string trim trim)
-              string)))))
+    (cons
+     (let ((string (buffer-substring-no-properties
+                    (car bounds)
+                    (cdr bounds))))
+       (if trim
+           (string-trim string trim trim)
+         string))
+     thing-type)))
 
 (defun search-scope-thing-at-point (&optional no-input)
   "Intends to pick a symbol at point or something else if there is
@@ -302,7 +313,7 @@ as a last resort."
                              (region-beginning) (region-end)))
                  (deactivate-mark 'dont-save))
              (deactivate-mark)
-             (cons 'string substring)))
+             (cons substring 'string)))
 
           ((thing-at-point 'email)
            (search-scope-get-thing 'email "[<>]"))
@@ -332,22 +343,26 @@ as a last resort."
 (defun search-scope-read-thing (prompt &optional initial)
   "reads a string thing from minibuffer"
 
-  (let ((string
-         (string-trim
-          (completing-read
-           prompt
-           search-scope-thing-history
-           nil nil initial 'search-scope-thing-history))))
+  (let* ((search-scope-history (search-scope-simple-history))
+         (string
+          (string-trim
+           (completing-read
+            prompt
+            search-scope-history
+            nil nil initial 'search-scope-history))))
     (if (string-empty-p string)
         (user-error "no input is provided")
-      (cons (gethash string search-scope-thing-type 'string)
-            string))))
+      (let ((thing (assoc string search-scope-searched-things)))
+        (unless thing
+          (setf thing (cons string 'string))
+          (push thing search-scope-searched-things))
+        thing))))
 
 (defmacro search-scope-is (thing type)
-  `(equal (car ,thing) ,type))
+  `(equal (cdr ,thing) ,type))
 
 (defmacro search-scope-quote (thing)
-  `(regexp-quote (cdr ,thing)))
+  `(regexp-quote (car ,thing)))
 
 ;;;###autoload
 (defun search-scope-replace (thing new-name)
@@ -355,19 +370,20 @@ as a last resort."
 `query-replace-regexp'"
 
   (interactive
-   (let ((thing (search-scope-thing-at-point)))
+   (let ((thing (search-scope-thing-at-point))
+         (search-scope-history (search-scope-simple-history t)))
      (list thing
-           (read-string (format "Rename '%s' to: " (cdr thing))
-                        (cdr thing) 'search-scope-thing-history nil t))))
+           (read-string (format "Rename '%s' to: " (car thing))
+                        (car thing) 'search-scope-history nil t))))
 
   (if (buffer-modified-p)
       (user-error "Rename of '%s' is aborted since buffer '%s' is modified"
-                  (cdr thing) (buffer-name (current-buffer)))
+                  (car thing) (buffer-name (current-buffer)))
     (save-excursion
       (let ((thing-regexp (cond ((search-scope-is thing 'symbol)
-                                 (format "\\_<%s\\_>" (cdr thing)))
+                                 (format "\\_<%s\\_>" (car thing)))
                                 ((search-scope-is thing 'word)
-                                 (format "\\b%s" (cdr thing)))
+                                 (format "\\b%s" (car thing)))
                                 (t (format "\\b%s\\b" (search-scope-quote thing))))))
         (goto-char (point-min))
         (query-replace-regexp thing-regexp new-name)))))
