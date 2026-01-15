@@ -23,7 +23,9 @@
 
   (string-match "29\\.[0-9]+" emacs-version))
 
-(let* ((loadable-directory "~/.emacs.d/loadable/")
+(let* ((loadable-directory
+        (expand-file-name "loadable/"
+                          user-emacs-directory))
        (pavel-autoloads (expand-file-name
 			 "pavel-autoloads.el"
 			 loadable-directory)))
