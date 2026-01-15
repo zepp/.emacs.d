@@ -16,7 +16,6 @@
 
 (defgroup search-scope nil "Main group")
 
-;;;###autoload
 (defcustom search-scope-grep-engines
   '((fundamental-mode . (rgrep . search-scope-compose-rgrep-args)))
   "alist to be used by `search-scope-grep' to find a engine for a
@@ -24,7 +23,6 @@ current major mode and perform a search in a directory tree"
   :group 'search-scope
   :type 'sexp)
 
-;;;###autoload
 (defcustom search-scope-root-functions '(search-scope-project-root vc-git-root)
   "set of functions to discover a root of a directory tree for a
 buffer. Function is executed in the context of the buffer and must
@@ -32,19 +30,16 @@ return nonempty string or nil"
   :group 'search-scope
   :type '(repeat function))
 
-;;;###autoload
-(defcustom search-scope-symbol-modes '(prog-mode sgml-mode nxml-mode conf-mode)
+(defcustom search-scope-symbolic-modes '(prog-mode sgml-mode nxml-mode conf-mode)
   "modes to search symbols rather then words"
   :group 'search-scope
   :type '(repeat function))
 
-;;;###autoload
 (defcustom search-scope-thing-flash-seconds 1
   "number of seconds to flash a thing at point using overlay"
   :group 'search-scope
   :type 'natnum)
 
-;;;###autoload
 (defcustom search-scope-word-trim-alist
   `(("[a-zA-Z’'\\-]+" . ,(string-join '("[’']?s" "y" "ship" "ment")
                                       "\\|"))
@@ -56,13 +51,11 @@ return nonempty string or nil"
   :group 'search-scope
   :type '(repeat (cons regexp regexp)))
 
-;;;###autoload
 (defcustom search-scope-word-min-length 3
   "It specifies a minimal length of a word to be trimmed"
   :group 'search-scope
   :type 'natnum)
 
-;;;###autoload
 (defcustom search-scope-dir-indexers '(search-scope-project-dirs)
   "set of functions to build a directory list of a
 scope. `search-scope-index-dirs' sequentially calls entries until
@@ -80,6 +73,34 @@ paths or nil."
 
 (defvar-local search-scope nil
   "buffer local variable that keeps scope for `search-scope-grep-thing'")
+
+;;;###autoload
+(defun search-scope-register-symbolic-engine (function args-function)
+  "registers an engine for all modes from `search-scope-symbolic-modes'
+alist."
+
+  (search-scope-register-engine
+   function
+   args-function
+   search-scope-symbolic-modes))
+
+;;;###autoload
+(defun search-scope-register-engine (function args-function &optional object)
+  "it registers a new grep engine in `search-scope-grep-engines' alist. If
+OBJECT is null then default search engine is overridden otherwise a
+major mode or a list of modes is expected"
+
+  (cond
+   ((or (null object) (functionp object))
+    (setf (alist-get (or object 'fundamental-mode) search-scope-grep-engines)
+          (cons function args-function)))
+   ((listp object)
+    (dolist (mode object)
+      (setf (alist-get mode search-scope-grep-engines)
+            (cons function args-function))))
+   (t
+    (user-error "can't register engine: unsupported object type %s"
+                (type-of object)))))
 
 (defun search-scope-compose-rgrep-args (thing scope)
   "Composes an argument list for `rgrep' and `rzgrep' commands"
@@ -294,7 +315,7 @@ as a last resort."
            (search-scope-get-thing 'filename))
 
           ;; `apply' is for compatibility reasons
-          ((and (apply #'derived-mode-p search-scope-symbol-modes)
+          ((and (apply #'derived-mode-p search-scope-symbolic-modes)
                 (thing-at-point 'symbol))
            (search-scope-get-thing 'symbol))
 

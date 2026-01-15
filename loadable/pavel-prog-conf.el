@@ -112,9 +112,9 @@ is non nil then THING is regular expression."
 
   :init
   (setq ag-reuse-buffers t)
-  (let ((e '(ag/search . pavel/compose-ag-args)))
-    (dolist (mode search-scope-symbol-modes)
-      (add-to-list 'search-scope-grep-engines (cons mode e))))
+  (search-scope-register-symbolic-engine
+   #'ag/search
+   #'pavel/compose-ag-args)
 
   :ensure t)
 
