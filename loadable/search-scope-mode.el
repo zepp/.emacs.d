@@ -55,14 +55,19 @@ return nonempty string or nil"
   :group 'search-scope
   :type 'natnum)
 
-(defcustom search-scope-dir-indexers '(search-scope-project-dirs)
-  "set of functions to build a directory list of a
-scope. `search-scope-index-dirs' sequentially calls entries until
-non-empty list is returned. Indexer receives a root and a regular
-expression to filter result and returns the list of relative
-paths or nil."
+(defcustom search-scope-indexers '(search-scope-index-project-files)
+  "set of functions to build a file list of a
+scope. `search-scope-index-files' sequentially calls entries
+until non-empty list is returned. Indexer receives a root and a
+regular expression to filter result and returns the list of
+relative paths or nil."
   :group 'search-scope
   :type '(repeat function))
+
+(defcustom search-scope-local-markers '("Makefile" "project.json")
+  "list of file names that marks a local scope"
+  :group 'search-scope
+  :type '(repeat string))
 
 (defvar search-scope-searched-things '()
   "alist to keep a history of searched things")
@@ -166,57 +171,87 @@ less then `search-scope-word-min-length'"
   (let ((proj (project-current nil (file-name-directory path))))
     (when proj (project-root proj))))
 
-(defun search-scope-project-dirs (root &optional regexp)
-  "Returns a directory list inside a project in ROOT."
+(defun search-scope-index-project-files (root &optional regexp)
+  "Returns file list of project in ROOT."
 
   (let ((proj (project-current nil root)))
     (when proj
-      (let* ((dirs (delete-dups
-                    (mapcar #'file-name-directory
-                            (project-files proj))))
-             (relatives (mapcar
-                         #'(lambda (dir)
-                             (file-relative-name dir root))
-                         dirs)))
-        (sort
-         (remove
-          "./"
-          (if regexp
-              (seq-filter
-               #'(lambda (dir)
-                   (string-match regexp dir))
-               relatives)
-            relatives))
-         #'string>)))))
+      (let ((paths (mapcar
+                    #'(lambda (dir)
+                        (file-relative-name dir root))
+                    (project-files proj))))
+        (if regexp
+            (seq-filter
+             #'(lambda (path)
+                 (string-match regexp path))
+             paths)
+          paths)))))
 
-(defun search-scope-index-dirs (scope &optional regexp)
+(defun search-scope-index-files (scope &optional regexp)
   "Returns a directory list inside of the SCOPE using functions
-from the `search-scope-dir-indexers'. List contains relative
-paths filtered using REGEXP."
+from the `search-scope-indexers'. List contains relative paths
+filtered using REGEXP."
   (let ((root (alist-get 'root scope)))
     (seq-some #'(lambda (fun)
                   (funcall fun root regexp))
-              search-scope-dir-indexers)))
+              search-scope-indexers)))
 
-(defun search-scope-read-relative-dir (root &optional dirs initial)
-  "Reads a relative directory path. If DIRS is not empty then read
-is completing."
+(defun search-scope-closest-dir (path dirs)
+  "finds PATH closest directory from DIRS list."
 
-  (let* ((dir (expand-file-name (or initial "") root))
-         (relative-dir
-          (if (length> dirs 0)
-              (completing-read
-               (format "Specify directory (%i): " (length dirs))
-               dirs nil t initial)
-            (file-relative-name
-             (read-directory-name
-              "Specify directory: "
-              dir dir t)
-             root))))
-    (setf dir (expand-file-name relative-dir root))
-    (if (and (not (string= root dir))
-             (string-match-p (regexp-quote root) dir))
-        relative-dir
+  (seq-reduce #'(lambda (accum dir)
+                  (if (and (string-match-p (regexp-quote dir) path)
+                           (or (null accum)
+                               (string> dir accum)))
+                      dir
+                    accum))
+              dirs nil))
+
+(defun search-scope-marked-local-dirs (scope)
+  "builds a direcotry list of SCOPE using
+`search-scope-local-markers'."
+
+  (let* ((quoted-markers (mapcar #'regexp-quote
+                                 search-scope-local-markers))
+         (regexp (string-join quoted-markers "\\|"))
+         (dirs (mapcar #'file-name-directory
+                       (search-scope-index-files scope regexp))))
+    (remove nil (delete-dups dirs))))
+
+(defun search-scope-completing-read-local (scope &optional prompt require-match)
+  "Reads a local directory path with completion. List of relative
+paths is build by `search-scope-marked-local-dirs'"
+
+  (let ((root (alist-get 'root scope))
+        (dirs (search-scope-marked-local-dirs scope)))
+    (when (length> dirs 0)
+      (let ((default-closest (search-scope-closest-dir
+                              (file-relative-name
+                               default-directory root)
+                              dirs)))
+        (completing-read
+         (if prompt
+             prompt
+           (format "Specify directory (%i): " (length dirs)))
+         dirs nil require-match
+         (alist-get 'local scope default-closest))))))
+
+(defun search-scope-read-local (scope &optional prompt require-match)
+  "Reads a local directory path using
+`read-directory-name'."
+
+  (let* ((root (alist-get 'root scope))
+         (local (alist-get 'local scope
+                           (file-relative-name
+                            default-directory root)))
+         (default (expand-file-name local root))
+         (dir (expand-file-name
+               (read-directory-name
+                (or prompt "Specify directory: ")
+                default default require-match))))
+    (if (and (string-match-p (regexp-quote root) dir)
+             (not (string= dir root)))
+        (file-relative-name dir root)
       nil)))
 
 (defun search-scope-get-engine (&optional mode)
@@ -413,18 +448,11 @@ as a last resort."
   (let ((scope (copy-alist scope)))
     (if dwim
         scope
-      (let* ((root (alist-get 'root scope))
-             (local (alist-get 'local scope))
-             (path (search-scope-read-relative-dir
-                    root
-                    (search-scope-index-dirs scope)
-                    (cond (local local)
-                          ((not (string= default-directory root))
-                           (file-relative-name
-                            default-directory
-                            root))))))
-        (if path
-            (setf (alist-get 'local scope) path)
+      (let ((local (alist-get 'local scope))
+            (dir (or (search-scope-completing-read-local scope nil t)
+                     (search-scope-read-local scope nil t))))
+        (if dir
+            (setf (alist-get 'local scope) dir)
           (setf scope (assq-delete-all 'local scope)))
 
         (let* ((strategies '(default same-files))
