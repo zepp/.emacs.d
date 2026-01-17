@@ -12,7 +12,6 @@
 (require 'thingatpt)
 (require 'vc-git)
 (require 'project)
-(require 'cl-seq)
 
 (defgroup search-scope nil "Main group")
 
@@ -113,7 +112,6 @@ major mode or a list of modes is expected"
           (concat "*." ext)
           (search-scope-absolute-dir-path scope))))
 
-;;;###autoload
 (defun search-scope-thing-to-regexp (thing &optional trim-word)
   "forms a regexp to perform a search of THING"
 
@@ -129,7 +127,6 @@ major mode or a list of modes is expected"
            (search-scope-trim-word (car thing))
          (search-scope-quote thing))))))
 
-;;;###autoload
 (defun search-scope-to-path-regexp (scope)
   "forms a relative path regexp to perform a search in SCOPE"
 
@@ -353,9 +350,11 @@ as a last resort."
     (if (string-empty-p string)
         (user-error "no input is provided")
       (let ((thing (assoc string search-scope-searched-things)))
-        (unless thing
-          (setf thing (cons string 'string))
-          (push thing search-scope-searched-things))
+        (if thing
+            (setq search-scope-searched-things
+                  (delete thing search-scope-searched-things))
+          (setq thing (cons string 'string)))
+        (push thing search-scope-searched-things)
         thing))))
 
 (defmacro search-scope-is (thing type)
@@ -457,7 +456,7 @@ strategy. `search-scope' is updated with a new value."
    (list
     ;; double universal prefix argument
     (if (= (prefix-numeric-value current-prefix-arg) 16)
-        (search-scope-read-thing "Specify a string: ")
+        (search-scope-read-thing "Specify a thing: ")
       (search-scope-thing-at-point))
     (search-scope-adjust
      (search-scope-get (current-buffer))
