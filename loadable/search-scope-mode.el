@@ -115,7 +115,7 @@ major mode or a list of modes is expected"
         (ext (alist-get 'ext scope "*")))
     (list (if regexp regexp (search-scope-quote thing))
           (concat "*." ext)
-          (search-scope-absolute-dir-path scope))))
+          (search-scope-absolute-path scope))))
 
 (defun search-scope-thing-to-regexp (thing &optional trim-word)
   "forms a regexp to perform a search of THING"
@@ -225,16 +225,15 @@ paths is build by `search-scope-marked-local-dirs'"
   (let ((root (alist-get 'root scope))
         (dirs (search-scope-marked-local-dirs scope)))
     (when (length> dirs 0)
-      (let ((default-closest (search-scope-closest-dir
-                              (file-relative-name
-                               default-directory root)
-                              dirs)))
+      (let* ((dir (search-scope-closest-dir
+                   (file-relative-name default-directory root)
+                   dirs))
+             (default (alist-get 'local scope dir)))
         (completing-read
-         (if prompt
-             prompt
-           (format "Specify directory (%i): " (length dirs)))
-         dirs nil require-match
-         (alist-get 'local scope default-closest))))))
+         (or prompt
+             (format "%s directory (%s) : "
+                     (abbreviate-file-name root) default))
+         dirs nil require-match nil nil default)))))
 
 (defun search-scope-read-local (scope &optional prompt require-match)
   "Reads a local directory path using
@@ -253,6 +252,39 @@ paths is build by `search-scope-marked-local-dirs'"
              (not (string= dir root)))
         (file-relative-name dir root)
       nil)))
+
+(defun search-scope-read-strategy (scope)
+  "Reads a search strategy for SCOPE."
+
+  (let* ((local (alist-get 'local scope))
+         (strategies '(default same-files))
+         (strategy (alist-get 'strategy scope (if local 'default 'same-files))))
+    (intern
+     (completing-read
+      (format "%s search strategy (%s): "
+              (search-scope-absolute-path scope t)
+              strategy)
+      strategies nil t nil nil (symbol-name strategy)))))
+
+(defun search-scope-read-thing (&optional prompt initial)
+  "Reads a thing from minibuffer"
+
+  (let* ((search-scope-history (search-scope-simple-history))
+         (string (completing-read
+                  (or prompt
+                      "Specify a thing: ")
+                  search-scope-history
+                  nil nil initial
+                  'search-scope-history
+                  (car search-scope-history))))
+    (let* ((alist search-scope-searched-things)
+           (thing (when string (assoc string alist))))
+      (if thing
+          (setq search-scope-searched-things
+                (delete thing alist))
+        (setq thing (cons string 'string)))
+      (push thing search-scope-searched-things)
+      thing)))
 
 (defun search-scope-get-engine (&optional mode)
   "Searches engine for MODE. If one is not specified then
@@ -282,12 +314,14 @@ directory."
     (when result
       (expand-file-name result))))
 
-(defun search-scope-absolute-dir-path (scope)
+(defun search-scope-absolute-path (scope &optional abbreviate)
   "Returns an absolute directory path of SCOPE"
 
   (let ((root (alist-get 'root scope))
         (local (alist-get 'local scope ".")))
-    (expand-file-name local root)))
+    (if abbreviate
+        (abbreviate-file-name (expand-file-name local root))
+      (expand-file-name local root))))
 
 (defun search-scope-add-to-history (thing)
   "records THING to `search-scope-searched-things'"
@@ -306,9 +340,10 @@ directory."
   "It transforms `search-scope-searched-things' to a simple list of
 thing names"
 
-  (if omit-first-thing
-      (cdr (mapcar #'car search-scope-searched-things))
-    (mapcar #'car search-scope-searched-things)))
+  (let ((names (mapcar #'car search-scope-searched-things)))
+    (if omit-first-thing
+        (cdr names)
+      names)))
 
 (defun search-scope-get-thing (thing-type &optional trim)
   "returns thing at point as `cons'"
@@ -371,26 +406,6 @@ as a last resort."
             "Specify a thing from line: "
             (string-trim (thing-at-point 'line t)))))))
     (search-scope-add-to-history thing)))
-
-(defun search-scope-read-thing (prompt &optional initial)
-  "reads a string thing from minibuffer"
-
-  (let* ((search-scope-history (search-scope-simple-history))
-         (string
-          (string-trim
-           (completing-read
-            prompt
-            search-scope-history
-            nil nil initial 'search-scope-history))))
-    (if (string-empty-p string)
-        (user-error "no input is provided")
-      (let ((thing (assoc string search-scope-searched-things)))
-        (if thing
-            (setq search-scope-searched-things
-                  (delete thing search-scope-searched-things))
-          (setq thing (cons string 'string)))
-        (push thing search-scope-searched-things)
-        thing))))
 
 (defmacro search-scope-is (thing type)
   `(equal (cdr ,thing) ,type))
@@ -455,16 +470,8 @@ as a last resort."
             (setf (alist-get 'local scope) dir)
           (setf scope (assq-delete-all 'local scope)))
 
-        (let* ((strategies '(default same-files))
-               (strategy (alist-get 'strategy scope 'default))
-               (ext (alist-get 'ext scope))
-               ;; `substring' is to copy a name of symbol
-               (initial (substring (symbol-name strategy))))
-          (setf strategy (intern
-                          (completing-read
-                           "Search strategy: "
-                           strategies nil t
-                           initial)))
+        (let ((strategy (search-scope-read-strategy scope))
+              (ext (alist-get 'ext scope)))
           (setf (alist-get 'strategy scope)
                 strategy)
           (when (and (eq strategy 'same-files)
@@ -484,7 +491,7 @@ strategy. `search-scope' is updated with a new value."
    (list
     ;; double universal prefix argument
     (if (= (prefix-numeric-value current-prefix-arg) 16)
-        (search-scope-read-thing "Specify a thing: ")
+        (search-scope-read-thing)
       (search-scope-thing-at-point))
     (search-scope-adjust
      (search-scope-get (current-buffer))
