@@ -75,6 +75,7 @@
               ("t" . tab-new)
               ("M-t" . other-tab-prefix)
               ("k" . tab-close)
+              ("M-o" . tab-previous)
               ("<left>" . tab-previous)
               ("<right>" . tab-next)
               ("M-<left>" . tab-bar-move-tab-backward)
@@ -232,6 +233,16 @@ make it more informative"
       (add-to-list 'compilation-error-regexp-alist (car cell))))
 
   (advice-add 'compile :around #'pavel/compile-buf-name-advice))
+
+;;-------------------------------------------------------------------------------
+
+(use-package info
+  :bind
+  (:map Info-mode-map
+        ("n" . Info-next-reference)
+        ("p" . Info-prev-reference)
+        ("o" . Info-next)
+        ("M-o" . Info-prev)))
 
 ;;-------------------------------------------------------------------------------
 
