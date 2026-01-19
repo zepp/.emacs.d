@@ -228,6 +228,16 @@ make it more informative"
 
 ;;-------------------------------------------------------------------------------
 
+(use-package info
+  :bind
+  (:map Info-mode-map
+        ("n" . Info-next-reference)
+        ("p" . Info-prev-reference)
+        ("o" . Info-next)
+        ("M-o" . Info-prev)))
+
+;;-------------------------------------------------------------------------------
+
 (keymap-global-unset "M-q") ;; fill-paragraph
 (define-key ctl-x-map (kbd "M-s") #'write-file)
 
