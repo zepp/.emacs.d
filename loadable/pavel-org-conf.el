@@ -29,7 +29,7 @@ point."
                ("C-c C-p" . org-agenda-set-property)))
   :init
   (setq
-   org-agenda-window-setup 'only-window
+   org-agenda-window-setup 'current-window
    org-agenda-start-on-weekday nil
    org-agenda-start-day "-1d"
    org-agenda-remove-tags t
