@@ -29,7 +29,7 @@ point."
                ("C-c C-p" . org-agenda-set-property)))
   :init
   (setq
-   org-agenda-window-setup 'only-window
+   org-agenda-window-setup 'current-window
    org-agenda-start-on-weekday nil
    org-agenda-start-day "-1d"
    org-agenda-remove-tags t
@@ -128,6 +128,21 @@ in all agenda buffers when Emacs idles")
                   (major-mode . calendar-mode))
                  display-buffer-at-bottom
                  (dedicated . t)))
+
+  (add-to-list
+   'display-buffer-alist
+   ;; attachment directory naming is an UUID but first part is shorten
+   '("^[0-9a-f]\\{6\\}-[0-9a-f]\\{4\\}-[0-9a-f]\\{4\\}-[0-9a-f]\\{4\\}-[0-9a-f]\\{12\\}$"
+     display-buffer-below-selected
+     (window-height . 0.25)))
+
+  (add-to-list 'display-buffer-alist
+               '((or
+                  "\\*Org Table Edit Field\\*$"
+                  "\\*Edit Formulas\\*$")
+                 display-buffer-below-selected
+                 (dedicated . t)
+                 (window-height . 5)))
 
   :config
   (add-to-list 'org-latex-packages-alist '("AUTO" "babel" t ("pdflatex")))
