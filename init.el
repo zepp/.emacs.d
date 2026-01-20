@@ -203,11 +203,11 @@ make it more informative"
 
   ;; let's take command string into account
   (let* ((command (string-trim (nth 0 args)))
-         (chopped (if (> (length command) 24)
-                      (substring command 0 24)
-                    command))
+         (chopped (string-trim-right
+                   (string-limit command 24)))
          (ellipsis (if (string= command chopped)
-                       "" "…"))
+                       ""
+                     (truncate-string-ellipsis)))
          (compilation-buffer-name-function
           #'(lambda (mode)
               (format "*%s: %s%s*" mode chopped ellipsis))))
