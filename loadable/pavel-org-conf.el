@@ -129,6 +129,14 @@ in all agenda buffers when Emacs idles")
                  display-buffer-at-bottom
                  (dedicated . t)))
 
+  (add-to-list 'display-buffer-alist
+               '((or
+                  "\\*Org Table Edit Field\\*$"
+                  "\\*Edit Formulas\\*$")
+                 display-buffer-below-selected
+                 (dedicated . t)
+                 (window-height . 5)))
+
   :config
   (add-to-list 'org-latex-packages-alist '("AUTO" "babel" t ("pdflatex")))
   (add-to-list 'org-latex-packages-alist '("" "tabularx"))
