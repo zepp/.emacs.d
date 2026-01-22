@@ -108,6 +108,12 @@ major mode or a list of modes is expected"
     (user-error "can't register engine: unsupported object type %s"
                 (type-of object)))))
 
+(defmacro search-scope-is (thing type)
+  `(equal (cdr ,thing) ,type))
+
+(defmacro search-scope-quote (thing)
+  `(regexp-quote (car ,thing)))
+
 (defun search-scope-compose-rgrep-args (thing scope)
   "Composes an argument list for `rgrep' and `rzgrep' commands"
 
@@ -166,10 +172,22 @@ less then `search-scope-word-min-length'"
         word))))
 
 (defun search-scope-project-root (path)
-  "Looks for a root of a directory tree using `project-root'"
+  "Looks for a root directory of PATH using `project-root'"
 
   (let ((proj (project-current nil (file-name-directory path))))
     (when proj (project-root proj))))
+
+(defun search-scope-discover-root (path &optional fallback)
+  "iterates over `search-scope-root-functions' to find a root
+directory."
+
+  (let ((result (or (seq-some
+                     #'(lambda (fun)
+                         (funcall fun path))
+                     search-scope-root-functions)
+                    fallback)))
+    (when result
+      (expand-file-name result))))
 
 (defun search-scope-index-project-files (root &optional regexp)
   "Returns file list of project in ROOT."
@@ -195,6 +213,74 @@ filtered using REGEXP."
     (seq-some #'(lambda (fun)
                   (funcall fun root regexp))
               search-scope-indexers)))
+
+(defun search-scope-get-engine (&optional mode)
+  "Searches engine for MODE. If one is not specified then
+`major-mode' is used"
+
+  (let ((effective-mode (or mode major-mode))
+        (fallback (alist-get
+                   'fundamental-mode
+                   search-scope-grep-engines)))
+    (or (seq-some #'(lambda (entry)
+                      (when (provided-mode-derived-p
+                             effective-mode
+                             (car entry))
+                        (cdr entry)))
+                  search-scope-grep-engines)
+        fallback)))
+
+(defun search-scope-get (buffer)
+  "finds BUFFER scope out and caches one to `search-scope'"
+
+  (with-current-buffer buffer
+    (if search-scope
+        search-scope
+      (let* ((file-path (buffer-file-name))
+             (dir-path (expand-file-name default-directory))
+             (root (search-scope-discover-root
+                    (or file-path
+                        dir-path)
+                    dir-path)))
+        (setq search-scope
+              (let ((scope `((root . ,root)
+                             (strategy . default))))
+                (when file-path
+                  (push `(ext . ,(file-name-extension file-path))
+                        scope))
+                scope))))))
+
+(defun search-scope-adjust (scope &optional dwim)
+  "adjusts a copy of SCOPE according to user input."
+
+  (let ((scope (copy-alist scope)))
+    (if dwim
+        scope
+      (let ((local (alist-get 'local scope))
+            (dir (or (search-scope-completing-read-local scope nil t)
+                     (search-scope-read-local scope nil t))))
+        (if dir
+            (setf (alist-get 'local scope) dir)
+          (setf scope (assq-delete-all 'local scope)))
+
+        (let ((strategy (search-scope-read-strategy scope))
+              (ext (alist-get 'ext scope)))
+          (setf (alist-get 'strategy scope)
+                strategy)
+          (when (and (eq strategy 'same-files)
+                     (not ext))
+            (setf (alist-get 'ext scope)
+                  (read-string "File extension: "))))))
+    scope))
+
+(defun search-scope-absolute-path (scope &optional abbreviate)
+  "Returns an absolute directory path of SCOPE"
+
+  (let ((root (alist-get 'root scope))
+        (local (alist-get 'local scope ".")))
+    (if abbreviate
+        (abbreviate-file-name (expand-file-name local root))
+      (expand-file-name local root))))
 
 (defun search-scope-closest-dir (path dirs)
   "finds PATH closest directory from DIRS list."
@@ -286,43 +372,6 @@ paths is build by `search-scope-marked-local-dirs'"
       (push thing search-scope-searched-things)
       thing)))
 
-(defun search-scope-get-engine (&optional mode)
-  "Searches engine for MODE. If one is not specified then
-`major-mode' is used"
-
-  (let ((effective-mode (or mode major-mode))
-        (fallback (alist-get
-                   'fundamental-mode
-                   search-scope-grep-engines)))
-    (or (seq-some #'(lambda (entry)
-                      (when (provided-mode-derived-p
-                             effective-mode
-                             (car entry))
-                        (cdr entry)))
-                  search-scope-grep-engines)
-        fallback)))
-
-(defun search-scope-discover-root (path &optional fallback)
-  "iterates over `search-scope-root-functions' to find a root
-directory."
-
-  (let ((result (or (seq-some
-                     #'(lambda (fun)
-                         (funcall fun path))
-                     search-scope-root-functions)
-                    fallback)))
-    (when result
-      (expand-file-name result))))
-
-(defun search-scope-absolute-path (scope &optional abbreviate)
-  "Returns an absolute directory path of SCOPE"
-
-  (let ((root (alist-get 'root scope))
-        (local (alist-get 'local scope ".")))
-    (if abbreviate
-        (abbreviate-file-name (expand-file-name local root))
-      (expand-file-name local root))))
-
 (defun search-scope-add-to-history (thing)
   "records THING to `search-scope-searched-things'"
 
@@ -407,12 +456,6 @@ as a last resort."
             (string-trim (thing-at-point 'line t)))))))
     (search-scope-add-to-history thing)))
 
-(defmacro search-scope-is (thing type)
-  `(equal (cdr ,thing) ,type))
-
-(defmacro search-scope-quote (thing)
-  `(regexp-quote (car ,thing)))
-
 ;;;###autoload
 (defun search-scope-replace (thing new-name)
   "it renames THING to NEW-NAME in a current buffer using
@@ -436,49 +479,6 @@ as a last resort."
                                 (t (format "\\b%s\\b" (search-scope-quote thing))))))
         (goto-char (point-min))
         (query-replace-regexp thing-regexp new-name)))))
-
-(defun search-scope-get (buffer)
-  "finds BUFFER scope out and caches one to `search-scope'"
-
-  (with-current-buffer buffer
-    (if search-scope
-        search-scope
-      (let* ((file-path (buffer-file-name))
-             (dir-path (expand-file-name default-directory))
-             (root (search-scope-discover-root
-                    (or file-path
-                        dir-path)
-                    dir-path)))
-        (setq search-scope
-              (let ((scope `((root . ,root)
-                             (strategy . default))))
-                (when file-path
-                  (push `(ext . ,(file-name-extension file-path))
-                        scope))
-                scope))))))
-
-(defun search-scope-adjust (scope &optional dwim)
-  "adjusts a copy of SCOPE according to user input."
-
-  (let ((scope (copy-alist scope)))
-    (if dwim
-        scope
-      (let ((local (alist-get 'local scope))
-            (dir (or (search-scope-completing-read-local scope nil t)
-                     (search-scope-read-local scope nil t))))
-        (if dir
-            (setf (alist-get 'local scope) dir)
-          (setf scope (assq-delete-all 'local scope)))
-
-        (let ((strategy (search-scope-read-strategy scope))
-              (ext (alist-get 'ext scope)))
-          (setf (alist-get 'strategy scope)
-                strategy)
-          (when (and (eq strategy 'same-files)
-                     (not ext))
-            (setf (alist-get 'ext scope)
-                  (read-string "File extension: "))))))
-    scope))
 
 ;;;###autoload
 (defun search-scope-grep (thing scope)
