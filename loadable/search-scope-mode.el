@@ -69,6 +69,11 @@ relative paths or nil."
   :group 'search-scope
   :type '(repeat string))
 
+(defcustom search-scope-root-strategy 'same-files
+  "list to keep discovered scopes"
+  :group 'search-scope
+  :type 'symbol)
+
 (defvar search-scope-searched-things '()
   "alist to keep a history of searched things")
 
@@ -76,6 +81,9 @@ relative paths or nil."
   "special variable to be overridden in a lexical scope to hold a
 simple history for minibuffer functions. See also
 `search-scope-simple-history'.")
+
+(defvar search-scope-list '()
+  "list to keep discovered scopes")
 
 (defvar-local search-scope nil
   "buffer local variable that keeps scope for `search-scope-grep-thing'")
@@ -230,110 +238,185 @@ filtered using REGEXP."
                   search-scope-grep-engines)
         fallback)))
 
-(defun search-scope-construct (root &optional path)
+(defun search-scope-construct (root &optional path strategy)
   "Constucts a new scope from ROOT and PATH."
 
-  (let ((scope `((root . ,root)
-                 (strategy . default)))
+  (let ((scope `((root . ,root)))
         (dir (when path (file-name-directory path))))
     (cond
      ((and dir (file-name-absolute-p dir))
       (let ((relative (file-relative-name dir root)))
         (push `(absolute . ,dir) scope)
-        (push `(relative . ,relative) scope)))
+        (push `(relative . ,relative) scope)
+        (push `(strategy . ,(or strategy 'default)) scope)))
      (dir
       (let ((absolute (expand-file-name dir root)))
         (push `(absolute . ,absolute) scope)
-        (push `(relative . ,dir) scope)))
+        (push `(relative . ,dir) scope)
+        (push `(strategy . ,(or strategy 'default)) scope)))
      (t
-      (push `(absolute . ,root) scope)))
+      (push `(absolute . ,root) scope)
+      (push `(strategy . ,search-scope-root-strategy) scope)))
     scope))
 
-(defun search-scope-get (buffer)
-  "finds BUFFER scope out and caches one to `search-scope'"
+(defmacro search-scope-root-p (scope)
+  `(null (alist-get 'relative ,scope)))
 
-  (with-current-buffer buffer
-    (if search-scope
-        search-scope
-      (let* ((path (buffer-file-name))
-             (dir (or (file-name-directory path)
-                      (expand-file-name default-directory)))
-             (root (search-scope-discover-root
-                    (or path dir)
-                    dir)))
-        (setq search-scope (search-scope-construct root))))))
+(defmacro search-scope-root-equal (scope peer)
+  `(string= (alist-get 'root ,scope)
+            (alist-get 'root ,peer)))
 
-(defun search-scope-adjust (scope &optional path dwim)
-  "adjusts a copy of SCOPE according to user input."
+(defun search-scope-greater-p (scope peer)
+  (let ((same-roots (search-scope-root-equal scope peer)))
+    (if same-roots
+        (string> (alist-get 'absolute scope)
+                 (alist-get 'absolute peer))
+      (string> (alist-get 'root scope)
+               (alist-get 'root peer)))))
 
-  (let ((scope (copy-alist scope)))
-    (if dwim
-        scope
-      (let ((relative (alist-get 'relative scope))
-            (dir (or (search-scope-completing-read-dir scope nil t)
-                     (search-scope-read-dir scope nil t))))
-        (if dir
-            (setf (alist-get 'relative scope) dir)
-          (setf scope (assq-delete-all 'relative scope)))
-
-        (let ((strategy (search-scope-read-strategy scope)))
-          (setf (alist-get 'strategy scope)
-                strategy)
-          (when (eq strategy 'same-files)
-            (if path
-                (push `(ext . ,(file-name-extension path))
-                      scope)
-              (push `(ext . ,(read-string "File extension: "))
-                    scope))))))
-    scope))
+(defun search-scope-add (scope list)
+  "adds SCOPE to LIST and sorts using `search-scope-greater-p'"
+  (seq-sort #'search-scope-greater-p
+            (push scope list)))
 
 (defun search-scope-absolute-path (scope &optional abbreviate)
-  "Returns an absolute directory path of SCOPE"
+  "Returns an absolute directory path of SCOPE that is abbreviated
+if ABBREVIATE is non nil."
 
-  (let ((root (alist-get 'root scope))
-        (relative (alist-get 'relative scope ".")))
+  (let ((absolute (alist-get 'absolute scope)))
     (if abbreviate
-        (abbreviate-file-name (expand-file-name relative root))
-      (expand-file-name relative root))))
-
-(defun search-scope-closest-dir (path dirs)
-  "finds PATH closest directory from DIRS list."
-
-  (seq-reduce #'(lambda (accum dir)
-                  (if (and (string-match-p (regexp-quote dir) path)
-                           (or (null accum)
-                               (string> dir accum)))
-                      dir
-                    accum))
-              dirs nil))
+        (abbreviate-file-name absolute)
+      absolute)))
 
 (defun search-scope-marked-dirs (scope)
-  "builds a direcotry list of SCOPE using
-`search-scope-markers'."
+  "looks for marked direcotries in SCOPE."
 
   (let* ((quoted-markers (mapcar #'regexp-quote
                                  search-scope-markers))
          (regexp (string-join quoted-markers "\\|"))
          (dirs (mapcar #'file-name-directory
                        (search-scope-index-files scope regexp))))
-    (remove nil (delete-dups dirs))))
+    (delete nil (delete-dups dirs))))
 
-(defun search-scope-completing-read-dir (scope &optional prompt require-match)
-  "Reads a relative directory path with completion. List is build by
-`search-scope-marked-dirs'"
+(defun search-scope-discover (root)
+  "Discovers scopes in ROOT using `search-scope-marked-dirs'"
+
+  (let ((list)
+        (root-scope (search-scope-construct root)))
+    (push root-scope list)
+    (nconc list
+           (mapcar #'(lambda (dir)
+                       (search-scope-construct root dir))
+                   (search-scope-marked-dirs root-scope)))))
+
+(defun search-scope-find (dir scopes &optional path-key)
+  "Finds a scope in SCOPES list by one's path (absolute, relative or
+root)."
+
+  (let ((key (or path-key 'absolute)))
+    (cl-assert
+     (memq key '(root absolute relative)))
+    (seq-find #'(lambda (scope)
+                  (string= (alist-get key scope)
+                           dir))
+              (if (eq key 'root)
+                  (seq-filter #'(lambda (scope)
+                                  (search-scope-root-p scope))
+                              scopes)
+                scopes))))
+
+(defun search-scope-closest (path scopes)
+  "finds PATH closest scope from SCOPES list."
+
+  (seq-reduce
+   #'(lambda (closest scope)
+       (let ((closest-dir (alist-get 'absolute closest))
+             (dir (alist-get 'absolute scope)))
+         (if (and (string-match-p (regexp-quote dir) path)
+                  (or (null closest)
+                      (string> dir closest-dir)))
+             scope
+           closest)))
+   scopes
+   '()))
+
+(defun search-scope-related-scopes (original &optional list)
+  "finds all related scopes in `search-scope-list'."
+
+  (seq-reduce #'(lambda (accum scope)
+                  (cond
+                   ((not (search-scope-root-equal original scope))
+                    accum)
+                   ((search-scope-find
+                     (alist-get 'absolute scope)
+                     accum)
+                    accum)
+                   (t
+                    (push scope accum))))
+              (or list search-scope-list)
+              `(,original)))
+
+(defun search-scope-get (buffer)
+  "finds closest scope of BUFFER and saves one to `search-scope'
+buffer local variable. If scope does not exist then it discovers
+and creates list of related scopes."
+
+  (with-current-buffer buffer
+    (if search-scope
+        search-scope
+      (let* ((dir (expand-file-name default-directory))
+             (root-dir (search-scope-discover-root dir dir))
+             (root-scope (search-scope-find root-dir
+                                            search-scope-list
+                                            'root)))
+        (if root-scope
+            (let* ((scopes (search-scope-related-scopes root-scope))
+                   (scope (search-scope-closest dir scopes)))
+              (setf search-scope scope))
+          (let* ((scopes (search-scope-discover root-dir))
+                 (scope (search-scope-closest dir scopes)))
+            (setf search-scope-list
+                  (seq-sort #'search-scope-greater-p
+                            (append search-scope-list scopes))
+                  search-scope scope)))))))
+
+(defun search-scope-read-adjust (scope &optional path)
+  "Reads a scope from a list of related scopes of SCOPE and adjusts
+one according to user input."
+
+  (let* ((original (search-scope-completing-read-related scope))
+         (scope (copy-alist original))
+         (strategy (search-scope-read-strategy scope)))
+    (unless (search-scope-root-p original)
+      (setf
+       (alist-get 'strategy original) strategy))
+    (setf
+     (alist-get 'strategy scope) strategy)
+    (when (eq strategy 'same-files)
+      (if path
+          (push `(ext . ,(file-name-extension path))
+                scope)
+        (push `(ext . ,(read-string "File extension: "))
+              scope)))
+    scope))
+
+(defun search-scope-completing-read-related (scope &optional prompt)
+  "Reads a related scope with completion. Candidate list is built by
+`search-scope-related-scopes'"
 
   (let ((root (alist-get 'root scope))
-        (dirs (search-scope-marked-dirs scope)))
-    (when (length> dirs 0)
-      (let* ((dir (search-scope-closest-dir
-                   (file-relative-name default-directory root)
-                   dirs))
-             (default (alist-get 'relative scope dir)))
-        (completing-read
-         (or prompt
-             (format "%s directory (%s) : "
-                     (abbreviate-file-name root) default))
-         dirs nil require-match nil nil default)))))
+        (related (search-scope-related-scopes scope)))
+    (if (length> related 0)
+        (let* ((dirs (mapcar #'(lambda (scope)
+                                 (alist-get 'relative scope))
+                             related))
+               (dir (completing-read
+                     (or prompt
+                         (format "Scope (%s): "
+                                 (abbreviate-file-name root)))
+                     (delete nil dirs) nil t nil nil "./")))
+          (search-scope-find (expand-file-name dir root) related))
+      (list scope))))
 
 (defun search-scope-read-dir (scope &optional prompt require-match)
   "Reads a relative directory path using `read-directory-name'."
@@ -503,13 +586,14 @@ is updated with a new value."
   (interactive
    (list
     ;; double universal prefix argument
-    (if (= (prefix-numeric-value current-prefix-arg) 16)
+    (if (> (prefix-numeric-value current-prefix-arg) 1)
         (search-scope-read-thing)
       (search-scope-thing-at-point))
-    (search-scope-adjust
-     (search-scope-get (current-buffer))
-     (buffer-file-name)
-     (not current-prefix-arg))))
+    (if current-prefix-arg
+        (search-scope-read-adjust
+         (search-scope-get (current-buffer))
+         (buffer-file-name))
+      (search-scope-get (current-buffer)))))
 
   (let* ((engine (search-scope-get-engine))
          (args (funcall (cdr engine)
@@ -520,5 +604,31 @@ is updated with a new value."
     (let ((default-directory (alist-get 'root scope))
           (current-prefix-arg nil))
       (apply (car engine) args))))
+
+;;;###autoload
+(defun search-scope-remember (buffer)
+  "Constructs a new scope in `default-directory' of BUFFER and
+adds one to `search-scope-list'"
+
+  (interactive (list (current-buffer)))
+
+  (with-current-buffer buffer
+    (let* ((dir (expand-file-name default-directory))
+           (scope (search-scope-get buffer))
+           (root (alist-get 'root scope)))
+      (cond
+       ((null scope)
+        (let ((scope (search-scope-construct dir)))
+          (setf search-scope-list
+                (search-scope-add scope search-scope-list))
+          (setf search-scope scope)))
+       ((and (search-scope-root-p scope)
+             (not (string= root dir)))
+        (let ((scope (search-scope-construct root dir)))
+          (setf search-scope-list
+                (search-scope-add scope search-scope-list))
+          (setf search-scope scope)))
+       (t
+        (user-error "%s is already in scope" (abbreviate-file-name dir)))))))
 
 (provide 'search-scope-mode)
