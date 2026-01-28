@@ -88,27 +88,8 @@
 
      :file-regex (search-scope-to-path-regexp scope))))
 
-(defun pavel/ag-grep-thing-in-project (project thing is-regexp)
-  "Searches THING in PROJECT using `ag/search' as a engine. If IS-REGEXP
-is non nil then THING is regular expression."
-
-  (interactive
-   (let* ((proj (project-current t))
-          (is-regexp current-prefix-arg)
-          (prompt (format "Grep %s in %s"
-                          (if is-regexp "regexp" "literal")
-                          (project-root proj))))
-     (list
-      proj
-      (ag/read-from-minibuffer prompt)
-      is-regexp)))
-
-  (let ((default-directory (project-root project))
-        (current-prefix-arg))
-    (ag/search thing default-directory :regexp is-regexp)))
-
 (use-package ag
-  :autoload (ag/read-from-minibuffer ag/search)
+  :autoload (ag/search)
 
   :init
   (setq ag-reuse-buffers t)
@@ -124,9 +105,8 @@ is non nil then THING is regular expression."
               ("%" . project-query-replace-regexp)
               ("j" . project-dired)
               ("4" . project-other-window-command)
-              ("m" . magit-project-status)
-              ("v" . magit-file-dispatch)
-              ("g" . pavel/ag-grep-thing-in-project)))
+              ("g" . ag-project-at-point)
+              ("v" . magit-project-status)))
 
 ;;-------------------------------------------------------------------------------
 ;; version control

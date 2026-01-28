@@ -178,20 +178,18 @@
   (:map search-map
         ;; remapped to be handy and mnemonic
         ("s" . isearch-forward-symbol-at-point)
-        ("t" . isearch-forward-thing-at-point)
-        ;; reserved
-        ;;
-        ;; "r" – find a symbol references, "j" – jump to a symbol definition
-        ;;
-        ;; extra commands
-        ("g" . search-scope-grep)
-        ;; common key, infrequently used
-        ("%" . search-scope-replace))
+        ("t" . isearch-forward-thing-at-point))
   :init
   (setq isearch-allow-motion t
         isearch-motion-changes-direction t)
 
   :demand t)
+
+(use-package search-scope-mode
+  :bind
+  (:map search-map
+        ("g" . search-scope-grep)
+        ("%" . search-scope-replace)))
 
 ;;-------------------------------------------------------------------------------
 
