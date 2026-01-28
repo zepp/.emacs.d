@@ -75,6 +75,11 @@ relative paths or nil."
   :group 'search-scope
   :type 'symbol)
 
+(defcustom search-scope-max-history-size 30
+  "maximal size of `search-scope-searched-things'."
+  :group 'search-scope
+  :type 'natnum)
+
 (defvar search-scope-searched-things '()
   "alist to keep a history of searched things")
 
@@ -453,38 +458,45 @@ one according to user input."
               strategy)
       strategies nil t nil nil (symbol-name strategy)))))
 
-(defun search-scope-read-thing (&optional prompt initial)
+(defun search-scope-read-thing (&optional prompt)
   "Reads a thing from minibuffer"
 
   (let* ((search-scope-history (search-scope-simple-history))
-         (string (completing-read
-                  (or prompt
-                      "Specify a thing: ")
-                  search-scope-history
-                  nil nil initial
-                  'search-scope-history
-                  (car search-scope-history))))
-    (let* ((alist search-scope-searched-things)
-           (thing (when string (assoc string alist))))
+         (name (completing-read
+                (or prompt
+                    "Specify a thing: ")
+                search-scope-history
+                nil nil nil
+                'search-scope-history)))
+    (let ((thing (search-scope-pull-from-history name)))
       (if thing
-          (setq search-scope-searched-things
-                (delete thing alist))
-        (setq thing (cons string 'string)))
-      (push thing search-scope-searched-things)
-      thing)))
+          thing
+        (search-scope-add-to-history (cons name 'string))))))
 
 (defun search-scope-add-to-history (thing)
   "records THING to `search-scope-searched-things'"
 
   (let ((alist search-scope-searched-things)
-        (length (length search-scope-searched-things))
-        (max-alist-size 30))
-    (when (>= length max-alist-size)
-      (setf alist (nbutlast alist (- (1+ length) max-alist-size))))
+        (length (length search-scope-searched-things)))
+    (when (>= length search-scope-max-history-size)
+      (setf alist (nbutlast alist (- (1+ length)
+                                     search-scope-max-history-size))))
     (setf search-scope-searched-things
           (assoc-delete-all (car thing) alist)))
   (push thing search-scope-searched-things)
   thing)
+
+(defun search-scope-pull-from-history (name)
+  "Lookups a thing in `search-scope-searched-things' by
+NAME. `search-scope-searched-things' is rearranged in case of successful
+lookup."
+
+  (let* ((alist search-scope-searched-things)
+         (thing (assoc name alist)))
+    (when thing
+      (setf search-scope-searched-things
+            (cons thing (delete thing alist))))
+    thing))
 
 (defun search-scope-simple-history (&optional omit-first-thing)
   "It transforms `search-scope-searched-things' to a simple list of
@@ -516,15 +528,15 @@ thing names"
          string))
      thing-type)))
 
-(defun search-scope-thing-at-point (&optional no-input)
-  "Intends to pick a symbol at point or something else if there is
-an active region. Initiates minibuffer input if NO-INPUT is nil
-as a last resort."
+(defun search-scope-thing-at-point (&optional no-history)
+  "Picks up a thing at point or a literal if there is an active
+region. If NO-HISTORY is nil then new thing is added to
+`search-scope-searched-things'."
 
   (let ((thing
          (cond
-          ;; check region at first in case of only part of a thing at point should be
-          ;; searched.
+          ;; check region at first in case of only part of a thing at point
+          ;; should be searched.
           ((use-region-p)
            (let ((substring (buffer-substring-no-properties
                              (region-beginning) (region-end)))
@@ -549,13 +561,10 @@ as a last resort."
 
           ((and (derived-mode-p 'text-mode)
                 (thing-at-point 'word))
-           (search-scope-get-thing 'word))
-
-          ((not no-input)
-           (search-scope-read-thing
-            "Specify a thing from line: "
-            (string-trim (thing-at-point 'line t)))))))
-    (search-scope-add-to-history thing)))
+           (search-scope-get-thing 'word)))))
+    (if (and thing (null no-history))
+        (search-scope-add-to-history thing)
+      thing)))
 
 ;;;###autoload
 (defun search-scope-replace (thing new-name)
@@ -565,13 +574,17 @@ as a last resort."
   (interactive
    (let ((thing (search-scope-thing-at-point))
          (search-scope-history (search-scope-simple-history t)))
+     (unless thing
+       (user-error "There is nothing at point"))
      (list thing
            (read-string (format "Rename '%s' to: " (car thing))
                         (car thing) 'search-scope-history nil t))))
 
-  (if (buffer-modified-p)
-      (user-error "Rename of '%s' is aborted since buffer '%s' is modified"
-                  (car thing) (buffer-name (current-buffer)))
+  (cond
+   ((buffer-modified-p)
+    (user-error "Rename of '%s' is aborted since buffer '%s' is modified"
+                (car thing) (buffer-name (current-buffer))))
+   (t
     (save-excursion
       (let ((thing-regexp (cond ((search-scope-is thing 'symbol)
                                  (format "\\_<%s\\_>" (car thing)))
@@ -579,7 +592,7 @@ as a last resort."
                                  (format "\\b%s" (car thing)))
                                 (t (format "\\b%s\\b" (search-scope-quote thing))))))
         (goto-char (point-min))
-        (query-replace-regexp thing-regexp new-name)))))
+        (query-replace-regexp thing-regexp new-name))))))
 
 ;;;###autoload
 (defun search-scope-grep (thing scope)
@@ -593,7 +606,8 @@ is updated with a new value."
     ;; double universal prefix argument
     (if (> (prefix-numeric-value current-prefix-arg) 1)
         (search-scope-read-thing)
-      (search-scope-thing-at-point))
+      (or (search-scope-thing-at-point)
+          (search-scope-read-thing)))
     (if current-prefix-arg
         (search-scope-read-adjust
          (search-scope-get (current-buffer))
