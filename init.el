@@ -189,7 +189,10 @@
   :bind
   (:map search-map
         ("g" . search-scope-grep)
-        ("%" . search-scope-replace)))
+        ("%" . search-scope-replace))
+  :hook
+  (find-file-hook . search-scope-link-buffer)
+  :demand t)
 
 ;;-------------------------------------------------------------------------------
 

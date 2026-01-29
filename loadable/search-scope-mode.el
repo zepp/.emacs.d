@@ -13,6 +13,10 @@
 (require 'vc-git)
 (require 'project)
 
+;;;###autoload
+(define-minor-mode search-scope-mode
+  "Minor mode to search things in a scope")
+
 (defgroup search-scope nil "Main group")
 
 (defcustom search-scope-grep-engines
@@ -322,10 +326,13 @@ if ABBREVIATE is non nil."
                        search-scope-marker-regexps))))
     (delete nil (delete-dups dirs))))
 
-(defun search-scope-discover (dir)
+(defun search-scope-discover-scopes (dir)
   "Discovers scopes in a root directory DIR using
 `search-scope-marked-dirs'."
 
+  (cl-assert (and
+              (file-name-absolute-p dir)
+              (file-directory-p dir)))
   (let* ((root (search-scope-construct dir))
          (list (list root)))
     (nconc list
@@ -384,28 +391,64 @@ directory path."
               (or list search-scope-list)
               `(,original)))
 
-(defun search-scope-get (buffer)
-  "finds closest scope of BUFFER and saves one to `search-scope'
-buffer local variable. If scope does not exist then it discovers
-and creates list of related scopes."
+(defun search-scope-get (dir)
 
-  (with-current-buffer buffer
-    (if search-scope
-        search-scope
-      (let* ((dir (expand-file-name default-directory))
-             (root-dir (search-scope-discover-root dir dir))
-             (root-scope (search-scope-find (cons 'root root-dir)
-                                            search-scope-list)))
-        (if root-scope
-            (let* ((scopes (search-scope-related-scopes root-scope))
-                   (scope (search-scope-closest dir scopes)))
-              (setf search-scope scope))
-          (let* ((scopes (search-scope-discover root-dir))
-                 (scope (search-scope-closest dir scopes)))
-            (setf search-scope-list
-                  (seq-sort #'search-scope-greater-p
-                            (append search-scope-list scopes))
-                  search-scope scope)))))))
+  (cl-assert (and
+              (file-name-absolute-p dir)
+              (file-directory-p dir)))
+  (let* ((root-dir (search-scope-discover-root dir dir))
+         (root (search-scope-find (cons 'root root-dir)
+                                  search-scope-list)))
+    (when root
+      (let ((scopes (search-scope-related-scopes root)))
+        (search-scope-closest dir scopes)))))
+
+(defun search-scope-discover (dir)
+
+  (cl-assert (and
+              (file-name-absolute-p dir)
+              (file-directory-p dir)))
+  (let* ((root-dir (search-scope-discover-root dir dir))
+         (scopes (search-scope-discover-scopes root-dir))
+         (scope (search-scope-closest dir scopes)))
+    (setf search-scope-list
+          (seq-sort #'search-scope-greater-p
+                    (nconc search-scope-list scopes)))
+    scope))
+
+;;;###autoload
+(defun search-scope-link-buffer (&optional buffer relink)
+  "Links BUFFER to an existing scope from `search-scope-list'."
+
+  (let ((fun
+         #'(lambda (dir)
+             (let ((scope (if (or (null search-scope)
+                                  relink)
+                              (search-scope-get dir)
+                            search-scope)))
+               (search-scope-mode (if (null search-scope) -1 1))
+               (setf search-scope scope)))))
+    (if buffer
+        (with-current-buffer buffer
+          (funcall fun (expand-file-name default-directory)))
+      (funcall fun (expand-file-name default-directory)))))
+
+(defun search-scope-require-scope (&optional relink)
+  "Finds a closest scope of the current buffer. If one does not
+exist then it discovers a root directory and creates a list of
+related scopes. Closest scope is saved to`search-scope' buffer
+local variable."
+
+  (if (and search-scope
+           (null relink))
+      search-scope
+    (let ((scope (search-scope-link-buffer (current-buffer) relink)))
+      (if scope
+          scope
+        (let* ((dir (expand-file-name default-directory))
+               (scope (search-scope-discover dir)))
+          (search-scope-mode 1)
+          (setf search-scope scope))))))
 
 (defun search-scope-read-adjust (scope &optional path)
   "Reads a scope from a list of related scopes of SCOPE and adjusts
@@ -610,9 +653,9 @@ is updated with a new value."
           (search-scope-read-thing)))
     (if current-prefix-arg
         (search-scope-read-adjust
-         (search-scope-get (current-buffer))
+         (search-scope-require-scope)
          (buffer-file-name))
-      (search-scope-get (current-buffer)))))
+      (search-scope-require-scope))))
 
   (let* ((engine (search-scope-get-engine))
          (args (funcall (cdr engine)
@@ -633,18 +676,20 @@ adds one to `search-scope-list'"
 
   (with-current-buffer buffer
     (let ((dir (expand-file-name default-directory))
-          (scope (search-scope-get buffer)))
+          (scope (search-scope-require-scope)))
       (cond
        ((null scope)
         (let ((scope (search-scope-construct dir)))
           (setf search-scope-list
                 (search-scope-add scope search-scope-list))
-          (setf search-scope scope)))
+          (setf search-scope scope))
+        (search-scope-mode 1))
        ((not (search-scope-find dir search-scope-list))
         (let ((scope (search-scope-construct scope dir)))
           (setf search-scope-list
                 (search-scope-add scope search-scope-list))
-          (setf search-scope scope)))
+          (setf search-scope scope))
+        (search-scope-mode 1))
        (t
         (user-error "%s is already in scope" (abbreviate-file-name dir)))))))
 
