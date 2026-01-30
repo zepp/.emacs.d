@@ -100,13 +100,16 @@
   :ensure t)
 
 (use-package project
-  :bind (:map project-prefix-map
-              ("$" . project-eshell)
-              ("%" . project-query-replace-regexp)
-              ("j" . project-dired)
-              ("4" . project-other-window-command)
-              ("g" . ag-project-at-point)
-              ("v" . magit-project-status)))
+  :bind
+  (:map project-prefix-map
+        ("$" . project-eshell)
+        ("%" . project-query-replace-regexp)
+        ("j" . project-dired)
+        ("4" . project-other-window-command)
+        ("g" . ag-project-at-point)
+        ("v" . magit-project-status))
+  (:map project-prefix-map
+        ("t" . search-scope-find-pair)))
 
 ;;-------------------------------------------------------------------------------
 ;; version control

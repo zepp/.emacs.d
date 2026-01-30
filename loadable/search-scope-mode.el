@@ -84,6 +84,13 @@ relative paths or nil."
   :group 'search-scope
   :type 'natnum)
 
+(defcustom search-scope-display-pair-function
+  #'display-buffer-pop-up-window
+  "Function to form an action passed to `display-buffer' in
+`search-scope-find-pair'."
+  :group 'search-scope
+  :type 'function)
+
 (defvar search-scope-searched-things '()
   "alist to keep a history of searched things")
 
@@ -207,41 +214,58 @@ directory."
     (when result
       (expand-file-name result))))
 
-(defun search-scope-index-project-files (scope &optional regexp)
-  "Returns file list of a project filtered by REGEXP."
+(defun search-scope-index-project-files (scope exclude-dirs &optional regexp)
+  "Filters a list produced by `project-files'"
 
   (when regexp
     (cl-assert (memq (type-of regexp) '(cons string))))
 
   (let* ((root (alist-get 'root scope))
          (absolute (alist-get 'absolute scope))
-         (proj (project-current nil root)))
+         (proj (project-current nil root))
+         (exclude-regexp (when exclude-dirs
+                           (string-join (mapcar #'regexp-quote exclude-dirs)
+                                        "\\|"))))
     (when proj
       (let* ((dirs (unless (search-scope-root-p scope)
                      (list absolute)))
              (files (mapcar #'(lambda (path)
                                 (file-relative-name path absolute))
-                            (project-files proj dirs))))
+                            (project-files proj dirs)))
+             (list (if exclude-regexp
+                       (seq-remove
+                        (apply-partially #'string-match-p exclude-regexp)
+                        files)
+                     files)))
         (cond
          ((consp regexp)
           (mapcan
            #'(lambda (regexp)
                (seq-filter (apply-partially #'string-match-p regexp)
-                           files))
+                           list))
            regexp))
          ((stringp regexp)
           (seq-filter (apply-partially #'string-match-p regexp)
-                      files))
-         (t files))))))
+                      list))
+         (t list))))))
 
-(defun search-scope-index-files (scope &optional regexp)
+(defun search-scope-index-files (scope &optional regexp exclude-related-scopes)
   "Returns a list of files located inside of SCOPE using indexers from the
-`search-scope-indexers'. List contains relative paths filtered using
-REGEXP. REGEXP can be a string or a list of strings."
+`search-scope-indexers'. List contains relative paths filtered
+using REGEXP. REGEXP can be a string or a list of strings. if
+EXCLUDE-RELATED-SCOPES is non nil then related scope direcotries
+are excluded."
 
-  (seq-some #'(lambda (fun)
-                (funcall fun scope regexp))
-            search-scope-indexers))
+  (let* ((relatives (mapcar
+                     #'(lambda (scope)
+                         (alist-get 'relative scope))
+                     (search-scope-related-scopes scope)))
+         (exclude (when (and (search-scope-root-p scope)
+                             exclude-related-scopes)
+                    (delete nil relatives))))
+    (seq-some #'(lambda (fun)
+                  (funcall fun scope exclude regexp))
+              search-scope-indexers)))
 
 (defun search-scope-get-engine (&optional mode)
   "Searches engine for MODE. If one is not specified then
@@ -317,6 +341,12 @@ if ABBREVIATE is non nil."
         (abbreviate-file-name absolute)
       absolute)))
 
+(defmacro search-scope-relative-name (scope path)
+  `(file-relative-name ,path (alist-get 'absolute ,scope)))
+
+(defmacro search-scope-expand-name (scope path)
+  `(expand-file-name ,path (alist-get 'absolute ,scope)))
+
 (defun search-scope-marked-dirs (scope)
   "looks for marked direcotries in SCOPE."
 
@@ -325,6 +355,23 @@ if ABBREVIATE is non nil."
                        scope
                        search-scope-marker-regexps))))
     (delete nil (delete-dups dirs))))
+
+(defun search-scope-find-pairs (scope)
+  "looks for file pairs in SCOPE"
+
+  (let ((files (search-scope-index-files scope nil t))
+        (names (make-hash-table :test #'equal))
+        (pairs))
+    (dolist (file files)
+      (let* ((base (file-name-base file))
+             (list (gethash base names)))
+        (puthash base (cons file list) names)))
+    (maphash #'(lambda (name list)
+                 (when (length> list 1)
+                   (push (cons name (seq-sort #'string> list))
+                         pairs)))
+             names)
+    pairs))
 
 (defun search-scope-discover-scopes (dir)
   "Discovers scopes in a root directory DIR using
@@ -414,6 +461,8 @@ directory path."
     (setf search-scope-list
           (seq-sort #'search-scope-greater-p
                     (nconc search-scope-list scopes)))
+    (message "Root scope is discovered in %s"
+             (search-scope-absolute-path scope t))
     scope))
 
 ;;;###autoload
@@ -427,7 +476,7 @@ directory path."
                               (search-scope-get dir)
                             search-scope)))
                (search-scope-mode (if (null search-scope) -1 1))
-               (setf search-scope scope)))))
+               (setf search-scope (copy-alist scope))))))
     (if buffer
         (with-current-buffer buffer
           (funcall fun (expand-file-name default-directory)))
@@ -448,7 +497,7 @@ local variable."
         (let* ((dir (expand-file-name default-directory))
                (scope (search-scope-discover dir)))
           (search-scope-mode 1)
-          (setf search-scope scope))))))
+          (setf search-scope (copy-alist scope)))))))
 
 (defun search-scope-read-adjust (scope &optional path)
   "Reads a scope from a list of related scopes of SCOPE and adjusts
@@ -692,5 +741,47 @@ adds one to `search-scope-list'"
         (search-scope-mode 1))
        (t
         (user-error "%s is already in scope" (abbreviate-file-name dir)))))))
+
+(defun search-scope-circ-next (elt list)
+  "finds an element that is placed after ELT."
+
+  (seq-reduce #'(lambda (accum elt_)
+                  (cond
+                   ((string= accum elt_) nil)
+                   ((null accum) elt_)
+                   (t accum)))
+              (append (last list) list)
+              elt))
+
+;;;###autoload
+(defun search-scope-find-pair (scope path &optional no-cache)
+  "Looks up for a pair to find one and display buffer using
+`search-scope-display-pair-function'."
+
+  (interactive (list (search-scope-require-scope)
+                     (or (buffer-file-name)
+                         (user-error "current buffer has no visited file"))
+                     current-prefix-arg))
+
+  (let ((relative (search-scope-relative-name scope path))
+        (pair (alist-get 'pair scope)))
+    (when (or (null pair ) no-cache)
+      (let ((pairs (search-scope-find-pairs scope))
+            (base (file-name-base relative)))
+        (setf pair (assoc-default base pairs))
+        (if pair
+            (setf (alist-get 'pair scope) pair)
+          (user-error "no pair for %s" relative))))
+    ;; save scope after modification
+    (setf search-scope scope)
+    (setf relative (search-scope-circ-next relative pair))
+    (cl-assert relative)
+    (let* ((absolute (search-scope-expand-name scope relative))
+           (buffer (or (get-file-buffer absolute)
+                       (find-file-noselect absolute)))
+           (action (cons search-scope-display-pair-function
+                         '((inhibit-switch-frame . t)))))
+      (select-window
+       (display-buffer buffer action)))))
 
 (provide 'search-scope-mode)
