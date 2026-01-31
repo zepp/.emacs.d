@@ -148,21 +148,6 @@ major mode or a list of modes is expected"
           (concat "*." ext)
           (search-scope-absolute-path scope))))
 
-(defun search-scope-thing-to-regexp (thing &optional trim-word)
-  "forms a regexp to perform a search of THING"
-
-  (let ((template (cond
-                   ((search-scope-is thing 'symbol) "\\b%s\\b")
-                   ((search-scope-is thing 'word)
-                    (if trim-word "\\b%s\\w*\\b" "\\b%s\\b"))
-                   ((search-scope-is thing 'filename) "%s\\b"))))
-    (when template
-      (format
-       template
-       (if (and (search-scope-is thing 'word) trim-word)
-           (search-scope-trim-word (car thing))
-         (search-scope-quote thing))))))
-
 (defun search-scope-to-path-regexp (scope)
   "forms a relative path regexp to perform a search in SCOPE"
 
@@ -599,18 +584,28 @@ thing names"
         (cdr names)
       names)))
 
-(defun search-scope-get-thing (thing-type &optional trim)
+(defun search-scope-highlight (bounds seconds)
+  "Highlights a region with BOUNDS in a current buffer. BOUNDS can
+be a cons or a list."
+
+  (let* ((beg (car bounds))
+         (end (cdr bounds))
+         (overlay (make-overlay beg (if (consp end) (car end) end)))
+         (destructor (apply-partially #'delete-overlay overlay)))
+    (overlay-put overlay 'face 'region)
+    (overlay-put overlay 'evaporate t)
+    (when (natnump seconds)
+      (run-at-time seconds nil destructor))
+    overlay))
+
+(defun search-scope-get-thing (thing-type &optional trim no-highlight)
   "returns thing at point as `cons'"
 
   (let ((bounds (bounds-of-thing-at-point thing-type)))
-    (when search-scope-thing-flash-seconds
-      (let ((overlay (make-overlay (car bounds) (cdr bounds))))
-        (overlay-put overlay 'face 'region)
-        (overlay-put overlay 'evaporate t)
-        (run-at-time search-scope-thing-flash-seconds
-                     nil
-                     #'(lambda ()
-                         (delete-overlay overlay)))))
+    (when (and (null no-highlight)
+               search-scope-thing-flash-seconds)
+      (search-scope-highlight bounds
+                              search-scope-thing-flash-seconds))
     (cons
      (let ((string (buffer-substring-no-properties
                     (car bounds)
@@ -620,43 +615,86 @@ thing names"
          string))
      thing-type)))
 
-(defun search-scope-thing-at-point (&optional no-history)
+(defun search-scope-get-contextual-thing (buffer &optional no-highlight)
+  "Looks up for a thing in buffer BUFFER depending on major mode and
+an active mark state."
+
+  (with-current-buffer buffer
+    (cond
+     ;; check region at first in case of only part of a thing at point
+     ;; should be searched.
+     ((use-region-p)
+      (let ((substring (buffer-substring-no-properties
+                        (region-beginning) (region-end)))
+            (deactivate-mark 'dont-save))
+        (deactivate-mark)
+        (cons substring 'string)))
+
+     ((thing-at-point 'email)
+      (search-scope-get-thing 'email "[<>]" no-highlight))
+
+     ((thing-at-point 'uuid)
+      (search-scope-get-thing 'uuid nil no-highlight))
+
+     ((and (derived-mode-p 'dired-mode)
+           (thing-at-point 'filename))
+      (search-scope-get-thing 'filename nil no-highlight))
+
+     ;; `apply' is for compatibility reasons
+     ((and (apply #'derived-mode-p search-scope-symbolic-modes)
+           (thing-at-point 'symbol))
+      (search-scope-get-thing 'symbol nil no-highlight))
+
+     ((and (derived-mode-p 'text-mode)
+           (thing-at-point 'word))
+      (search-scope-get-thing 'word nil no-highlight)))))
+
+(defun search-scope-thing-at-point (&optional no-history no-highlight)
   "Picks up a thing at point or a literal if there is an active
 region. If NO-HISTORY is nil then new thing is added to
 `search-scope-searched-things'."
 
-  (let ((thing
-         (cond
-          ;; check region at first in case of only part of a thing at point
-          ;; should be searched.
-          ((use-region-p)
-           (let ((substring (buffer-substring-no-properties
-                             (region-beginning) (region-end)))
-                 (deactivate-mark 'dont-save))
-             (deactivate-mark)
-             (cons substring 'string)))
-
-          ((thing-at-point 'email)
-           (search-scope-get-thing 'email "[<>]"))
-
-          ((thing-at-point 'uuid)
-           (search-scope-get-thing 'uuid))
-
-          ((and (derived-mode-p 'dired-mode)
-                (thing-at-point 'filename))
-           (search-scope-get-thing 'filename))
-
-          ;; `apply' is for compatibility reasons
-          ((and (apply #'derived-mode-p search-scope-symbolic-modes)
-                (thing-at-point 'symbol))
-           (search-scope-get-thing 'symbol))
-
-          ((and (derived-mode-p 'text-mode)
-                (thing-at-point 'word))
-           (search-scope-get-thing 'word)))))
+  (let ((thing (search-scope-get-contextual-thing
+                (current-buffer)
+                no-highlight)))
     (if (and thing (null no-history))
         (search-scope-add-to-history thing)
       thing)))
+
+(defun search-scope-thing-to-regexp (thing &optional trim-word)
+  "Creates a regexp from THING. If TRIM-WORD is not nil then word
+ending is trimmed by `search-scope-trim-word'."
+
+  (let ((template (cond
+                   ((search-scope-is thing 'symbol) "\\b%s\\b")
+                   ((search-scope-is thing 'word)
+                    (if trim-word "\\b%s\\w*\\b" "\\b%s\\b"))
+                   ((search-scope-is thing 'filename) "%s\\b"))))
+    (when template
+      (format
+       template
+       (if (and (search-scope-is thing 'word) trim-word)
+           (search-scope-trim-word (car thing))
+         (search-scope-quote thing))))))
+
+(defun search-scope-thing-positions (thing buffer &optional limit)
+  "Searches at most LIMIT positions of THING in a buffer BUFFER."
+
+  (with-current-buffer buffer
+    (save-excursion
+      (goto-char (point-min))
+
+      (let ((regexp (search-scope-thing-to-regexp thing))
+            (case-fold-search nil)
+            (list))
+        (while (and (re-search-forward regexp nil t)
+                    (if limit (length< list limit) t))
+          (let ((string (substring-no-properties (match-string 0)))
+                (beg (match-beginning 0))
+                (end (match-end 0))
+                (line-beg (line-beginning-position)))
+            (push (list string beg end line-beg) list)))
+        (nreverse list)))))
 
 ;;;###autoload
 (defun search-scope-replace (thing new-name)
@@ -754,13 +792,14 @@ adds one to `search-scope-list'"
               elt))
 
 ;;;###autoload
-(defun search-scope-find-pair (scope path &optional no-cache)
+(defun search-scope-find-pair (scope path &optional thing no-cache)
   "Looks up for a pair to find one and display buffer using
 `search-scope-display-pair-function'."
 
   (interactive (list (search-scope-require-scope)
                      (or (buffer-file-name)
                          (user-error "current buffer has no visited file"))
+                     (search-scope-get-contextual-thing (current-buffer) t)
                      current-prefix-arg))
 
   (let ((relative (search-scope-relative-name scope path))
@@ -779,9 +818,20 @@ adds one to `search-scope-list'"
     (let* ((absolute (search-scope-expand-name scope relative))
            (buffer (or (get-file-buffer absolute)
                        (find-file-noselect absolute)))
+           (other-thing (when thing (search-scope-get-contextual-thing buffer t)))
            (action (cons search-scope-display-pair-function
                          '((inhibit-switch-frame . t)))))
-      (select-window
-       (display-buffer buffer action)))))
+      (let ((w (display-buffer buffer action))
+            (bounds (when (and thing
+                               (not (equal thing other-thing)))
+                      (cdar (search-scope-thing-positions thing buffer 1)))))
+        (when bounds
+          (search-scope-add-to-history thing)
+          (set-window-point w (car bounds))
+          (when search-scope-thing-flash-seconds
+            (with-current-buffer buffer
+              (search-scope-highlight bounds
+                                      search-scope-thing-flash-seconds))))
+        (select-window w)))))
 
 (provide 'search-scope-mode)
