@@ -109,9 +109,7 @@
         ("j" . project-dired)
         ("4" . project-other-window-command)
         ("g" . ag-project-at-point)
-        ("v" . magit-project-status))
-  (:map project-prefix-map
-        ("t" . search-scope-find-part)))
+        ("v" . magit-project-status)))
 
 ;;-------------------------------------------------------------------------------
 ;; version control

@@ -178,8 +178,7 @@
         ("M-o" . isearch-occur))
   (:map search-map
         ;; remapped to be handy and mnemonic
-        ("s" . isearch-forward-symbol-at-point)
-        ("t" . isearch-forward-thing-at-point))
+        ("s" . isearch-forward-symbol-at-point))
   :init
   (setq isearch-allow-motion t
         isearch-motion-changes-direction t)
@@ -187,12 +186,8 @@
   :demand t)
 
 (use-package search-scope-mode
-  :bind
-  (:map search-map
-        ("g" . search-scope-grep)
-        ("%" . search-scope-replace))
   :hook
-  (find-file-hook . search-scope-link-buffer)
+  (find-file-hook . search-scope-on-file-found)
   :demand t)
 
 ;;-------------------------------------------------------------------------------
