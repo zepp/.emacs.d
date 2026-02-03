@@ -84,10 +84,10 @@ relative paths or nil."
   :group 'search-scope
   :type 'natnum)
 
-(defcustom search-scope-display-pair-function
+(defcustom search-scope-display-part-function
   #'display-buffer-pop-up-window
   "Function to form an action passed to `display-buffer' in
-`search-scope-find-pair'."
+`search-scope-find-part'."
   :group 'search-scope
   :type 'function)
 
@@ -341,12 +341,12 @@ if ABBREVIATE is non nil."
                        search-scope-marker-regexps))))
     (delete nil (delete-dups dirs))))
 
-(defun search-scope-find-pairs (scope)
-  "looks for file pairs in SCOPE"
+(defun search-scope-find-composites (scope)
+  "looks for a set of files that form composite in SCOPE"
 
   (let ((files (search-scope-index-files scope nil t))
         (names (make-hash-table :test #'equal))
-        (pairs))
+        (composites))
     (dolist (file files)
       (let* ((base (file-name-base file))
              (list (gethash base names)))
@@ -354,9 +354,9 @@ if ABBREVIATE is non nil."
     (maphash #'(lambda (name list)
                  (when (length> list 1)
                    (push (cons name (seq-sort #'string> list))
-                         pairs)))
+                         composites)))
              names)
-    pairs))
+    composites))
 
 (defun search-scope-discover-scopes (dir)
   "Discovers scopes in a root directory DIR using
@@ -677,8 +677,8 @@ ending is trimmed by `search-scope-trim-word'."
            (search-scope-trim-word (car thing))
          (search-scope-quote thing))))))
 
-(defun search-scope-thing-positions (thing buffer &optional limit)
-  "Searches at most LIMIT positions of THING in a buffer BUFFER."
+(defun search-scope-occurrences (thing buffer &optional limit)
+  "Searches at most LIMIT occurrences of THING in a buffer BUFFER."
 
   (with-current-buffer buffer
     (save-excursion
@@ -686,15 +686,21 @@ ending is trimmed by `search-scope-trim-word'."
 
       (let ((regexp (search-scope-thing-to-regexp thing))
             (case-fold-search nil)
-            (list))
+            (occurrences))
         (while (and (re-search-forward regexp nil t)
-                    (if limit (length< list limit) t))
+                    (if limit (length< occurrences limit) t))
           (let ((string (substring-no-properties (match-string 0)))
-                (beg (match-beginning 0))
-                (end (match-end 0))
-                (line-beg (line-beginning-position)))
-            (push (list string beg end line-beg) list)))
-        (nreverse list)))))
+                (position (cons (line-number-at-pos)
+                                (- (match-beginning 0)
+                                   (line-beginning-position))))
+                (match-offsets (cons (match-beginning 0)
+                                     (match-end 0)))
+                (line-offsets (cons (line-beginning-position)
+                                    (line-end-position))))
+            (push (list string position
+                        match-offsets line-offsets)
+                  occurrences)))
+        (nreverse occurrences)))))
 
 ;;;###autoload
 (defun search-scope-replace (thing new-name)
@@ -792,9 +798,9 @@ adds one to `search-scope-list'"
               elt))
 
 ;;;###autoload
-(defun search-scope-find-pair (scope path &optional thing no-cache)
-  "Looks up for a pair to find one and display buffer using
-`search-scope-display-pair-function'."
+(defun search-scope-find-part (scope path &optional thing no-cache)
+  "Looks up for a part of composite to visite and display one's buffer
+using `search-scope-display-part-function'."
 
   (interactive (list (search-scope-require-scope)
                      (or (buffer-file-name)
@@ -803,28 +809,28 @@ adds one to `search-scope-list'"
                      current-prefix-arg))
 
   (let ((relative (search-scope-relative-name scope path))
-        (pair (alist-get 'pair scope)))
-    (when (or (null pair ) no-cache)
-      (let ((pairs (search-scope-find-pairs scope))
+        (composite (alist-get 'composite scope)))
+    (when (or (null composite ) no-cache)
+      (let ((composites (search-scope-find-composites scope))
             (base (file-name-base relative)))
-        (setf pair (assoc-default base pairs))
-        (if pair
-            (setf (alist-get 'pair scope) pair)
-          (user-error "no pair for %s" relative))))
+        (setf composite (assoc-default base composites))
+        (if composite
+            (setf (alist-get 'composite scope) composite)
+          (user-error "%s is not part of composite" relative))))
     ;; save scope after modification
     (setf search-scope scope)
-    (setf relative (search-scope-circ-next relative pair))
+    (setf relative (search-scope-circ-next relative composite))
     (cl-assert relative)
     (let* ((absolute (search-scope-expand-name scope relative))
            (buffer (or (get-file-buffer absolute)
                        (find-file-noselect absolute)))
            (other-thing (when thing (search-scope-get-contextual-thing buffer t)))
-           (action (cons search-scope-display-pair-function
+           (action (cons search-scope-display-part-function
                          '((inhibit-switch-frame . t)))))
       (let ((w (display-buffer buffer action))
             (bounds (when (and thing
                                (not (equal thing other-thing)))
-                      (cdar (search-scope-thing-positions thing buffer 1)))))
+                      (nth 2 (search-scope-occurrences thing buffer 1)))))
         (when bounds
           (search-scope-add-to-history thing)
           (set-window-point w (car bounds))
