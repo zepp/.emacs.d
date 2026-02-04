@@ -93,6 +93,7 @@
 ;; some of this modes provide navigation capabilities
 (add-to-list 'display-buffer-alist
              '((or (derived-mode . compilation-mode)
+                   (derived-mode . backtrace-mode)
                    (major-mode . occur-mode)
                    (major-mode . xref--xref-buffer-mode))
                (display-buffer-reuse-window

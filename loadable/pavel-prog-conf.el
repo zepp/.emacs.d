@@ -12,7 +12,9 @@
 
 (use-package elisp-mode
   :bind ([remap fill-paragraph] . lisp-fill-paragraph)
-  :hook (emacs-lisp-mode-hook . eldoc-mode))
+  :hook (emacs-lisp-mode-hook . eldoc-mode)
+  :bind (:map emacs-lisp-mode-map
+              ("C-c C-d" . debug-on-entry)))
 
 (use-package company
   :after prog-mode
