@@ -42,8 +42,8 @@ return nonempty string or nil"
   :group 'search-scope
   :type '(repeat function))
 
-(defcustom search-scope-thing-flash-seconds 1
-  "number of seconds to flash a thing at point using overlay"
+(defcustom search-scope-highlight-seconds 1
+  "number of seconds to highlight a thing at point using overlay"
   :group 'search-scope
   :type 'natnum)
 
@@ -668,24 +668,22 @@ thing names"
   "Highlights a region with BOUNDS in a current buffer. BOUNDS can
 be a cons or a list."
 
-  (let* ((beg (car bounds))
-         (end (cdr bounds))
-         (overlay (make-overlay beg (if (consp end) (car end) end)))
-         (destructor (apply-partially #'delete-overlay overlay)))
-    (overlay-put overlay 'face 'region)
-    (overlay-put overlay 'evaporate t)
-    (when (natnump seconds)
-      (run-at-time seconds nil destructor))
-    overlay))
+  (when (natnump seconds)
+    (let* ((beg (car bounds))
+           (end (cdr bounds))
+           (overlay (make-overlay beg (if (consp end) (car end) end)))
+           (destructor (apply-partially #'delete-overlay overlay)))
+      (overlay-put overlay 'face 'region)
+      (overlay-put overlay 'evaporate t)
+      (run-at-time seconds nil destructor)
+      overlay)))
 
-(defun search-scope-get-thing (thing-type &optional trim no-highlight)
+(defun search-scope-get-thing (thing-type &optional trim)
   "returns thing at point as `cons'"
 
   (let ((bounds (bounds-of-thing-at-point thing-type)))
-    (when (and (null no-highlight)
-               search-scope-thing-flash-seconds)
-      (search-scope-highlight bounds
-                              search-scope-thing-flash-seconds))
+    (search-scope-highlight bounds
+                            search-scope-highlight-seconds)
     (cons
      (let ((string (buffer-substring-no-properties
                     (car bounds)
@@ -695,7 +693,7 @@ be a cons or a list."
          string))
      thing-type)))
 
-(defun search-scope-get-contextual-thing (buffer &optional no-highlight)
+(defun search-scope-get-contextual-thing (buffer)
   "Looks up for a thing in buffer BUFFER depending on major mode and
 an active mark state."
 
@@ -711,32 +709,30 @@ an active mark state."
         (cons substring 'string)))
 
      ((thing-at-point 'email)
-      (search-scope-get-thing 'email "[<>]" no-highlight))
+      (search-scope-get-thing 'email "[<>]"))
 
      ((thing-at-point 'uuid)
-      (search-scope-get-thing 'uuid nil no-highlight))
+      (search-scope-get-thing 'uuid nil))
 
      ((and (derived-mode-p 'dired-mode)
            (thing-at-point 'filename))
-      (search-scope-get-thing 'filename nil no-highlight))
+      (search-scope-get-thing 'filename nil))
 
      ;; `apply' is for compatibility reasons
      ((and (apply #'derived-mode-p search-scope-symbolic-modes)
            (thing-at-point 'symbol))
-      (search-scope-get-thing 'symbol nil no-highlight))
+      (search-scope-get-thing 'symbol nil))
 
      ((and (derived-mode-p 'text-mode)
            (thing-at-point 'word))
-      (search-scope-get-thing 'word nil no-highlight)))))
+      (search-scope-get-thing 'word nil)))))
 
-(defun search-scope-thing-at-point (&optional no-history no-highlight)
+(defun search-scope-thing-at-point (&optional no-history)
   "Picks up a thing at point or a literal if there is an active
 region. If NO-HISTORY is nil then new thing is added to
 `search-scope-searched-things'."
 
-  (let ((thing (search-scope-get-contextual-thing
-                (current-buffer)
-                no-highlight)))
+  (let ((thing (search-scope-get-contextual-thing (current-buffer))))
     (if (and thing (null no-history))
         (search-scope-add-to-history thing)
       thing)))
@@ -847,10 +843,11 @@ adds one to `search-scope-list'"
 using `search-scope-display-part-function'."
 
   (interactive
-   (let ((buf (current-buffer)))
+   (let ((buf (current-buffer))
+         (search-scope-highlight-seconds))
      (list (search-scope-require-scope)
            buf
-           (search-scope-get-contextual-thing buf t)
+           (search-scope-get-contextual-thing buf)
            current-prefix-arg)))
 
   (let* ((path (or (buffer-file-name buffer)
@@ -874,13 +871,12 @@ using `search-scope-display-part-function'."
             (bounds (nth 2 (cadr buf-occur))))
         (when bounds
           (search-scope-add-to-history thing)
-          (unless (equal (search-scope-get-contextual-thing (car buf-occur) t)
-                         thing)
-            (set-window-point w (car bounds)))
-          (when search-scope-thing-flash-seconds
-            (with-current-buffer (car buf-occur)
-              (search-scope-highlight bounds
-                                      search-scope-thing-flash-seconds))))
+          (with-current-buffer (car buf-occur)
+            (let ((other-thing (search-scope-get-thing (cdr thing))))
+              (unless (equal other-thing thing)
+                (set-window-point w (car bounds))
+                (search-scope-highlight bounds
+                                        search-scope-highlight-seconds)))))
         (select-window w)))))
 
 (provide 'search-scope-mode)
