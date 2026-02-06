@@ -78,23 +78,47 @@
   :bind (:map json-ts-mode-map
               ("C-c C-p" . json-pretty-print)))
 
+;; required by projectile
 (use-package ag
-  :autoload (ag/search)
-
-  :init
-  (setq ag-reuse-buffers t)
-
   :ensure t)
 
-(use-package project
-  :bind
-  (:map project-prefix-map
-        ("$" . project-eshell)
-        ("%" . project-query-replace-regexp)
-        ("j" . project-dired)
-        ("4" . project-other-window-command)
-        ("g" . ag-project-at-point)
-        ("v" . magit-project-status)))
+;;;###autoload
+(defun pavel/projectile-commander-other-tab ()
+  "Starts projectile commander and overrides a default action to
+display a buffer."
+  (interactive)
+
+  ;; `projectile-completion-system' is overridden since default completion
+  ;; utilizes a bottom window.
+  (let ((projectile-completion-system 'ido)
+        (display-buffer-overriding-action '(display-buffer-in-new-tab)))
+    (projectile-commander)))
+
+(defun pavel/projectile-eshell ()
+  "Starts `eshell' in a project's root directory."
+  (interactive)
+
+  (pavel/eshell-jump (projectile-project-root)))
+
+(use-package projectile
+  :bind-keymap ("C-x p" . projectile-command-map)
+  :bind ((:map tab-prefix-map
+               ("p" . pavel/projectile-commander-other-tab))
+         (:map projectile-command-map
+               ("$" . pavel/projectile-eshell)
+               ("g" . projectile-ag)
+               ("F" . projectile-find-file-dwim)))
+  :init
+  (setf
+   projectile-mode-line-prefix " "
+   projectile-completion-system 'default)
+  (projectile-mode 1)
+  :config
+  (push "node_modules" projectile-globally-ignored-directories)
+  (push ".angular" projectile-globally-ignored-directories)
+  (push ".husky" projectile-globally-ignored-directories)
+  (push ".nx" projectile-globally-ignored-directories)
+  :ensure t)
 
 ;;-------------------------------------------------------------------------------
 ;; version control
