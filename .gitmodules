@@ -1,0 +1,3 @@
+[submodule "search-scope"]
+	path = loadable/search-scope-mode
+	url = https://github.com/zepp/search-scope-mode.git

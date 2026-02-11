@@ -4,6 +4,7 @@ My Emacs configuration which I strive to keep /simple/ as much as possible:
 + [[https://magit.vc/][Magit]] – to work with git repositories
 
 There are few modules written by myself:
++ [[https://github.com/zepp/search-scope-mode][search-scope-mode]] – search and replace things in a scope
 + =typography-mode= – mode to insert various typographic characters
 
 Frankly speaking, I do not want to spend much time configuring Emacs but I have to since there are inconsistent keybindings and poor default settings. It is weird but engaging so I keep doing that.

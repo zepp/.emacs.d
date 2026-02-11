@@ -80,6 +80,15 @@
 
 ;; required by projectile
 (use-package ag
+  ;; used by `search-scope-compose-ag-args'
+  :autoload (ag/search)
+
+  :init
+  (setq ag-reuse-buffers t)
+  (search-scope-register-symbolic-engine
+   #'ag/search
+   #'search-scope-compose-ag-args)
+
   :ensure t)
 
 ;;;###autoload

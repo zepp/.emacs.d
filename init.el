@@ -23,14 +23,13 @@
 
   (string-match "29\\.[0-9]+" emacs-version))
 
-(let* ((loadable-directory
+(let* ((default-directory
         (expand-file-name "loadable/"
                           user-emacs-directory))
-       (pavel-autoloads (expand-file-name
-			 "pavel-autoloads.el"
-			 loadable-directory)))
-  (normal-top-level-add-to-load-path `(,loadable-directory))
-  (loaddefs-generate loadable-directory pavel-autoloads)
+       (paths (delete ".." (directory-files default-directory)))
+       (dirs (mapcar #'expand-file-name (seq-filter #'file-directory-p paths))))
+  (normal-top-level-add-to-load-path dirs)
+  (loaddefs-generate dirs "pavel-autoloads.el")
   (require 'pavel-autoloads))
 
 (setq  use-package-always-defer t
@@ -183,6 +182,11 @@
   (setq isearch-allow-motion t
         isearch-motion-changes-direction t)
 
+  :demand t)
+
+(use-package search-scope-mode
+  :hook
+  (find-file-hook . search-scope-on-file-found)
   :demand t)
 
 ;;-------------------------------------------------------------------------------
