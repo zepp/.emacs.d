@@ -127,6 +127,7 @@ display a buffer."
   (push ".angular" projectile-globally-ignored-directories)
   (push ".husky" projectile-globally-ignored-directories)
   (push ".nx" projectile-globally-ignored-directories)
+  (push #'search-scope-index-projectile-files search-scope-indexers)
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
