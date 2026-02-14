@@ -128,6 +128,11 @@ display a buffer."
   (push ".husky" projectile-globally-ignored-directories)
   (push ".nx" projectile-globally-ignored-directories)
   (push #'search-scope-index-projectile-files search-scope-indexers)
+  (add-to-list 'display-buffer-alist
+               '("\\*projectile-files-errors\\*"
+                 display-buffer-at-bottom
+                 (dedicated . t)
+                 (window-height . 5)))
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
