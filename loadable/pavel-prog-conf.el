@@ -2,6 +2,15 @@
 
 ;;-------------------------------------------------------------------------------
 
+(add-to-list 'display-buffer-alist
+             '((derived-mode . prog-mode)
+               (display-buffer-reuse-window
+                display-buffer-reuse-mode-window
+                display-buffer-use-some-window
+                display-buffer-pop-up-window)
+               (mode . prog-mode)
+               (inhibit-switch-frame . t)))
+
 (use-package prog-mode
   :bind (:map prog-mode-map
               ("C-c C-q" . fill-paragraph))
@@ -179,11 +188,13 @@ display a buffer."
   (add-hook 'git-commit-setup-hook #'pavel/ws-long-lines)
   (add-to-list 'ido-ignore-buffers "^magit-process: .*")
   (add-to-list 'ido-ignore-buffers ".*\\.~[[:alnum:]]+~$")
+
   (add-to-list 'display-buffer-alist
-               '((derived-mode . magit-diff-mode)
+               '((derived-mode . magit-log-mode)
                  (display-buffer-reuse-mode-window
-                  display-buffer-pop-up-window)
-                 (dedicated . t)))
+                  display-buffer-at-bottom)
+                 (window-height . 0.25)
+                 (inhibit-switch-frame . t)))
 
   :ensure t)
 

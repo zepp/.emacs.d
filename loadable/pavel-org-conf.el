@@ -50,8 +50,10 @@ point."
   :init
   (add-to-list 'display-buffer-alist
                '("CAPTURE-\\w+\\.org$"
-                 display-buffer-pop-up-window
-                 (dedicated . t))))
+                 (display-buffer-pop-up-window
+                  display-buffer-use-some-window)
+                 (dedicated . t)
+                 (window-min-width . 60))))
 
 (defconst pavel/rebuild-scheduler
   (let ((timer (timer-create)))
