@@ -257,11 +257,22 @@ make it more informative"
   ;; it looks ugly
   (menu-bar-mode -1)
 
-  (setq
-   ;; make `rgrep' work
-   find-program
-   (expand-file-name "bin/find.exe"
-                     (getenv "ChocolateyInstall")))
+  ;; update of PATH environment variable and `exec-path' to be sure that UNIX
+  ;; utils are preferred
+  (when-let* ((path (getenv "PATH"))
+              (git-install "c:/Program Files/Git")
+              (git-bin (expand-file-name "usr/bin/" git-install))
+              (p (file-exists-p git-bin)))
+    (push git-bin exec-path)
+    ;; converted file name doesn't look standard but it works
+    (setenv "PATH" (concat  (convert-standard-filename git-bin) ";" path)))
+
+  (when-let* ((path (getenv "PATH"))
+              (choco-install (getenv "ChocolateyInstall"))
+              (choco-bin (expand-file-name "bin/" choco-install))
+              (p (file-exists-p choco-bin)))
+    (push choco-bin exec-path)
+    (setenv "PATH" (concat  (convert-standard-filename choco-bin) ";" path)))
 
   ;; make `hunspell' work
   (let ((root (expand-file-name ".dicts"

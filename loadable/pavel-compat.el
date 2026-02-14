@@ -14,15 +14,6 @@
              "[[:lower:]]\\{2\\}_[[:upper:]]\\{2\\}\\.dic"))))
 
 ;;;###autoload
-(defun pavel/fix-find-regexp (list)
-  (mapcar #'(lambda(entry)
-              (if (string-match "\\^find" (car entry))
-                  (list (string-replace "^find" "find\\.exe" (car entry))
-                        (cadr entry))
-                entry))
-          list))
-
-;;;###autoload
 (defun pavel/toggle-window-dedicated (arg)
   "Toggles window dedication in the selected window."
 

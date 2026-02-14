@@ -127,10 +127,6 @@ an existing one"
                   ".vscode"))
         grep-find-ignored-files
         (append grep-find-ignored-files
-                '("chunk-*.js*")))
-
-  (when (string= system-type "windows-nt")
-    (setq grep-mode-font-lock-keywords
-          (pavel/fix-find-regexp grep-mode-font-lock-keywords))))
+                '("chunk-*.js*"))))
 
 (provide 'pavel-fm-conf)
