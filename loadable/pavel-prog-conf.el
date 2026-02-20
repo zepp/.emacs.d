@@ -93,7 +93,6 @@
   :autoload (ag/search)
 
   :init
-  (setq ag-reuse-buffers t)
   (search-scope-register-symbolic-engine
    #'ag/search
    #'search-scope-compose-ag-args)
