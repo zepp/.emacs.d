@@ -255,6 +255,10 @@ make it more informative"
 
 ;;-------------------------------------------------------------------------------
 
+(use-package help
+  :init
+  (setf help-window-select t))
+
 (use-package info
   :bind
   (:map Info-mode-map
