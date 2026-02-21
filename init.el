@@ -74,7 +74,8 @@
               ("t" . tab-new)
               ("M-t" . other-tab-prefix)
               ("k" . tab-close)
-              ("M-o" . tab-previous)
+              ("o" . tab-recent)
+              ("C-j" . tab-switch)
               ("<left>" . tab-previous)
               ("<right>" . tab-next)
               ("M-<left>" . tab-bar-move-tab-backward)
@@ -102,13 +103,35 @@
 
 (when (pavel/emacs-29-p)
   (define-key ctl-x-map (kbd "w d") #'pavel/toggle-window-dedicated))
+(define-key ctl-x-map (kbd "q") #'quit-window)
 (define-key ctl-x-map (kbd "M-b") #'switch-to-buffer-other-window)
 (define-key ctl-x-map (kbd "M-f") #'find-file-other-window)
-(define-key ctl-x-map (kbd "M-0") #'quit-window)
 
-;; buffer management
-(define-key ctl-x-x-map (kbd "o") #'next-buffer)
-(define-key ctl-x-x-map (kbd "M-o") #'previous-buffer)
+(defun pavel/pop-up-other-buffer ()
+  "Displays an other buffer in a new window or select an existing
+one if buffer is already displayed."
+  (interactive)
+  (when-let* ((action '((display-buffer-reuse-window
+                         display-buffer-pop-up-window
+                         display-buffer-use-some-window)
+                        (inhibit-same-window . t)))
+              (buf (other-buffer (current-buffer) t))
+              (window (display-buffer buf action)))
+    (select-window window)))
+(define-key ctl-x-map (kbd "o") #'pavel/pop-up-other-buffer)
+
+(defun pavel/kill-window (&optional kill-buffer)
+  "Deletes a selected window and buries one's buffer. if KILL-BUFFER
+is non-nil then the buffer is killed."
+  (interactive "P")
+  (let* ((ignore-window-parameters t) ;; dwim
+         (window (selected-window))
+         (buffer (window-buffer window)))
+    (delete-window window)
+    (if kill-buffer
+        (kill-buffer buffer)
+      (bury-buffer buffer))))
+(define-key ctl-x-map (kbd "k") #'pavel/kill-window)
 
 (use-package uniquify
   :init
