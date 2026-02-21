@@ -311,7 +311,7 @@ make it more informative"
 
  ((string= system-type "darwin")
   (setq mac-command-modifier 'meta
-        mac-option-modifier 'none
+        mac-option-modifier 'alt
         browse-url-browser-function 'browse-url-default-macosx-browser
         visible-bell nil)
   (when (eq window-system 'ns)
