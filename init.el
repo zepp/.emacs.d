@@ -188,6 +188,9 @@ is non-nil then the buffer is killed."
 
   :demand t)
 
+(use-package ibuffer
+  :bind (:map ctl-x-map ("C-b" . ibuffer-other-window)))
+
 (use-package which-key
   :init (setq which-key-idle-delay 2.0)
   :config (which-key-mode 1)
