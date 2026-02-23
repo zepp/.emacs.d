@@ -133,6 +133,13 @@ is non-nil then the buffer is killed."
       (bury-buffer buffer))))
 (define-key ctl-x-map (kbd "k") #'pavel/kill-window)
 
+(use-package garbage-buffer-collector
+  :config
+  (garbage-buffer-collector-init)
+  :hook
+  (org-mode-hook . persistent-buffer-mode)
+  :demand t)
+
 (use-package uniquify
   :init
   (setq uniquify-buffer-name-style 'forward
