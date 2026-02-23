@@ -58,11 +58,11 @@ point."
 (defconst pavel/rebuild-scheduler
   (let ((timer (timer-create)))
     (timer-set-function timer #'org-agenda-redo-all '(1))
-    (timer-set-idle-time timer 1) ;; 1 second
-    #'(lambda ()
-        (let ((list (org-buffer-list 'agenda t))
-              (buf (current-buffer)))
-          (when (member buf list)
+    (timer-set-idle-time timer 2) ;; 2 second
+    #'(lambda (buf)
+        (when-let ((list (org-buffer-list 'agenda t))
+                   (not-a (not (memq timer timer-idle-list))))
+          (when (memq buf list)
             (timer-activate-when-idle timer)))))
 
   "watches Org-mode file buffers to schedule `org-agenda-redo-all'
@@ -71,7 +71,7 @@ in all agenda buffers when Emacs idles")
 (defun pavel/rebuild-org-agenda ()
   "wrapper to encapsulate `pavel/rebuild-scheduler' call"
 
-  (funcall pavel/rebuild-scheduler))
+  (funcall pavel/rebuild-scheduler (current-buffer)))
 
 (use-package org
   :bind (("C-x &" . org-store-link)
