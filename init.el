@@ -120,17 +120,19 @@ one if buffer is already displayed."
     (select-window window)))
 (define-key ctl-x-map (kbd "o") #'pavel/pop-up-other-buffer)
 
-(defun pavel/kill-window (&optional kill-buffer)
-  "Deletes a selected window and buries one's buffer. if KILL-BUFFER
-is non-nil then the buffer is killed."
+(defun pavel/kill-window (&optional no-history)
+  "Deletes a selected window and buries one's history unless
+NO-HISTORY is non-nil."
   (interactive "P")
-  (let* ((ignore-window-parameters t) ;; dwim
-         (window (selected-window))
-         (buffer (window-buffer window)))
+  (let* ((window (selected-window))
+         (backlog (unless no-history
+                    (seq-map #'car (window-prev-buffers window)))))
+    (push (window-buffer window) backlog)
+    (setq backlog (nreverse (seq-remove #'get-buffer-window backlog)))
     (delete-window window)
-    (if kill-buffer
-        (kill-buffer buffer)
-      (bury-buffer buffer))))
+    (seq-do #'bury-buffer backlog)
+    (when (length> backlog 1)
+      (message "%i buries are buried" (length backlog)))))
 (define-key ctl-x-map (kbd "k") #'pavel/kill-window)
 
 (use-package garbage-buffer-collector
