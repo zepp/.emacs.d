@@ -91,12 +91,105 @@ are not not collectible."
 (defmacro garbage-buffer-mem-size (buffers)
   `(apply #'+ (mapcar #'buffer-size ,buffers)))
 
+(defun garbage-buffer-get-info (buffer)
+  "Creates alist that holds BUFFER properties to measure weight."
+  (with-current-buffer buffer
+    (let ((alist))
+      (push (cons 'buffer buffer) alist)
+      ;; 0 makes `garbage-buffer-adjust-weight-by-count' suboptimal
+      (when (> buffer-display-count 0)
+        (push (cons 'display-count buffer-display-count) alist))
+      ;; it is easier to substitute it right here
+      (push (cons 'display-time (or buffer-display-time
+                                    before-init-time))
+            alist)
+      (push (cons 'size (buffer-size)) alist)
+      (push (cons 'weight (buffer-size)) alist)
+      (nreverse alist))))
+
+(defun garbage-buffer-find-by-property (symbol comparator buffers)
+  (cl-assert (and (symbolp symbol)
+                  (functionp comparator)))
+  (seq-reduce
+   #'(lambda (accum buf-info)
+       (let ((value (alist-get symbol buf-info)))
+         (if (and value (or (null accum) (funcall comparator value accum)))
+             value
+           accum)))
+   (cdr buffers)
+   (alist-get symbol (car buffers))))
+
+(defun garbage-buffer-diff-time (a b)
+  (abs (time-convert (time-subtract a b) 'integer)))
+
+(defun garbage-buffer-adjust-weight-by-time (buffers time-base-point &optional addendum)
+  "Adjusts weight according to a buffer display time. ADDENDUM is a
+value added to a calculated factor."
+
+  (cl-assert (length> buffers 0))
+  (let* ((min (garbage-buffer-find-by-property 'display-time
+                                               #'time-less-p buffers))
+         (delta (garbage-buffer-diff-time time-base-point min))
+         (addendum (or addendum 0)))
+    (seq-do #'(lambda (buf-info)
+                (let* ((weight (assq 'weight buf-info))
+                       (time (alist-get 'display-time buf-info))
+                       (factor (/ (garbage-buffer-diff-time time-base-point time)
+                                  (float delta))))
+                  (setcdr weight (* (cdr weight) (+ factor addendum)))))
+            buffers)
+    (cons min delta)))
+
+(defun garbage-buffer-adjust-weight-by-count (buffers &optional addendum)
+  "Adjusts weight according to a buffer display count. ADDENDUM is a
+value added to a calculated factor."
+
+  (cl-assert (length> buffers 0))
+  (let* ((min (garbage-buffer-find-by-property 'display-count #'< buffers))
+         (max (garbage-buffer-find-by-property 'display-count #'> buffers))
+         (delta (- max min))
+         (addendum (or addendum 0)))
+    (seq-do #'(lambda (buf-info)
+                (let* ((weight (assq 'weight buf-info))
+                       (count (alist-get 'display-count buf-info min))
+                       (factor (/ (- max count) (float delta))))
+                  (setcdr weight (* (cdr weight) (+ factor addendum)))))
+            buffers)
+    (cons min delta)))
+
+(defun garbage-buffer-divide (buffers time)
+  "Divides BUFFERS into groups. Former group contains buffers with
+`buffer-display-time' after TIME, latter before TIME."
+  (let* ((buffers (seq-sort
+                   #'(lambda (a b)
+                       (time-less-p (alist-get 'display-time a)
+                                    (alist-get 'display-time b)))
+                   buffers))
+         (groups (seq-group-by
+                  #'(lambda (buf-info)
+                      (time-less-p (alist-get 'display-time buf-info)
+                                   time))
+                  buffers)))
+    (cons (cdr (nth 1 groups))
+          (cdr (nth 0 groups)))))
+
 (defun garbage-buffer-sort (buffers time)
-  "sorts BUFFERS list accoding to a buffer weight."
-  (seq-sort #'(lambda (a b)
-                (> (buffer-size a)
-                   (buffer-size b)))
-            buffers))
+  "Sorts BUFFERS list accoding to a buffer weight."
+  (let* ((last-time garbage-buffer-last-base-point)
+         (buffers (seq-map #'garbage-buffer-get-info buffers))
+         (groups (garbage-buffer-divide buffers last-time))
+         (utilized (car groups))
+         (unused (cdr groups)))
+    (garbage-buffer-adjust-weight-by-count buffers)
+    (when utilized
+      (garbage-buffer-adjust-weight-by-time utilized time 1))
+    (when unused
+      (garbage-buffer-adjust-weight-by-time unused last-time 2))
+    (mapcar (apply-partially #'alist-get 'buffer)
+            (seq-sort #'(lambda (a b)
+                          (> (alist-get 'weight a)
+                             (alist-get 'weight b)))
+                      buffers))))
 
 (defun garbage-buffer-reduce (buffers time)
   "Reduces BUFFERS list if one's total memory size is greater then
