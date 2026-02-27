@@ -46,6 +46,10 @@ a garbage collection"
 (defvar garbage-buffer-last-base-point nil
   "base point to measure buffer metrics")
 
+(defvar garbage-buffer-missing-time nil
+  "total amount of inactive time before
+`garbage-buffer-last-base-point'")
+
 (defun garbage-buffer-collector-set-delay (hours &optional minutes)
   "Updates a delay to run a garbage buffer collection and
 `garbage-buffer-collection-delay' special variable."
@@ -91,12 +95,83 @@ are not not collectible."
 (defmacro garbage-buffer-mem-size (buffers)
   `(apply #'+ (mapcar #'buffer-size ,buffers)))
 
+(defun garbage-buffer-get-info (buffer)
+  "Collects information about BUFFER to measure metrics."
+  (with-current-buffer buffer
+    (let ((alist))
+      (push (cons 'buffer buffer) alist)
+      (push (cons 'display-count buffer-display-count) alist)
+      (push (cons 'display-time (or buffer-display-time
+                                    before-init-time)) alist)
+      (push (cons 'size (buffer-size)) alist)
+      (push (cons 'weight (buffer-size)) alist)
+      (nreverse alist))))
+
+(defun garbage-buffer-find (symbol comparator buffers)
+  (seq-reduce
+   #'(lambda (accum buf-info)
+       (or (when-let* ((value (alist-get symbol buf-info))
+                       (p (or (null accum)
+                              (funcall comparator value accum))))
+             buf-info)
+           accum)
+       accum)
+   buffers
+   nil))
+
+(defun garbage-buffer-adjust-weight-by-display-time (buffers base-point coef-base)
+  (let* ((min (garbage-buffer-find 'display-time
+                                   #'time-less-p buffers))
+         (delta (float (time-convert (time-subtract base-point min) 'integer))))
+    (seq-do #'(lambda (buf-info)
+                (let* ((weight (alist-get 'weight buf-info))
+                       (time (alist-get 'display-time buf-info))
+                       (c (/ (time-convert (time-subtract base-point time) 'integer)
+                             delta)))
+                  (setf (alist-get 'weight buf-info)
+                        (* weight (+ coef-base c)))))
+            buffers)))
+
+(defun garbage-buffer-adjust-weight-by-display-count (buffers base)
+  (let* ((min (garbage-buffer-find 'display-count #'< buffers))
+         (max (garbage-buffer-find 'display-count #'> buffers))
+         (delta (float (- max min))))
+    (seq-do #'(lambda (buf-info)
+                (let* ((weight (alist-get 'weight buf-info))
+                       (count (alist-get 'display-count buf-info))
+                       (c (/ (- count min) delta)))
+                  (setf (alist-get 'weight buf-info)
+                        (* weight (+ c base)))))
+            buffers)))
+
+(defun garbage-buffer-time-comparator (a b)
+  (time-less-p (alist-get 'display-time a)
+               (alist-get 'display-time b)))
+
+(defun garbage-buffer-weight-comparator (a b)
+  (> (alist-get 'weight a)
+     (alist-get 'weight b)))
+
 (defun garbage-buffer-sort (buffers time)
   "sorts BUFFERS list accoding to a buffer weight."
-  (seq-sort #'(lambda (a b)
-                (> (buffer-size a)
-                   (buffer-size b)))
-            buffers))
+  (let ((last-time garbage-buffer-last-base-point)
+        (buffers (seq-map #'garbage-buffer-get-info buffers))
+        (unused)
+        (used))
+    (setq buffers (seq-sort #'garbage-buffer-time-comparator buffers))
+    (let ((groups (seq-group-by
+                   #'(lambda (buf-info)
+                       (time-less-p (alist-get 'display-time buf-info)
+                                    last-time))
+                   buffers)))
+      (setq unused (cdr (nth 1 groups))
+            used (cdr (nth 0 groups))))
+    (when used
+      (garbage-buffer-adjust-weight-by-display-count used 1)
+      (garbage-buffer-adjust-weight-by-display-time used time 1))
+    (garbage-buffer-adjust-weight-by-display-time unused last-time 2)
+    (mapcar (apply-partially #'alist-get 'buffer)
+            (seq-sort #'garbage-buffer-weight-comparator buffers))))
 
 (defun garbage-buffer-reduce (buffers time)
   "Reduces BUFFERS list if one's total memory size is greater then
