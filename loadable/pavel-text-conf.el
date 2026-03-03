@@ -69,6 +69,7 @@ usefull for text editing"
               ("C-M-f" . markdown-outline-next-same-level)
               ("C-M-b" . markdown-outline-previous-same-level)
               ("C-M-k" . markdown-kill-block)
-              ("C-M-SPC" . markdown-mark-block)))
+              ("C-M-SPC" . markdown-mark-block))
+  :ensure t)
 
 (provide 'pavel-text-conf)
