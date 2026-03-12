@@ -18,24 +18,26 @@
 (defgroup garbage-buffer-collector nil "Main group")
 
 (defcustom garbage-buffer-collection-delay (* 3 60)
-  "Number of minutes to delay a garbage buffer collection."
+  "Number of minutes to delay a garbage buffer collection after
+Emacs idle."
   :group 'garbage-buffer-collector
   :type 'natnum)
 
 (defcustom garbage-buffer-query '()
-  "Query to form a list of garbage buffers to be collected and
-released. Take a look at `buffer-match-p' for details."
+  "Query to form a candidate list of buffers to be collected and
+released. Take a look at `buffer-match-p' for details. All
+buffers are considered by default."
   :group 'garbage-buffer-collector
   :type 'sexp)
 
 (defcustom garbage-buffer-memory-threshold (* 32 1024)
-  "total amount of allocated buffer memory that is required to start
-a garbage collection"
+  "Total amount of allocated buffer memory that is required to start
+a garbage collection."
   :group 'garbage-buffer-collector
   :type 'natnum)
 
 (defcustom garbage-buffer-collect-ephemeral nil
-  "If non-nill then ephemeral buffers are collectible. Buffers that
+  "If non-nil then ephemeral buffers are collectible. Buffers that
 are ephemeral and generally uninteresting to the user have names
 starting with a space."
   :group 'garbage-buffer-collector
@@ -51,7 +53,7 @@ starting with a space."
 `garbage-buffer-schedule'")
 
 (defvar garbage-buffer-last-base-point nil
-  "base point to measure buffer metrics")
+  "base point to measure buffer weight")
 
 (defun garbage-buffer-collector-set-delay (hours &optional minutes)
   "Updates a delay to run a garbage buffer collection and
@@ -72,16 +74,14 @@ idle."
   (add-hook 'buffer-list-update-hook
             #'garbage-buffer-schedule)
   (garbage-buffer-schedule)
-  (setq garbage-buffer-last-base-point (current-time)))
+  (unless garbage-buffer-last-base-point
+    (setq garbage-buffer-last-base-point (current-time))))
 
 (defun garbage-buffer-schedule ()
   "Schedules a garbage buffer collection."
   (when-let* ((timer garbage-buffer-collector-timer)
               (p (not (memq timer timer-idle-list))))
     (timer-activate-when-idle timer)))
-
-(defun garbage-buffer-diff-time (a b)
-  (abs (time-convert (time-subtract a b) 'integer)))
 
 (defun garbage-buffer-collectible-p (buffer)
   "Checks that BUFFER is collectible and can be released. Modified
@@ -106,14 +106,17 @@ collectible and measure one's weight to optimize gc."
       (push (cons 'name (buffer-name)) alist)
       (when (and collectible (not persistent))
         (push (cons 'collectible t) alist))
-      ;; 0 makes `garbage-buffer-adjust-weight-by-count' suboptimal
       (when (> buffer-display-count 0)
         (push (cons 'display-count buffer-display-count) alist))
-      (push (cons 'last-activity-time (or buffer-display-time
-                                          before-init-time))
-            alist)
-      (push (cons 'size (buffer-size)) alist)
-      (push (cons 'weight (buffer-size)) alist)
+      (when buffer-display-time
+        (push (cons 'display-time (time-convert buffer-display-time 'integer))
+              alist))
+      (when-let* ((ticks (buffer-chars-modified-tick))
+                  (p (> ticks 0)))
+        (push (cons 'chars-modified-tick ticks) alist))
+      (let ((size (buffer-size)))
+        (push (cons 'size size) alist)
+        (push (cons 'weight (float size)) alist))
       (nreverse alist))))
 
 (defmacro garbage-buffer-mem-size (buffers)
@@ -131,69 +134,63 @@ collectible and measure one's weight to optimize gc."
    (cdr buffers)
    (alist-get symbol (car buffers))))
 
-(defun garbage-buffer-adjust-weight-by-time (buffers time-base-point &optional addendum)
-  "Adjusts weight according to a buffer last activity time. ADDENDUM
-is a value added to a calculated factor."
+(defun garbage-buffer-adjust-weight (buffers property factor-addendum &optional max-value)
+  "Adjusts weight according to a buffer PROPERTY. The more PROPERTY
+value the fewer weight since weight is simply multiplied by a
+calculated factor. Basic factor is aproximatley in range of 0 to
+1 and shifted by FACTOR-ADDENDUM."
 
   (cl-assert (length> buffers 0))
-  (let* ((min (garbage-buffer-find-by-property 'last-activity-time
-                                               #'time-less-p buffers))
-         (delta (garbage-buffer-diff-time time-base-point min))
-         (addendum (or addendum 0)))
-    (seq-do #'(lambda (buf-info)
-                (let* ((weight (assq 'weight buf-info))
-                       (time (alist-get 'last-activity-time buf-info))
-                       (factor (/ (garbage-buffer-diff-time time-base-point time)
-                                  (float delta))))
-                  (setcdr weight (* (cdr weight) (+ factor addendum)))))
-            buffers)
-    (cons min delta)))
-
-(defun garbage-buffer-adjust-weight-by-count (buffers)
-  "Adjusts weight according to a buffer display count. Weight is
-multiplied by a calculated factor. Factor value is in range from
-1 to ~2. Weight of buffer that has not been displayed at all or
-has minimal display count is multiplied by ~2."
-
-  (cl-assert (length> buffers 0))
-  (let* ((min (garbage-buffer-find-by-property 'display-count #'< buffers))
-         (max (1+ (garbage-buffer-find-by-property 'display-count #'> buffers)))
+  (let* ((min (garbage-buffer-find-by-property property #'< buffers))
+         (max (if max-value
+                  max-value
+                (1+ (garbage-buffer-find-by-property property #'> buffers))))
          (delta (- max min)))
     (seq-do #'(lambda (buf-info)
                 (let* ((weight (assq 'weight buf-info))
-                       (count (alist-get 'display-count buf-info min))
-                       (factor (/ (- max count) (float delta))))
-                  (setcdr weight (* (cdr weight) (1+ factor)))))
+                       (value (alist-get property buf-info min))
+                       (factor (/ (- max value) (float delta))))
+                  (setcdr weight (* (cdr weight) (+ factor factor-addendum)))))
             buffers)
     (cons min (1- delta))))
 
 (defun garbage-buffer-divide (buffers time)
-  "Divides BUFFERS into groups. Former group contains buffers with
-`last-activity-time' after TIME, latter before TIME."
-  (let* ((buffers (seq-sort
-                   #'(lambda (a b)
-                       (time-less-p (alist-get 'last-activity-time a)
-                                    (alist-get 'last-activity-time b)))
-                   buffers))
+  "Divides BUFFERS into groups according to a display time. First
+group contains buffers with `buffer-display-time' after TIME,
+next one before TIME and last one contains non-displayed buffers."
+  (let* ((non-displayed (seq-remove (apply-partially #'alist-get 'display-time)
+                                    buffers))
+         (displayed (seq-sort
+                     #'(lambda (a b)
+                         (< (alist-get 'display-time a)
+                            (alist-get 'display-time b)))
+                     (seq-difference buffers non-displayed)))
          (groups (seq-group-by
                   #'(lambda (buf-info)
-                      (time-less-p (alist-get 'last-activity-time buf-info)
-                                   time))
-                  buffers)))
-    (cons (cdr (nth 1 groups))
-          (cdr (nth 0 groups)))))
+                      (> (alist-get 'display-time buf-info) time))
+                  displayed)))
+    (list
+     (cdr (nth 1 groups))
+     (nreverse (cdr (nth 0 groups)))
+     non-displayed)))
 
 (defun garbage-buffer-sort (buffers time)
-  "Sorts BUFFERS list accoding to a buffer weight."
-  (let* ((last-time garbage-buffer-last-base-point)
+  "Measures buffer weight and sorts BUFFERS list accoding to it."
+  (let* ((last-time (time-convert garbage-buffer-last-base-point 'integer))
          (groups (garbage-buffer-divide buffers last-time))
-         (utilized (car groups))
-         (unused (cdr groups)))
-    (garbage-buffer-adjust-weight-by-count buffers)
+         (utilized (nth 0 groups))
+         (unutilized (nth 1 groups))
+         (non-displayed (nth 2 groups)))
+    (garbage-buffer-adjust-weight buffers 'chars-modified-tick 1)
+    (seq-do #'(lambda (buf-info)
+                (let ((weight (assq 'weight buf-info)))
+                  (setcdr weight (* (cdr weight) 2))))
+            non-displayed)
+    (garbage-buffer-adjust-weight (append utilized unutilized) 'display-count 1)
     (when utilized
-      (garbage-buffer-adjust-weight-by-time utilized time 1))
-    (when unused
-      (garbage-buffer-adjust-weight-by-time unused last-time 2))
+      (garbage-buffer-adjust-weight utilized 'display-time 1 time))
+    (when unutilized
+      (garbage-buffer-adjust-weight unutilized 'display-time 2 last-time))
     (seq-sort #'(lambda (a b)
                   (> (alist-get 'weight a)
                      (alist-get 'weight b)))
@@ -205,7 +202,7 @@ has minimal display count is multiplied by ~2."
 which buffers should be released last."
 
   (let* ((threshold garbage-buffer-memory-threshold)
-         (buffers (garbage-buffer-sort buffers time))
+         (buffers (garbage-buffer-sort buffers (time-convert time 'integer)))
          (total-size (garbage-buffer-mem-size buffers)))
     (when (> total-size threshold)
       (let ((release-at-least (- total-size threshold)))
@@ -235,7 +232,7 @@ which buffers should be released last."
 
 ;;;###autoload
 (defun garbage-buffer-collect (&optional no-reduce)
-  "Runs a garbage buffer collection. List of collected buffers is
+  "Runs a garbage buffer collection. List of collectible buffers is
 reduced by `garbage-buffer-reduce' if NO-REDUCE argument is nil."
   (interactive)
   (when-let* ((time (garbage-buffer-emacs-last-active))
