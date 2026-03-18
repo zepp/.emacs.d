@@ -3,9 +3,9 @@
 ;; Copyright (C) 2026 Pavel Sokolov
 ;; All rights reserved.
 
-;; Author: Pavel Sokolov <pavel.zepp@gmail.com>
-;; Maintainer: Pavel Sokolov <pavel.zepp@gmail.com>
-;; Created: 2025
+;; Author: Pavel Sokolov <pavel@warp-link.ru>
+;; Maintainer: Pavel Sokolov <pavel@warp-link.ru>
+;; Created: 2026
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -42,6 +42,16 @@ are ephemeral and generally uninteresting to the user have names
 starting with a space."
   :group 'garbage-buffer-collector
   :type 'boolean)
+
+(defcustom garbage-buffer-debug nil
+  "If non-nil then additional information is printed."
+  :group 'garbage-buffer-collector
+  :type 'boolean)
+
+(defcustom garbage-buffer-max-name-width 20
+  "Maximal buffer name width in debug output"
+  :group 'garbage-buffer-collector
+  :type 'natnum)
 
 (defconst garbage-buffer-collector-timer
   (let ((timer (timer-create))
@@ -101,9 +111,11 @@ collectible and measure one's weight to optimize gc."
   (with-current-buffer buffer
     (let ((collectible (garbage-buffer-collectible-p buffer))
           (persistent (memq 'persistent-buffer-mode local-minor-modes))
+          (width garbage-buffer-max-name-width)
           (alist))
       (push (cons 'buffer buffer) alist)
-      (push (cons 'name (buffer-name)) alist)
+      (push (cons 'name (truncate-string-to-width (buffer-name) width nil nil t))
+            alist)
       (when (and collectible (not persistent))
         (push (cons 'collectible t) alist))
       (when (> buffer-display-count 0)
@@ -222,13 +234,33 @@ which buffers should be released last."
         (time-subtract current-time idle-time)
       current-time)))
 
-(defun garbage-buffer-list-to-string (buffers)
-  "Joins BUFFERS names to a string for a debug purposes."
-  (string-join
-   (seq-map #'(lambda (buf)
-                (truncate-string-to-width (alist-get 'name buf) 20 nil nil t))
-            buffers)
-   " "))
+(defun garbage-buffer-replace-indirect-bufs (buffers)
+  "Replaces indirect buffers with base buffers in BUFFERS list and
+returns a list of unique entries."
+
+  (seq-uniq
+   (seq-map
+    #'(lambda (buf)
+        (or (buffer-base-buffer buf)
+            buf))
+    buffers)))
+
+(defun garbage-buffer-print (buffers)
+  "Print BUFFERS names and amount of allocated memory."
+  (if garbage-buffer-debug
+      (let* ((width (+ 5 garbage-buffer-max-name-width))
+             (format (concat "%" (number-to-string width) "s" "%10d %10.1f %5.1f")))
+        (dolist (buf buffers)
+          (let* ((size (alist-get 'size buf))
+                 (weight (alist-get 'weight buf))
+                 (ratio (/ weight size)))
+            (message format (alist-get 'name buf) size weight ratio))))
+    (message "garbage buffers: %s "
+             (string-join
+              (seq-map (apply-partially #'alist-get 'name) buffers)
+              " ")))
+  (let ((bytes (garbage-buffer-mem-size buffers)))
+    (message "total size: %s bytes" bytes)))
 
 ;;;###autoload
 (defun garbage-buffer-collect (&optional no-reduce)
@@ -237,20 +269,18 @@ reduced by `garbage-buffer-reduce' if NO-REDUCE argument is nil."
   (interactive)
   (when-let* ((time (garbage-buffer-emacs-last-active))
               (buffers (mapcar #'garbage-buffer-get-info
-                               (if garbage-buffer-query
-                                   (match-buffers garbage-buffer-query)
-                                 (buffer-list))))
+                               (garbage-buffer-replace-indirect-bufs
+                                (if garbage-buffer-query
+                                    (match-buffers garbage-buffer-query)
+                                  (buffer-list)))))
               (collectible (seq-filter (apply-partially #'alist-get 'collectible) buffers)))
     (message "last active time - %s" (format-time-string "%F %R" time))
     (message "%i/%i buffers are collectible" (length collectible) (length buffers))
     (when-let* ((reduced (if no-reduce
                              collectible
-                           (garbage-buffer-reduce collectible time)))
-                (mem-to-release (garbage-buffer-mem-size reduced))
-                (names (garbage-buffer-list-to-string reduced)))
+                           (garbage-buffer-reduce collectible time))))
       (mapcar #'kill-buffer (mapcar (apply-partially #'alist-get 'buffer) reduced))
-      (message "released buffers: %s" names)
-      (message "%s bytes are realsed" mem-to-release)
+      (garbage-buffer-print reduced)
       (cancel-timer garbage-buffer-collector-timer)
       (setq garbage-buffer-last-base-point time))))
 
