@@ -140,6 +140,8 @@ NO-HISTORY is non-nil."
   (garbage-buffer-collector-init)
   :hook
   (org-mode-hook . persistent-buffer-mode)
+  (org-agenda-mode-hook . persistent-buffer-mode)
+  (magit-status-mode-hook . persistent-buffer-mode)
   :demand t)
 
 (use-package uniquify
