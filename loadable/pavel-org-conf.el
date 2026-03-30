@@ -73,11 +73,17 @@ in all agenda buffers when Emacs idles")
 
   (funcall pavel/rebuild-scheduler (current-buffer)))
 
+(defun pavel/org-current-timestamp ()
+  "Inserts an inactive timestamp without prompt."
+  (interactive)
+  (org-timestamp '(16) 'inactive))
+
 (use-package org
   :bind (("C-x &" . org-store-link)
          (:map org-mode-map
                ("C-x C-n" . org-insert-heading-respect-content)
                ("C-c &") ;; org-mark-ring-goto
+               ("C-c M-." . pavel/org-current-timestamp)
                ("M-m" . org-emphasize)
                ("C-M-f" . org-forward-element)
                ("C-M-b" . org-backward-element)
