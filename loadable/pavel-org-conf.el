@@ -2,19 +2,10 @@
 
 (require 'pavel-text-conf)
 
-(defun pavel/org-agenda-capture ()
-  "Call `org-capture' from agenda buffer with the date and time at
-point."
-
-  (interactive)
-
-  (let ((org-overriding-default-time (org-get-cursor-date 1)))
-    (call-interactively 'org-capture)))
-
 (use-package org-agenda
   :bind (("C-x C-a" . org-agenda)
          (:map org-agenda-mode-map
-               ("C-x C-n" . pavel/org-agenda-capture)
+               ("C-x C-n" . org-agenda-capture)
                ("C-c C-w") ;; org-agenda-refile
 
                ("n" . org-agenda-next-item)
@@ -33,13 +24,7 @@ point."
    org-agenda-start-on-weekday nil
    org-agenda-start-day "-1d"
    org-agenda-remove-tags t
-   org-agenda-time-grid
-   (let ((graphical (and (display-graphic-p)
-                         (char-displayable-p ?┄))))
-     `((daily)
-       (1000 1100 1200 1300 1400 1500 1600 1700 1800 1900)
-       ,(if graphical " ┄┄┄┄┄ " "......")
-       ""))
+   org-agenda-use-time-grid nil
    org-agenda-bulk-custom-functions
    '((?a org-agenda-archive-default))))
 
