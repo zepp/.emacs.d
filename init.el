@@ -3,6 +3,10 @@
 (setq
  calendar-week-start-day 1
  default-input-method 'russian-computer
+ save-interprogram-paste-before-kill t
+ kill-do-not-save-duplicates t
+ read-extended-command-predicate
+ #'command-completion-default-include-p
  custom-file (locate-user-emacs-file "custom.el"))
 
 (put 'upcase-region 'disabled nil)
@@ -217,7 +221,8 @@ NO-HISTORY is non-nil."
         ("s" . isearch-forward-symbol-at-point))
   :init
   (setq isearch-allow-motion t
-        isearch-motion-changes-direction t)
+        isearch-motion-changes-direction t
+        isearch-lazy-count t)
 
   :demand t)
 
