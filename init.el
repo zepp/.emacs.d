@@ -148,6 +148,17 @@ NO-HISTORY is non-nil."
   (magit-status-mode-hook . persistent-buffer-mode)
   :demand t)
 
+(use-package super-save
+  :init
+  (setq
+   super-save-auto-save-when-idle t
+   super-save-silent t)
+  :config
+  (setq auto-save-default nil)
+  (super-save-mode 1)
+  :ensure t
+  :demand t)
+
 (use-package uniquify
   :init
   (setq uniquify-buffer-name-style 'forward
