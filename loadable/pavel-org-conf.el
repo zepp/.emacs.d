@@ -40,24 +40,6 @@
                  (dedicated . t)
                  (window-min-width . 60))))
 
-(defconst pavel/rebuild-scheduler
-  (let ((timer (timer-create)))
-    (timer-set-function timer #'org-agenda-redo-all '(1))
-    (timer-set-idle-time timer 2) ;; 2 second
-    #'(lambda (buf)
-        (when-let ((list (org-buffer-list 'agenda t))
-                   (not-a (not (memq timer timer-idle-list))))
-          (when (memq buf list)
-            (timer-activate-when-idle timer)))))
-
-  "watches Org-mode file buffers to schedule `org-agenda-redo-all'
-in all agenda buffers when Emacs idles")
-
-(defun pavel/rebuild-org-agenda ()
-  "wrapper to encapsulate `pavel/rebuild-scheduler' call"
-
-  (funcall pavel/rebuild-scheduler (current-buffer)))
-
 (defun pavel/org-current-timestamp ()
   "Inserts an inactive timestamp without prompt."
   (interactive)
@@ -146,7 +128,6 @@ in all agenda buffers when Emacs idles")
   (org-mode-hook . org-indent-mode)
   (org-mode-hook . org-toggle-time-stamp-overlays)
   (org-mode-hook . auto-revert-mode)
-  (after-revert-hook . pavel/rebuild-org-agenda)
   (org-mode-hook . flyspell-mode)
 
   :mode
