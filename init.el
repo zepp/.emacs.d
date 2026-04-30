@@ -69,9 +69,9 @@
               ("<left>" . windmove-left))
   :demand t)
 
-;; It replicates a common keybinding to switch between windows on different
-;; OS. It must be placed here to prevent overriding by `tab-bar-mode'.
-(global-set-key [(control tab)] #'other-window)
+;; It is a common keybinding to switch between windows from the same
+;; applications on macOS and Gnome
+(global-set-key (kbd "M-`") #'other-window)
 
 (use-package tab-bar
   :bind (:map tab-prefix-map
@@ -122,7 +122,7 @@ one if buffer is already displayed."
               (buf (other-buffer (current-buffer) t))
               (window (display-buffer buf action)))
     (select-window window)))
-(define-key ctl-x-map (kbd "o") #'pavel/pop-up-other-buffer)
+(define-key ctl-x-map (kbd "w TAB") #'pavel/pop-up-other-buffer)
 
 (defun pavel/kill-window (&optional no-history)
   "Deletes a selected window and buries one's history unless
