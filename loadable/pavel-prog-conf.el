@@ -35,8 +35,7 @@
   :ensure t)
 
 (use-package tree-sitter-langs
-  :ensure t
-  :demand t)
+  :ensure t)
 
 ;;;###autoload
 (defun pavel/install-ts-grammars ()
