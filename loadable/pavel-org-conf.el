@@ -123,6 +123,9 @@
   (add-to-list 'org-latex-packages-alist '("AUTO" "babel" t ("pdflatex")))
   (add-to-list 'org-latex-packages-alist '("" "tabularx"))
   (add-to-list 'org-latex-packages-alist '("" "spverbatim"))
+  (push '("\\.pptx$" . system) org-file-apps-windowsnt)
+  (push '("\\.xlsx$" . system) org-file-apps-windowsnt)
+  (push '("\\.docx$" . system) org-file-apps-windowsnt)
 
   :hook
   (org-mode-hook . org-indent-mode)
