@@ -69,19 +69,14 @@ DIRECTORY and a host name in case of a remote file
 editing. Format is simillar to `project-eshell'."
 
   (let* ((dir (abbreviate-file-name (or directory default-directory)))
-         (name (file-name-nondirectory (directory-file-name dir)))
-         (tramp-info (when (and (fboundp 'tramp-tramp-file-p)
-                                (tramp-tramp-file-p dir))
-                       (tramp-dissect-file-name dir))))
+         (dir-name (file-name-nondirectory (directory-file-name dir)))
+         (remote-host (file-remote-p directory 'host)))
     (cond
-     (tramp-info
-      (let ((host (tramp-file-name-host tramp-info)))
-        (if (string-empty-p name)
-            (format "*%s:eshell*" host)
-          (format "*%s:%s-eshell*" host name))))
-     ((string-empty-p name)
-      "*eshell*")
-     (t (format "*%s-eshell*" name)))))
+     ((and dir-name remote-host)
+      (format "*%s:%s-eshell*" remote-host dir-name))
+     ((or dir-name remote-host)
+      (format "*%s-eshell*" (or dir-name remote-host)))
+     (t "*eshell*"))))
 
 (defun pavel/eshell-jump (&optional directory)
   "it starts `eshell' in a current directory or switches buffer to
