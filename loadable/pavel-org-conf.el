@@ -160,14 +160,14 @@
                '("–" . "&#x2013;")))
 
 ;;;###autoload
-(defun pavel/set-org-dir-files (directory)
-  "sets Org-mode's notes directory, default and archive files
-location"
+(defun pavel/set-org-dir-files (directory &rest dirs)
+  "Sets Org-mode's default directory to DIRECTORY then expands
+default and archive files path relative to one."
   (interactive "D")
 
   (setq
    org-directory directory
-   org-agenda-files `(,directory)
+   org-agenda-files (if dirs (cons directory dirs) (list directory))
    org-default-notes-file (expand-file-name "default.org" directory)
    org-archive-location (expand-file-name "archive.org::" directory)))
 
