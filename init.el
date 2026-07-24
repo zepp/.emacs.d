@@ -156,6 +156,8 @@ NO-HISTORY is non-nil."
   :config
   (setq auto-save-default nil)
   (super-save-mode 1)
+  (add-to-list 'super-save-predicates
+               #'(lambda () (derived-mode-p 'prog-mode)))
   :ensure t
   :demand t)
 
