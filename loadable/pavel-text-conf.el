@@ -58,9 +58,10 @@ usefull for text editing"
 
 (use-package markdown-mode
   :bind (:map markdown-mode-map
-              ;; marker keybindings replicating Org-mode
+              ;; marker keybindings resembling Org-mode
               ("M-m *" . markdown-insert-bold)
               ("M-m /" . markdown-insert-italic)
+              ("M-m `" . markdown-insert-code)
               ("M-m =" . markdown-insert-code)
               ;; movement
               ("C-M-u" . markdown-outline-up)
