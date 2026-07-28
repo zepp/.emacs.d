@@ -40,6 +40,8 @@
        use-package-hook-name-suffix nil)
 (require 'package)
 (setq use-package-compute-statistics t)
+(when (string= system-type "windows-nt")
+  (setq package-gnupghome-dir nil))
 (add-to-list
  'package-archives
  '("melpa" . "https://stable.melpa.org/packages/")
