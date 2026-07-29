@@ -258,6 +258,10 @@ NO-HISTORY is non-nil."
 
 ;;-------------------------------------------------------------------------------
 
+;; to avoid errors in `pavel/compile-buf-name-advice'
+(autoload 'truncate-string-ellipsis "mule-util"
+  "Return the string used to indicate truncation.")
+
 (defun pavel/compile-buf-name-advice (orig &rest args)
   "it advices `compile' to prettify name of a compilation buffer and
 make it more informative"
