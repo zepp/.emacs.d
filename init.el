@@ -266,24 +266,16 @@ NO-HISTORY is non-nil."
 
 ;;-------------------------------------------------------------------------------
 
-;; to avoid errors in `pavel/compile-buf-name-advice'
-(autoload 'truncate-string-ellipsis "mule-util"
-  "Return the string used to indicate truncation.")
-
 (defun pavel/compile-buf-name-advice (orig &rest args)
   "it advices `compile' to prettify name of a compilation buffer and
 make it more informative"
 
   ;; let's take command string into account
   (let* ((command (string-trim (nth 0 args)))
-         (chopped (string-trim-right
-                   (string-limit command 24)))
-         (ellipsis (if (string= command chopped)
-                       ""
-                     (truncate-string-ellipsis)))
+         (truncated (truncate-string-to-width command 25 nil nil t))
          (compilation-buffer-name-function
           #'(lambda (mode)
-              (format "*%s: %s%s*" mode chopped ellipsis))))
+              (format "*%s: %s*" mode truncated))))
     (apply orig args)))
 
 (use-package compile
