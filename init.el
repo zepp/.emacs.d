@@ -1,6 +1,7 @@
 ;; -*- lexical-binding: t; -*-
 
 (setq
+ use-short-answers t
  calendar-week-start-day 1
  default-input-method 'russian-computer
  save-interprogram-paste-before-kill t

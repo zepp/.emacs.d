@@ -19,14 +19,9 @@
                ("M-*" . dired-mark-files-regexp)))
 
   :init
-  (setq dired-deletion-confirmer #'y-or-n-p
-        ;; -l is mandatory
-        ;; -G omit the group name
-        ;; -h human-readable size
-        dired-listing-switches
-        (if (string= system-type "darwin")
-            "-aloh"
-          "-alGh"))
+  ;; -l is mandatory
+  ;; -o is like -l, but do not list group information
+  (setq dired-listing-switches "-aoh")
 
   :config
   (cond
