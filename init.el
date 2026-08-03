@@ -199,8 +199,16 @@ NO-HISTORY is non-nil."
     (comint-mode-hook . completion-preview-mode)
     (eshell-mode-hook . completion-preview-mode)
     (text-mode-hook . completion-preview-mode)
+    (prog-mode-hook . completion-preview-mode)
 
     :demand t))
+
+(use-package cape
+  :hook
+  (completion-at-point-functions . cape-keyword)
+  (completion-at-point-functions . cape-dabbrev)
+  (completion-at-point-functions . cape-file)
+  :ensure t)
 
 ;; alternative completion that uses minibuffer
 (use-package ido

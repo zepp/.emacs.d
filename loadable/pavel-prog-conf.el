@@ -11,10 +11,15 @@
                (mode . prog-mode)
                (inhibit-switch-frame . t)))
 
+(defun pavel/preserve-case ()
+  (setq-local case-fold-search nil
+              case-replace t))
+
 (use-package prog-mode
   :bind (:map prog-mode-map
               ("C-c C-q" . fill-paragraph))
   :hook
+  (prog-mode-hook . pavel/preserve-case)
   (prog-mode-hook . visual-line-mode)
   (prog-mode-hook . whitespace-mode)
   (prog-mode-hook . auto-revert-mode))
@@ -32,13 +37,8 @@
 (use-package typescript-mode
   :ensure t)
 
-(use-package company
-  :after prog-mode
-  :bind ((:map company-mode-map
-               ("C-M-i" . company-complete))
-         (:map company-active-map
-               ("M-i" . company-complete-selection)))
-  :hook (prog-mode-hook . company-mode)
+(use-package corfu
+  :hook (prog-mode-hook . corfu-mode)
   :ensure t)
 
 ;; required by projectile
