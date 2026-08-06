@@ -1,9 +1,9 @@
 ;; -*- lexical-binding: t; -*-
 
-(setq
+(setopt
  use-short-answers t
  calendar-week-start-day 1
- default-input-method 'russian-computer
+ default-input-method "russian-computer"
  save-interprogram-paste-before-kill t
  kill-do-not-save-duplicates t
  read-extended-command-predicate
@@ -37,12 +37,12 @@
   (loaddefs-generate dirs "pavel-autoloads.el")
   (require 'pavel-autoloads))
 
-(setq  use-package-always-defer t
-       use-package-hook-name-suffix nil)
 (require 'package)
-(setq use-package-compute-statistics t)
+(setopt  use-package-always-defer t
+         use-package-hook-name-suffix nil
+         use-package-compute-statistics t)
 (when (string= system-type "windows-nt")
-  (setq package-gnupghome-dir nil))
+  (setopt package-gnupghome-dir nil))
 (add-to-list
  'package-archives
  '("melpa" . "https://stable.melpa.org/packages/")
@@ -52,7 +52,7 @@
 ;;-------------------------------------------------------------------------------
 ;; UI related
 
-(setq
+(setopt
  inhibit-startup-screen t
  frame-title-format "%b"
  visible-bell t
@@ -89,13 +89,13 @@
               ("M-<right>" . tab-bar-move-tab))
 
   :config
-  (setq tab-bar-new-tab-choice "*scratch*")
+  (setopt tab-bar-new-tab-choice "*scratch*")
   (tab-bar-mode 1)
 
   :demand t)
 
 ;; buffer and window management
-(setq switch-to-buffer-obey-display-actions t)
+(setopt switch-to-buffer-obey-display-actions t)
 
 ;; some of this modes provide navigation capabilities
 (add-to-list 'display-buffer-alist
@@ -153,11 +153,11 @@ NO-HISTORY is non-nil."
 
 (use-package super-save
   :init
-  (setq
+  (setopt
    super-save-auto-save-when-idle t
    super-save-silent t)
   :config
-  (setq auto-save-default nil)
+  (setopt auto-save-default nil)
   (super-save-mode 1)
   (add-to-list 'super-save-predicates
                #'(lambda () (derived-mode-p 'prog-mode)))
@@ -166,22 +166,23 @@ NO-HISTORY is non-nil."
 
 (use-package uniquify
   :init
-  (setq uniquify-buffer-name-style 'forward
-      uniquify-ignore-buffers-re "^\\*"))
+  (setopt uniquify-buffer-name-style 'forward
+          uniquify-ignore-buffers-re "^\\*"))
 
 ;; basic completion that popups bottom window
-(setq completion-styles '(basic substring)
-      ;; help message in *Completions* buffer.
-      completion-show-help nil
-      completion-auto-select 'second-tab
-      ;; option to control a completion window visibility
-      completion-auto-help 'visible
-      completion-ignore-case t
-      ;; `veritcal' is interesting alternative option but next/prev commands do
-      ;; not respect direction, also `vertical' does not match perfectlry with
-      ;; `completions-detailed'
-      completions-format 'one-column
-      completions-max-height 10)
+(setopt
+ completion-styles '(basic substring)
+ ;; help message in *Completions* buffer.
+ completion-show-help nil
+ completion-auto-select 'second-tab
+ ;; option to control a completion window visibility
+ completion-auto-help 'visible
+ completion-ignore-case t
+ ;; `veritcal' is interesting alternative option but next/prev commands do
+ ;; not respect direction, also `vertical' does not match perfectlry with
+ ;; `completions-detailed'
+ completions-format 'one-column
+ completions-max-height 10)
 
 ;; similar to isearch
 (define-key completion-list-mode-map (kbd "M-e") #'switch-to-minibuffer)
@@ -214,10 +215,10 @@ NO-HISTORY is non-nil."
 ;; alternative completion that uses minibuffer
 (use-package ido
   :init
-  (setq ido-enable-flex-matching t
-        ido-cannot-complete-command 'ido-next-match)
+  (setopt ido-enable-flex-matching t)
 
   :config
+  (setopt ido-cannot-complete-command #'ido-next-match)
   (dolist (buf '("\\*Quail Completions\\*"
                  "\\*Completions\\*"
                  "\\*Buffer List\\*"))
@@ -231,7 +232,7 @@ NO-HISTORY is non-nil."
   :bind (:map ctl-x-map ("C-b" . ibuffer-other-window)))
 
 (use-package which-key
-  :init (setq which-key-idle-delay 2.0)
+  :init (setopt which-key-idle-delay 2.0)
   :config (which-key-mode 1)
   :demand t
   :ensure t)
@@ -244,9 +245,10 @@ NO-HISTORY is non-nil."
         ;; remapped to be handy and mnemonic
         ("s" . isearch-forward-symbol-at-point))
   :init
-  (setq isearch-allow-motion t
-        isearch-motion-changes-direction t
-        isearch-lazy-count t)
+  (setopt
+   isearch-allow-motion t
+   isearch-motion-changes-direction t
+   isearch-lazy-count t)
 
   :demand t)
 
@@ -346,13 +348,14 @@ make it more informative"
                                     (getenv "HOMEPATH")))))
     (setenv "DICPATH" root)
     (setenv "DICTIONARY" "en_US")
-    (setq ispell-hunspell-dict-paths-alist (pavel/list-dicts root))))
+    (setopt ispell-hunspell-dict-paths-alist (pavel/list-dicts root))))
 
  ((string= system-type "darwin")
-  (setq mac-command-modifier 'meta
-        mac-option-modifier 'alt
-        browse-url-browser-function 'browse-url-default-macosx-browser
-        visible-bell nil)
+  (setopt
+   mac-command-modifier 'meta
+   mac-option-modifier 'alt
+   browse-url-browser-function 'browse-url-default-macosx-browser
+   visible-bell nil)
   (when (eq window-system 'ns)
     (use-package exec-path-from-shell
       :config
