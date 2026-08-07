@@ -340,15 +340,7 @@ make it more informative"
               (choco-bin (expand-file-name "bin/" choco-install))
               (p (file-exists-p choco-bin)))
     (push choco-bin exec-path)
-    (setenv "PATH" (concat  (convert-standard-filename choco-bin) ";" path)))
-
-  ;; make `hunspell' work
-  (let ((root (expand-file-name ".dicts"
-                                (or (getenv "HOME")
-                                    (getenv "HOMEPATH")))))
-    (setenv "DICPATH" root)
-    (setenv "DICTIONARY" "en_US")
-    (setopt ispell-hunspell-dict-paths-alist (pavel/list-dicts root))))
+    (setenv "PATH" (concat  (convert-standard-filename choco-bin) ";" path))))
 
  ((string= system-type "darwin")
   (setopt

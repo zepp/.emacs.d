@@ -2,10 +2,11 @@
 
 (use-package whitespace
   :init
-  (setq whitespace-style '(face
-                           trailing
-                           space-after-tab
-                           space-before-tab)))
+  (setopt
+   whitespace-style '(face
+                      trailing
+                      space-after-tab
+                      space-before-tab)))
 
 ;;;###autoload
 (defun pavel/ws-long-lines ()
@@ -19,22 +20,31 @@
 
   :ensure t)
 
-(use-package ispell
-  :init
-  (setq ispell-program-name "hunspell"
-        ispell-dictionary "ru_RU,en_US"
-        ispell-personal-dictionary "~/.hunspell_personal")
-
-  :config
-  (ispell-set-spellchecker-params)
-  (ispell-hunspell-add-multi-dic "ru_RU,en_US")
-  (pavel/touch-file ispell-personal-dictionary))
-
 (defun pavel/touch-file (path)
   (unless (file-exists-p path)
     ;; If START is a string, then output that string to the file instead of any
     ;; buffer contents. END is ignored.
     (write-region "" nil path nil 0)))
+
+(use-package ispell
+  :init
+  (when (string= system-type "windows-nt")
+    ;; make `hunspell' work
+    (let ((root (expand-file-name ".dicts"
+                                  (or (getenv "HOME")
+                                      (getenv "HOMEPATH")))))
+      (setenv "DICPATH" root)
+      (setenv "DICTIONARY" "en_US")
+      (setopt ispell-hunspell-dict-paths-alist (pavel/list-dicts root))))
+  (setopt
+   ispell-program-name "hunspell"
+   ispell-dictionary "ru_RU,en_US"
+   ispell-personal-dictionary "~/.hunspell_personal")
+
+  :config
+  (ispell-set-spellchecker-params)
+  (ispell-hunspell-add-multi-dic "ru_RU,en_US")
+  (pavel/touch-file ispell-personal-dictionary))
 
 (use-package text-mode
   :bind (:map text-mode-map
