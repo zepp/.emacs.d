@@ -19,14 +19,15 @@
                ("r" . org-agenda-refile)
                ("C-c C-p" . org-agenda-set-property)))
   :init
-  (setq
+  (setopt
    org-agenda-window-setup 'current-window
    org-agenda-start-on-weekday nil
    org-agenda-start-day "-1d"
    org-agenda-remove-tags t
-   org-agenda-use-time-grid nil
-   org-agenda-bulk-custom-functions
-   '((?a org-agenda-archive-default))))
+   org-agenda-use-time-grid nil)
+  :config
+  (push '(?a . org-agenda-archive-default)
+        org-agenda-bulk-custom-functions))
 
 (use-package org-capture
   :bind (("C-x C-n" . org-capture)
@@ -69,7 +70,7 @@
                ("C-c C-x C-r" . org-reveal)))
 
   :init
-  (setq
+  (setopt
    org-hide-emphasis-markers t
    org-tags-column 0
    org-log-into-drawer t
@@ -139,7 +140,7 @@
 (use-package ox-html
   :after org
   :init
-  (setq
+  (setopt
    ;; highlight.js to be used
    org-html-htmlize-output-type nil
    org-html-self-link-headlines t
@@ -165,7 +166,7 @@
 default and archive files path relative to one."
   (interactive "D")
 
-  (setq
+  (setopt
    org-directory directory
    org-agenda-files (if dirs (cons directory dirs) (list directory))
    org-default-notes-file (expand-file-name "default.org" directory)
