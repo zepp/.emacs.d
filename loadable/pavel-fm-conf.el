@@ -21,7 +21,7 @@
   :init
   ;; -l is mandatory
   ;; -o is like -l, but do not list group information
-  (setq dired-listing-switches "-aoh")
+  (setopt dired-listing-switches "-aoh")
 
   :config
   (cond
@@ -109,14 +109,9 @@ an existing one"
 
 (use-package grep
   :config
-  (setq grep-find-ignored-directories
-        (append grep-find-ignored-directories
-                '("node_modules"
-                  ".angular"
-                  ".nx"
-                  ".vscode"))
-        grep-find-ignored-files
-        (append grep-find-ignored-files
-                '("chunk-*.js*"))))
+  (let ((dirs '("node_modules" ".angular" ".nx" ".vscode")))
+    (setopt grep-find-ignored-directories
+            (append grep-find-ignored-directories dirs)))
+  (push "chunk-*.js*" grep-find-ignored-files))
 
 (provide 'pavel-fm-conf)
