@@ -20,6 +20,12 @@
 
   :ensure t)
 
+(defun pavel/touch-file (path)
+  (unless (file-exists-p path)
+    ;; If START is a string, then output that string to the file instead of any
+    ;; buffer contents. END is ignored.
+    (write-region "" nil path nil 0)))
+
 (use-package ispell
   :init
   (setopt
@@ -31,12 +37,6 @@
   (ispell-set-spellchecker-params)
   (ispell-hunspell-add-multi-dic "ru_RU,en_US")
   (pavel/touch-file ispell-personal-dictionary))
-
-(defun pavel/touch-file (path)
-  (unless (file-exists-p path)
-    ;; If START is a string, then output that string to the file instead of any
-    ;; buffer contents. END is ignored.
-    (write-region "" nil path nil 0)))
 
 (use-package text-mode
   :bind (:map text-mode-map
