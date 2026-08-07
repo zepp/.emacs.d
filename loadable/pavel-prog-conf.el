@@ -108,8 +108,9 @@ display a buffer."
 
 (use-package ediff
   :init
-  (setq ediff-window-setup-function 'ediff-setup-windows-plain
-        ediff-split-window-function 'split-window-horizontally))
+  (setopt
+   ediff-window-setup-function 'ediff-setup-windows-plain
+   ediff-split-window-function 'split-window-horizontally))
 
 (use-package smerge-mode
   :bind (:map smerge-mode-map
@@ -135,7 +136,7 @@ display a buffer."
                ("C-M-b" . magit-section-backward-sibling)))
 
   :init
-  (setq
+  (setopt
    magit-define-global-key-bindings nil
    magit-display-buffer-function
    'magit-display-buffer-fullframe-status-v1)
