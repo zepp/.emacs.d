@@ -2,10 +2,11 @@
 
 (use-package whitespace
   :init
-  (setq whitespace-style '(face
-                           trailing
-                           space-after-tab
-                           space-before-tab)))
+  (setopt
+   whitespace-style '(face
+                      trailing
+                      space-after-tab
+                      space-before-tab)))
 
 ;;;###autoload
 (defun pavel/ws-long-lines ()
@@ -21,9 +22,10 @@
 
 (use-package ispell
   :init
-  (setq ispell-program-name "hunspell"
-        ispell-dictionary "ru_RU,en_US"
-        ispell-personal-dictionary "~/.hunspell_personal")
+  (setopt
+   ispell-program-name "hunspell"
+   ispell-dictionary "ru_RU,en_US"
+   ispell-personal-dictionary "~/.hunspell_personal")
 
   :config
   (ispell-set-spellchecker-params)
