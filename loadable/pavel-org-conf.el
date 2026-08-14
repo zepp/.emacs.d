@@ -82,7 +82,7 @@
    org-id-uuid-program
    (cond ((string= system-type "gnu/linux")
           "uuidgen | awk '{print toupper($0)}'")
-         ((string= system-type "windows-nt") "guidgen /u")
+         ((sys-windows-p) "guidgen /u")
          (t "uuidgen"))
 
    org-export-with-date nil

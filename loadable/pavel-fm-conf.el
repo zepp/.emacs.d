@@ -43,7 +43,7 @@
 
 (advice-add 'async-shell-command :around #'pavel/command-buf-name-advice)
 
-(if (pavel/emacs-29-p)
+(if (emacs-version-29-p)
     (use-package shell
       :bind (:map shell-mode-map
                 ;; similar to compilation mode

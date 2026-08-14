@@ -23,10 +23,11 @@
 ;;-------------------------------------------------------------------------------
 ;; package management
 
-(defun pavel/emacs-29-p ()
-  "Predicate to check Emacs version"
+(defmacro emacs-version-29-p ()
+  '(string-match "29\\.[0-9]+" emacs-version))
 
-  (string-match "29\\.[0-9]+" emacs-version))
+(defmacro sys-windows-p ()
+  '(string= system-type "windows-nt"))
 
 (let* ((default-directory
         (expand-file-name "loadable/"
@@ -41,7 +42,7 @@
 (setopt  use-package-always-defer t
          use-package-hook-name-suffix nil
          use-package-compute-statistics t)
-(when (string= system-type "windows-nt")
+(when (sys-windows-p)
   (setopt package-gnupghome-dir nil))
 (add-to-list
  'package-archives
@@ -108,7 +109,7 @@
                (side . bottom)
                (window-min-height . 0.25)))
 
-(when (pavel/emacs-29-p)
+(when (emacs-version-29-p)
   (define-key ctl-x-map (kbd "w d") #'pavel/toggle-window-dedicated))
 (define-key ctl-x-map (kbd "q") #'quit-window)
 (define-key ctl-x-map (kbd "M-b") #'switch-to-buffer-other-window)
@@ -187,7 +188,7 @@ NO-HISTORY is non-nil."
 ;; similar to isearch
 (define-key completion-list-mode-map (kbd "M-e") #'switch-to-minibuffer)
 
-(unless (pavel/emacs-29-p)
+(unless (emacs-version-29-p)
   (use-package completion-preview
     :bind (:map completion-preview-active-mode-map
                 ("M-p" . completion-preview-prev-candidate)
@@ -321,7 +322,7 @@ make it more informative"
 
 (cond
 
- ((string= system-type "windows-nt")
+ ((sys-windows-p)
   ;; it looks ugly
   (menu-bar-mode -1)
 
