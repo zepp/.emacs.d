@@ -109,7 +109,8 @@
                (side . bottom)
                (window-min-height . 0.25)))
 
-(when (emacs-version-29-p)
+;; introduced in Emacs 30.X
+(unless (fboundp 'toggle-window-dedicated)
   (define-key ctl-x-map (kbd "w d") #'pavel/toggle-window-dedicated))
 (define-key ctl-x-map (kbd "q") #'quit-window)
 (define-key ctl-x-map (kbd "M-b") #'switch-to-buffer-other-window)
@@ -188,7 +189,8 @@ NO-HISTORY is non-nil."
 ;; similar to isearch
 (define-key completion-list-mode-map (kbd "M-e") #'switch-to-minibuffer)
 
-(unless (emacs-version-29-p)
+;; introduced in Emacs 30.X
+(when (featurep 'completion-preview)
   (use-package completion-preview
     :bind (:map completion-preview-active-mode-map
                 ("M-p" . completion-preview-prev-candidate)
