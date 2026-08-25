@@ -114,4 +114,9 @@ an existing one"
             (append grep-find-ignored-directories dirs)))
   (push "chunk-*.js*" grep-find-ignored-files))
 
+(use-package powershell
+  ;; reserved to select other window
+  :bind (:map powershell-mode-map ("M-`"))
+  :ensure t)
+
 (provide 'pavel-fm-conf)
