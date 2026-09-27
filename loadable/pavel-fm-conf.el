@@ -43,20 +43,13 @@
 
 (advice-add 'async-shell-command :around #'pavel/command-buf-name-advice)
 
-(if (emacs-version-29-p)
-    (use-package shell
-      :bind (:map shell-mode-map
-                ;; similar to compilation mode
-                ("C-c C-k" . pavel/kill-process))
-      :hook
-      (shell-mode-hook . shell-dirtrack-mode))
-  (use-package shell
+(use-package shell
     :bind (:map shell-command-mode-map
                 ;; similar to compilation mode
                 ("C-c C-k" . pavel/kill-process))
     :hook
     (shell-mode-hook . shell-dirtrack-mode)
-    (shell-command-mode-hook . read-only-mode)))
+    (shell-command-mode-hook . read-only-mode))
 
 (defun pavel/eshell-buf-name (&optional directory)
   "it forms a name of `eshell' buffer that includes name of

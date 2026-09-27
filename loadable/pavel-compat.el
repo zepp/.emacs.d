@@ -13,15 +13,4 @@
              nil
              "[[:lower:]]\\{2\\}_[[:upper:]]\\{2\\}\\.dic"))))
 
-;;;###autoload
-(defun pavel/toggle-window-dedicated (arg)
-  "Toggles window dedication in the selected window."
-
-  (interactive "P")
-
-  (let* ((window (selected-window))
-         (flag (if arg (/= arg 0) (not (window-dedicated-p window)))))
-    (set-window-dedicated-p window flag)
-    (message "set window dedicated - %s" flag)))
-
 (provide 'pavel-compat)

@@ -23,8 +23,8 @@
 ;;-------------------------------------------------------------------------------
 ;; package management
 
-(defmacro emacs-version-29-p ()
-  '(string-match "29\\.[0-9]+" emacs-version))
+(defmacro emacs-version-30-p ()
+  '(string-match "30\\.[0-9]+" emacs-version))
 
 (defmacro sys-windows-p ()
   '(string= system-type "windows-nt"))
@@ -109,8 +109,6 @@
                (side . bottom)
                (window-min-height . 0.25)))
 
-(when (emacs-version-29-p)
-  (define-key ctl-x-map (kbd "w d") #'pavel/toggle-window-dedicated))
 (define-key ctl-x-map (kbd "q") #'quit-window)
 (define-key ctl-x-map (kbd "M-b") #'switch-to-buffer-other-window)
 (define-key ctl-x-map (kbd "M-f") #'find-file-other-window)
@@ -188,8 +186,7 @@ NO-HISTORY is non-nil."
 ;; similar to isearch
 (define-key completion-list-mode-map (kbd "M-e") #'switch-to-minibuffer)
 
-(unless (emacs-version-29-p)
-  (use-package completion-preview
+(use-package completion-preview
     :bind (:map completion-preview-active-mode-map
                 ("M-p" . completion-preview-prev-candidate)
                 ("M-n" . completion-preview-next-candidate)
@@ -204,7 +201,7 @@ NO-HISTORY is non-nil."
     (text-mode-hook . completion-preview-mode)
     (prog-mode-hook . completion-preview-mode)
 
-    :demand t))
+    :demand t)
 
 (use-package cape
   :hook

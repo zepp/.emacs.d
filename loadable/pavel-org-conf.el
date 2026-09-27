@@ -76,7 +76,7 @@
    org-log-into-drawer t
    org-log-done 'time
    org-fold-catch-invisible-edits 'show-and-error
-   org-time-stamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
+   org-timestamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
    org-goto-auto-isearch nil
    org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
    org-id-uuid-program

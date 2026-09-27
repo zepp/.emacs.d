@@ -60,7 +60,7 @@
 usefull for text editing"
 
   ;; pseudo-text modes are excluded
-  (unless (derived-mode-p 'html-mode 'nxml-mode)
+  (unless (derived-mode-p '(html-mode nxml-mode))
     (flyspell-mode 1)
     (abbrev-mode 1)
     (typography-mode 1)
