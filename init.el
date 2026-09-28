@@ -23,20 +23,20 @@
 ;;-------------------------------------------------------------------------------
 ;; package management
 
-(defmacro emacs-version-30-p ()
-  '(string-match "30\\.[0-9]+" emacs-version))
+(defun emacs-version-30-p ()
+  (string-match "30\\.[0-9]+" emacs-version))
 
-(defmacro sys-windows-p ()
-  '(string= system-type "windows-nt"))
+(defun sys-windows-p ()
+  (string= system-type "windows-nt"))
 
-(let* ((default-directory
-        (expand-file-name "loadable/"
-                          user-emacs-directory))
-       (paths (delete ".." (directory-files default-directory)))
-       (dirs (mapcar #'expand-file-name (seq-filter #'file-directory-p paths))))
-  (normal-top-level-add-to-load-path dirs)
-  (loaddefs-generate dirs "pavel-autoloads.el")
-  (require 'pavel-autoloads))
+(when (emacs-version-30-p)
+  (let* ((default-directory
+          (expand-file-name "user-lisp/" user-emacs-directory))
+         (paths (delete ".." (directory-files default-directory)))
+         (dirs (mapcar #'expand-file-name (seq-filter #'file-directory-p paths))))
+    (normal-top-level-add-to-load-path dirs)
+    (loaddefs-generate dirs ".user-lisp-autoloads.el"))
+  (require '.user-lisp-autoloads))
 
 (require 'package)
 (setopt  use-package-always-defer t

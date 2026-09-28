@@ -1,6 +1,7 @@
 /*~
-/loadable/*~
-/loadable/*-autoloads.el
+/user-lisp/*~
+/user-lisp/*-autoloads.el
+/user-lisp/*.elc
 /elpa/
 /eln-cache/
 /.cache/
