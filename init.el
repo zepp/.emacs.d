@@ -250,11 +250,6 @@ NO-HISTORY is non-nil."
 
   :demand t)
 
-(use-package search-scope-mode
-  :hook
-  (find-file-hook . search-scope-on-file-found)
-  :demand t)
-
 ;;-------------------------------------------------------------------------------
 
 ;; disable tab indentation globally

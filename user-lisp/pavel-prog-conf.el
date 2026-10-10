@@ -43,14 +43,6 @@
 
 ;; required by projectile
 (use-package ag
-  ;; used by `search-scope-compose-ag-args'
-  :autoload (ag/search)
-
-  :init
-  (search-scope-register-symbolic-engine
-   #'ag/search
-   #'search-scope-compose-ag-args)
-
   :ensure t)
 
 ;;;###autoload
@@ -89,7 +81,6 @@ display a buffer."
   (push ".angular" projectile-globally-ignored-directories)
   (push ".husky" projectile-globally-ignored-directories)
   (push ".nx" projectile-globally-ignored-directories)
-  (push #'search-scope-index-projectile-files search-scope-indexers)
   (when (sys-windows-p)
     (add-to-list 'display-buffer-alist
                  '("\\*projectile-files-errors\\*"

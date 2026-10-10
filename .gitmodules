@@ -1,6 +1,3 @@
-[submodule "search-scope"]
-	path = user-lisp/search-scope-mode
-	url = https://github.com/zepp/search-scope-mode.git
 [submodule "garbage-buffer-collector"]
 	path = user-lisp/garbage-buffer-collector
 	url = https://github.com/zepp/garbage-buffer-collector.git
