@@ -141,14 +141,11 @@ NO-HISTORY is non-nil."
       (message "%i buries are buried" (length backlog)))))
 (define-key ctl-x-map (kbd "k") #'pavel/kill-window)
 
-(use-package garbage-buffer-collector
+(use-package midnight
   :config
-  (garbage-buffer-collector-init)
-  :hook
-  (org-mode-hook . persistent-buffer-mode)
-  (org-agenda-mode-hook . persistent-buffer-mode)
-  (magit-status-mode-hook . persistent-buffer-mode)
-  :demand t)
+  (midnight-mode 1)
+  (push "\\.org\\'" clean-buffer-list-kill-never-regexps)
+  (push "\\`\\*Org" clean-buffer-list-kill-never-regexps))
 
 (use-package super-save
   :init

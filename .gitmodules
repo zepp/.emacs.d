@@ -1,3 +1,0 @@
-[submodule "garbage-buffer-collector"]
-	path = user-lisp/garbage-buffer-collector
-	url = https://github.com/zepp/garbage-buffer-collector.git
