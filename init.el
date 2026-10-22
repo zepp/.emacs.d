@@ -61,8 +61,10 @@
 
 (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
 
-(tool-bar-mode -1)
-(toggle-scroll-bar -1)
+;; to handle case when Emacs is launched as daemon on a guest VM
+(when (display-graphic-p)
+  (tool-bar-mode -1)
+  (toggle-scroll-bar -1))
 (column-number-mode 1)
 
 (use-package windmove
