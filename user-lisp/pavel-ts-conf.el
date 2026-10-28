@@ -55,4 +55,7 @@
   :bind (:map json-ts-mode-map
               ("C-c C-p" . json-pretty-print)))
 
+(unless (car (treesit-language-available-p 'elisp t))
+  (error "Tree-sitter grammar ABI is not compatible"))
+
 (provide 'pavel-ts-conf)
