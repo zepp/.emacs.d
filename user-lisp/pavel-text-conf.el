@@ -59,12 +59,17 @@
   "checks current buffer major mode then enables additional minor modes
 usefull for text editing"
 
-  ;; pseudo-text modes are excluded
+  (abbrev-mode 1)
+  (visual-line-fill-column-mode 1)
+
+  ;; pseudo text modes are excluded
   (unless (derived-mode-p '(html-mode nxml-mode))
     (flyspell-mode 1)
-    (abbrev-mode 1)
-    (typography-mode 1)
-    (visual-line-fill-column-mode 1)))
+    (typography-mode 1))
+
+  ;; to avoid a confilict with `org-indent-mode'
+  (unless (eq major-mode 'org-mode)
+    (visual-wrap-prefix-mode 1)))
 
 (use-package markdown-mode
   :bind (:map markdown-mode-map
