@@ -139,4 +139,13 @@
   :demand t
   :ensure t)
 
+;;-------------------------------------------------------------------------------
+;; Docker, CI/CD and etc
+
+(use-package yaml-mode
+  :ensure t)
+
+(use-package dockerfile-mode
+  :ensure t)
+
 (provide 'pavel-prog-conf)
