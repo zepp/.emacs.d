@@ -59,6 +59,7 @@
                ("F" . projectile-find-file-dwim)))
   :init
   (setf
+   projectile-indexing-method 'hybrid
    projectile-mode-line-prefix " "
    projectile-completion-system 'default)
   (projectile-mode 1)
