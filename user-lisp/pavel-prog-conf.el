@@ -45,18 +45,6 @@
 (use-package ag
   :ensure t)
 
-;;;###autoload
-(defun pavel/projectile-commander-other-tab ()
-  "Starts projectile commander and overrides a default action to
-display a buffer."
-  (interactive)
-
-  ;; `projectile-completion-system' is overridden since default completion
-  ;; utilizes a bottom window.
-  (let ((projectile-completion-system 'ido)
-        (display-buffer-overriding-action '(display-buffer-in-new-tab)))
-    (projectile-commander)))
-
 (defun pavel/projectile-eshell ()
   "Starts `eshell' in a project's root directory."
   (interactive)
@@ -65,9 +53,7 @@ display a buffer."
 
 (use-package projectile
   :bind-keymap ("C-x p" . projectile-command-map)
-  :bind ((:map tab-prefix-map
-               ("p" . pavel/projectile-commander-other-tab))
-         (:map projectile-command-map
+  :bind ((:map projectile-command-map
                ("$" . pavel/projectile-eshell)
                ("g" . projectile-ag)
                ("F" . projectile-find-file-dwim)))
