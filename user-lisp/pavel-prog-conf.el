@@ -60,19 +60,14 @@
   :init
   (setf
    projectile-indexing-method 'hybrid
+   projectile-git-use-fd t
    projectile-mode-line-prefix " "
    projectile-completion-system 'default)
   (projectile-mode 1)
   :config
-  (push "node_modules" projectile-globally-ignored-directories)
   (push ".angular" projectile-globally-ignored-directories)
   (push ".husky" projectile-globally-ignored-directories)
   (push ".nx" projectile-globally-ignored-directories)
-  (when (sys-windows-p)
-    (add-to-list 'display-buffer-alist
-                 '("\\*projectile-files-errors\\*"
-                   display-buffer-no-window
-                   (allow-no-window . t))))
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
