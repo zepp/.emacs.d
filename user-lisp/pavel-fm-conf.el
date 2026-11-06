@@ -58,7 +58,7 @@ editing. Format is simillar to `project-eshell'."
 
   (let* ((dir (abbreviate-file-name (or directory default-directory)))
          (dir-name (file-name-nondirectory (directory-file-name dir)))
-         (remote-host (file-remote-p directory 'host)))
+         (remote-host (file-remote-p dir 'host)))
     (cond
      ((and dir-name remote-host)
       (format "*%s:%s-eshell*" remote-host dir-name))
