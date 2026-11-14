@@ -41,7 +41,7 @@
   :hook (prog-mode-hook . corfu-mode)
   :ensure t)
 
-;; required by projectile
+;; obsolete but required by Projectile to be used as a backend
 (use-package ag
   :ensure t)
 
@@ -82,8 +82,7 @@
 (use-package ediff
   :init
   (setopt
-   ediff-window-setup-function 'ediff-setup-windows-plain
-   ediff-split-window-function 'split-window-horizontally))
+   ediff-window-setup-function 'ediff-setup-windows-plain))
 
 (use-package smerge-mode
   :bind (:map smerge-mode-map

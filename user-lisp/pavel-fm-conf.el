@@ -100,12 +100,10 @@ an existing one"
   :hook
   (eshell-directory-change-hook . pavel/rename-eshell-buf))
 
-(use-package grep
-  :config
-  (let ((dirs '("node_modules" ".angular" ".nx" ".vscode")))
-    (setopt grep-find-ignored-directories
-            (append grep-find-ignored-directories dirs)))
-  (push "chunk-*.js*" grep-find-ignored-files))
+(use-package urgrep
+  :bind (:map search-map
+              ("g" . urgrep))
+  :ensure t)
 
 (use-package powershell
   ;; reserved to select other window
