@@ -143,6 +143,16 @@ NO-HISTORY is non-nil."
       (message "%i buries are buried" (length backlog)))))
 (define-key ctl-x-map (kbd "k") #'pavel/kill-window)
 
+(use-package transient
+  :config
+  ;; everything is displayed in a single bottom window
+  (setopt
+   transient-display-buffer-action
+   '(display-buffer-at-bottom (dedicated . t) (inhibit-same-window . t))
+   transient-show-during-minibuffer-read t)
+  :demand t
+  :ensure t)
+
 (defun is-buffer-protected-from-killing (buffer)
   (with-current-buffer buffer
     (or (derived-mode-p 'org-mode)
