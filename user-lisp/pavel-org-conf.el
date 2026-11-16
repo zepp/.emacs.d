@@ -78,6 +78,10 @@
    org-fold-catch-invisible-edits 'show-and-error
    org-timestamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
    org-goto-auto-isearch nil
+   org-refile-use-outline-path 'file
+   ;; file and headline are combined
+   org-outline-path-complete-in-steps nil
+   org-refile-cache t
    org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
    org-id-uuid-program
    (cond ((string= system-type "gnu/linux")
