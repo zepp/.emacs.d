@@ -267,6 +267,13 @@ NO-HISTORY is non-nil."
   :demand t)
 
 ;;-------------------------------------------------------------------------------
+;; security
+
+(use-package epg-config
+  :config
+  (setopt epg-pinentry-mode 'loopback))
+
+;;-------------------------------------------------------------------------------
 
 ;; disable tab indentation globally
 (setq-default indent-tabs-mode nil)
