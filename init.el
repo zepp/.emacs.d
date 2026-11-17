@@ -166,19 +166,6 @@ NO-HISTORY is non-nil."
         clean-buffer-list-kill-never-regexps)
   :demand t)
 
-(use-package super-save
-  :init
-  (setopt
-   super-save-auto-save-when-idle t
-   super-save-silent t)
-  :config
-  (setopt auto-save-default nil)
-  (super-save-mode 1)
-  (add-to-list 'super-save-predicates
-               #'(lambda () (derived-mode-p 'prog-mode)))
-  :ensure t
-  :demand t)
-
 (use-package uniquify
   :init
   (setopt uniquify-buffer-name-style 'forward

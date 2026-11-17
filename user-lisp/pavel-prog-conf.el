@@ -11,6 +11,19 @@
                (mode . prog-mode)
                (inhibit-switch-frame . t)))
 
+(defun user/is-prog-mode-p ()
+  (derived-mode-p '(prog-mode sgml-mode nxml-mode)))
+
+(use-package super-save
+  :config
+  (setopt auto-save-default nil
+          super-save-auto-save-when-idle t
+          super-save-silent t)
+  (add-to-list 'super-save-predicates #'user/is-prog-mode-p)
+  (super-save-mode 1)
+  :ensure t
+  :demand t)
+
 (defun pavel/preserve-case ()
   (setq-local case-fold-search nil
               case-replace t))
