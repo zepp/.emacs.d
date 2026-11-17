@@ -64,6 +64,7 @@
    projectile-mode-line-prefix " "
    projectile-completion-system 'default)
   (projectile-mode 1)
+  (recentf-mode 1)
   :config
   (push ".angular" projectile-globally-ignored-directories)
   (push ".husky" projectile-globally-ignored-directories)
