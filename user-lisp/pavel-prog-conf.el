@@ -54,8 +54,7 @@
   :hook (prog-mode-hook . corfu-mode)
   :ensure t)
 
-;; obsolete but required by Projectile to be used as a backend
-(use-package ag
+(use-package rg
   :ensure t)
 
 (defun pavel/projectile-eshell ()
@@ -71,11 +70,12 @@
                ("g" . projectile-ag)
                ("F" . projectile-find-file-dwim)))
   :init
-  (setf
+  (setopt
    projectile-indexing-method 'hybrid
    projectile-git-use-fd t
    projectile-mode-line-prefix " "
-   projectile-completion-system 'default)
+   projectile-completion-system 'default
+   projectile-search-backend 'ripgrep)
   (projectile-mode 1)
   (recentf-mode 1)
   :config
