@@ -86,9 +86,9 @@
    org-refile-cache t
    org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
    org-id-uuid-program
-   (cond ((string= system-type "gnu/linux")
+   (cond ((user/sys-linux-p)
           "uuidgen | awk '{print toupper($0)}'")
-         ((sys-windows-p) "guidgen /u")
+         ((user/sys-win-p) "guidgen /u")
          (t "uuidgen"))
 
    org-export-with-date nil

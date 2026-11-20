@@ -1,8 +1,16 @@
 ;; various compatibility commands and functions -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun sys-windows-p ()
+(defun user/sys-win-p ()
   (string= system-type "windows-nt"))
+
+;;;###autoload
+(defun user/sys-linux-p ()
+  (string= system-type "gnu/linux"))
+
+;;;###autoload
+(defun user/sys-darwin-p ()
+  (string= system-type "darwin"))
 
 ;;;###autoload
 (defun pavel/list-dicts(directory)

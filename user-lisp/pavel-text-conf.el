@@ -31,7 +31,7 @@
 
 (use-package ispell
   :init
-  (when (sys-windows-p)
+  (when (user/sys-win-p)
     ;; make `hunspell' work
     (let ((root (expand-file-name ".dicts"
                                   (or (getenv "HOME")

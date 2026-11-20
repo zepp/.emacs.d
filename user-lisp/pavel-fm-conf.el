@@ -25,7 +25,7 @@
 
   :config
   (cond
-   ((string= system-type "gnu/linux")
+   ((user/sys-linux-p)
     (add-to-list 'dired-guess-shell-alist-user '("\\.pdf$" "xdg-open"))
     (add-to-list 'dired-guess-shell-alist-user '("\\.odt$" "xdg-open")))))
 

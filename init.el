@@ -39,7 +39,7 @@
 (setopt  use-package-always-defer t
          use-package-hook-name-suffix nil
          use-package-compute-statistics t)
-(when (sys-windows-p)
+(when (user/sys-win-p)
   (setopt package-gnupghome-dir nil))
 (add-to-list
  'package-archives
@@ -320,7 +320,7 @@ make it more informative"
 
 (cond
 
- ((sys-windows-p)
+ ((user/sys-win-p)
   ;; it looks ugly
   (menu-bar-mode -1)
 
@@ -341,7 +341,7 @@ make it more informative"
     (push choco-bin exec-path)
     (setenv "PATH" (concat  (convert-standard-filename choco-bin) ";" path))))
 
- ((string= system-type "darwin")
+ ((user/sys-darwin-p)
   (setopt
    mac-command-modifier 'meta
    mac-option-modifier 'alt
