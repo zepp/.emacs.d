@@ -1,5 +1,7 @@
 ;; file management and shells  -*- lexical-binding: t; -*-
 
+(require 'user-compat)
+
 (use-package dired
   :bind (("C-x C-d" . dired)
          ("C-x M-d" . dired-other-window)
