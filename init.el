@@ -23,19 +23,9 @@
 ;;-------------------------------------------------------------------------------
 ;; package management
 
-(defun emacs-version-30-p ()
-  (string-match "30\\.[0-9]+" emacs-version))
-
-(when (emacs-version-30-p)
-  (let* ((default-directory
-          (expand-file-name "user-lisp/" user-emacs-directory))
-         (paths (delete ".." (directory-files default-directory)))
-         (dirs (mapcar #'expand-file-name (seq-filter #'file-directory-p paths))))
-    (normal-top-level-add-to-load-path dirs)
-    (loaddefs-generate dirs ".user-lisp-autoloads.el"))
-  (require '.user-lisp-autoloads))
-
-(require 'user-compat)
+;; TODO replace by (require 'user-compat) after a migration to Emacs 31.x
+(require 'user-compat
+         (expand-file-name "user-lisp/user-compat" user-emacs-directory))
 
 (require 'package)
 (setopt  use-package-always-defer t
