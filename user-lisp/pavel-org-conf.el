@@ -43,17 +43,11 @@
                  (dedicated . t)
                  (window-min-width . 60))))
 
-(defun pavel/org-current-timestamp ()
-  "Inserts an inactive timestamp without prompt."
-  (interactive)
-  (org-timestamp '(16) 'inactive))
-
 (use-package org
   :bind (("C-x &" . org-store-link)
          (:map org-mode-map
                ("C-x C-n" . org-insert-heading-respect-content)
                ("C-c &") ;; org-mark-ring-goto
-               ("C-c M-." . pavel/org-current-timestamp)
                ("M-m" . org-emphasize)
                ("C-M-f" . org-forward-element)
                ("C-M-b" . org-backward-element)
@@ -79,23 +73,7 @@
    org-log-done 'time
    org-fold-catch-invisible-edits 'show-and-error
    org-timestamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
-   org-goto-auto-isearch nil
-   org-refile-use-outline-path 'file
-   ;; file and headline are combined
-   org-outline-path-complete-in-steps nil
-   org-refile-cache t
-   org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
-   org-id-uuid-program
-   (cond ((user/sys-linux-p)
-          "uuidgen | awk '{print toupper($0)}'")
-         ((user/sys-win-p) "guidgen /u")
-         (t "uuidgen"))
-
-   org-export-with-date nil
-   org-export-with-tags nil
-   org-export-with-toc nil
-   org-export-with-section-numbers nil
-   org-export-initial-scope 'subtree)
+   org-goto-auto-isearch nil)
 
   (add-to-list 'display-buffer-alist
                '((or
@@ -138,10 +116,37 @@
   (org-mode-hook . org-indent-mode)
   (org-mode-hook . org-toggle-time-stamp-overlays)
   (org-mode-hook . auto-revert-mode)
-  (org-mode-hook . flyspell-mode)
 
   :mode
   (("\\.org\\'" . org-mode)))
+
+(use-package org-id
+  :config
+  (setopt
+   org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
+   org-id-uuid-program
+   (cond ((user/sys-linux-p)
+          "uuidgen | awk '{print toupper($0)}'")
+         ((user/sys-win-p) "guidgen /u")
+         (t "uuidgen")))
+  :demand t)
+
+(use-package org-refile
+  :config
+  (setopt
+   org-refile-use-outline-path 'file
+   ;; file and headline are combined
+   org-outline-path-complete-in-steps nil
+   org-refile-cache t))
+
+(use-package ox
+  :config
+  (setopt
+   org-export-with-date nil
+   org-export-with-tags nil
+   org-export-with-toc nil
+   org-export-with-section-numbers nil
+   org-export-initial-scope 'subtree))
 
 (use-package ox-html
   :after org
