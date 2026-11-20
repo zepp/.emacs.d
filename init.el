@@ -45,7 +45,6 @@
  'package-archives
  '("melpa" . "https://stable.melpa.org/packages/")
  t)
-(package-initialize)
 
 ;;-------------------------------------------------------------------------------
 ;; UI related
