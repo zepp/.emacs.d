@@ -1,11 +1,11 @@
 ;;; typography-mode.el --- mode to insert various typographic characters -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2025 Pavel Sokolov
+;; Copyright (C) 2025-2026 Pavel Sokolov
 ;; All rights reserved.
 
-;; Author: Pavel Sokolov <pavel.zepp@gmail.com>
-;; Maintainer: Pavel Sokolov <pavel.zepp@gmail.com>
-;; Created: 2025
+;; Author: Pavel Sokolov <pavel@warp-link.ru>
+;; Maintainer: Pavel Sokolov <pavel@warp-link.ru>
+;; Created: 2025-2026
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -18,7 +18,6 @@ so on)"
   ;; The minor mode bindings.
   :keymap
   `((,(kbd "M-q") . typography-smart-quotes)
-    (,(kbd "\"") . typography-smart-quotes)
     (,(kbd "C-M--") . typography-smart-dash)))
 
 (defgroup typography nil
@@ -28,8 +27,8 @@ so on)"
 (defun typography-quotes (method primary secondary)
   "utility function to build `typography-quotation-marks-alist' entry"
 
-  `(,method . ,`((primary . ,primary)
-                 (secondary . ,secondary))))
+  `(,method . ((primary . ,primary)
+               (secondary . ,secondary))))
 
 (defcustom typography-quotation-marks-alist
   (list (typography-quotes 'english-computer
