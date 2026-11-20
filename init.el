@@ -26,9 +26,6 @@
 (defun emacs-version-30-p ()
   (string-match "30\\.[0-9]+" emacs-version))
 
-(defun sys-windows-p ()
-  (string= system-type "windows-nt"))
-
 (when (emacs-version-30-p)
   (let* ((default-directory
           (expand-file-name "user-lisp/" user-emacs-directory))

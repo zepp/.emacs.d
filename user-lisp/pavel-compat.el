@@ -1,6 +1,10 @@
 ;; various compatibility commands and functions -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(defun sys-windows-p ()
+  (string= system-type "windows-nt"))
+
+;;;###autoload
 (defun pavel/list-dicts(directory)
   "builds dictionary path alist for hunspell"
 

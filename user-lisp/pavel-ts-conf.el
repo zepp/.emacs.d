@@ -2,6 +2,8 @@
 
 ;;-------------------------------------------------------------------------------
 
+(require 'pavel-prog-conf)
+
 (use-package tree-sitter-langs
   :demand t
   :ensure t)

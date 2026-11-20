@@ -1,5 +1,8 @@
 ;; my configuration of text modes -*- lexical-binding: t; -*-
 
+(require 'pavel-compat)
+(require 'typography-mode)
+
 (use-package whitespace
   :init
   (setopt

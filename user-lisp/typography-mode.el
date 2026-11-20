@@ -21,7 +21,9 @@ so on)"
     (,(kbd "\"") . typography-smart-quotes)
     (,(kbd "C-M--") . typography-smart-dash)))
 
-(defgroup typography nil "Main group")
+(defgroup typography nil
+  "Main group"
+  :group 'extensions)
 
 (defun typography-quotes (method primary secondary)
   "utility function to build `typography-quotation-marks-alist' entry"
@@ -88,7 +90,7 @@ Description:
                     (cons im type))))
             typography-quotation-marks-alist))
 
-(defun typograpy-method-marks (&optional method)
+(defun typography-method-marks (&optional method)
   (alist-get (or method (typography-current-im))
              typography-quotation-marks-alist))
 
@@ -97,7 +99,7 @@ Description:
 method"
 
   (insert
-   (let* ((marks (alist-get type (typograpy-method-marks)))
+   (let* ((marks (alist-get type (typography-method-marks)))
           (opening (car marks))
           (closing (cdr marks)))
      (format "%c%s%c" opening text closing))))
@@ -187,4 +189,4 @@ is not specified."
          arg
        (alist-get (typography-current-im) typography-dash-alist)))))
 
-(provide 'typograpy-mode)
+(provide 'typography-mode)

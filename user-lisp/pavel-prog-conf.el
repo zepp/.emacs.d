@@ -2,6 +2,9 @@
 
 ;;-------------------------------------------------------------------------------
 
+(require 'pavel-text-conf)
+(require 'pavel-fm-conf)
+
 (add-to-list 'display-buffer-alist
              '((derived-mode . prog-mode)
                (display-buffer-reuse-window

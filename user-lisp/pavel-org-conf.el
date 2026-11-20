@@ -1,6 +1,8 @@
 ;; my Org-mode configuration and helper functions -*- lexical-binding: t; -*-
 
+(require 'pavel-compat)
 (require 'pavel-text-conf)
+(require 'pavel-aux)
 
 (use-package org-agenda
   :bind (("C-x C-a" . org-agenda)
