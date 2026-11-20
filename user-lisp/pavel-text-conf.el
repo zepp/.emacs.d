@@ -1,6 +1,6 @@
 ;; my configuration of text modes -*- lexical-binding: t; -*-
 
-(require 'pavel-compat)
+(require 'user-compat)
 (require 'typography-mode)
 
 (use-package whitespace
@@ -11,8 +11,7 @@
                       space-after-tab
                       space-before-tab)))
 
-;;;###autoload
-(defun pavel/ws-long-lines ()
+(defun text/ws-long-lines ()
   "highlights long lines using `whitespace-mode'"
 
   (setq-local whitespace-style (cons 'lines-char whitespace-style)))
@@ -29,6 +28,18 @@
     ;; buffer contents. END is ignored.
     (write-region "" nil path nil 0)))
 
+(defun user/hunpsell-dicts(directory)
+  "builds dictionary path alist for hunspell"
+
+  (let ((root (expand-file-name directory)))
+    (mapcar #'(lambda(file)
+                (list (substring file 0 -4)
+                      (expand-file-name file root)))
+            (directory-files
+             root
+             nil
+             "[[:lower:]]\\{2\\}_[[:upper:]]\\{2\\}\\.dic"))))
+
 (use-package ispell
   :init
   (when (user/sys-win-p)
@@ -38,7 +49,7 @@
                                       (getenv "HOMEPATH")))))
       (setenv "DICPATH" root)
       (setenv "DICTIONARY" "en_US")
-      (setopt ispell-hunspell-dict-paths-alist (pavel/list-dicts root))))
+      (setopt ispell-hunspell-dict-paths-alist (user/hunpsell-dicts root))))
   (setopt
    ispell-program-name "hunspell"
    ispell-dictionary "ru_RU,en_US"

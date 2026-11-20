@@ -1,6 +1,6 @@
 ;; my Org-mode configuration and helper functions -*- lexical-binding: t; -*-
 
-(require 'pavel-compat)
+(require 'user-compat)
 (require 'pavel-text-conf)
 (require 'pavel-aux)
 

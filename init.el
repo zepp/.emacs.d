@@ -35,6 +35,8 @@
     (loaddefs-generate dirs ".user-lisp-autoloads.el"))
   (require '.user-lisp-autoloads))
 
+(require 'user-compat)
+
 (require 'package)
 (setopt  use-package-always-defer t
          use-package-hook-name-suffix nil

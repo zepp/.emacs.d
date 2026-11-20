@@ -133,7 +133,7 @@
   :config
   ;; append to end of hook list
   (add-hook 'git-commit-setup-hook 'turn-off-auto-fill t)
-  (add-hook 'git-commit-setup-hook #'pavel/ws-long-lines)
+  (add-hook 'git-commit-setup-hook #'text/ws-long-lines)
   (add-to-list 'ido-ignore-buffers "^magit-process: .*")
   (add-to-list 'ido-ignore-buffers ".*\\.~[[:alnum:]]+~$")
 
