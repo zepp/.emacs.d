@@ -63,8 +63,8 @@
               ("<left>" . windmove-left))
   :demand t)
 
-;; It is a common keybinding to switch between windows from the same
-;; applications on macOS and Gnome
+;; It is a common keybinding to switch between application's windows on macOS
+;; and Gnome
 (global-set-key (kbd "M-`") #'other-window)
 
 (use-package tab-bar
@@ -103,20 +103,7 @@
 (define-key ctl-x-map (kbd "M-b") #'switch-to-buffer-other-window)
 (define-key ctl-x-map (kbd "M-f") #'find-file-other-window)
 
-(defun pavel/pop-up-other-buffer ()
-  "Displays an other buffer in a new window or select an existing
-one if buffer is already displayed."
-  (interactive)
-  (when-let* ((action '((display-buffer-reuse-window
-                         display-buffer-pop-up-window
-                         display-buffer-use-some-window)
-                        (inhibit-same-window . t)))
-              (buf (other-buffer (current-buffer) t))
-              (window (display-buffer buf action)))
-    (select-window window)))
-(define-key ctl-x-map (kbd "w TAB") #'pavel/pop-up-other-buffer)
-
-(defun pavel/kill-window (&optional no-history)
+(defun user/kill-window (&optional no-history)
   "Deletes a selected window and buries one's history unless
 NO-HISTORY is non-nil."
   (interactive "P")
@@ -129,7 +116,7 @@ NO-HISTORY is non-nil."
     (seq-do #'bury-buffer backlog)
     (when (length> backlog 1)
       (message "%i buries are buried" (length backlog)))))
-(define-key ctl-x-map (kbd "k") #'pavel/kill-window)
+(define-key ctl-x-map (kbd "k") #'user/kill-window)
 
 (use-package transient
   :config
@@ -141,7 +128,7 @@ NO-HISTORY is non-nil."
   :demand t
   :ensure t)
 
-(defun is-buffer-protected-from-killing (buffer)
+(defun user/is-buf-protected (buffer)
   (with-current-buffer buffer
     (or (derived-mode-p 'org-mode)
         (derived-mode-p 'org-agenda-mode)
@@ -150,7 +137,7 @@ NO-HISTORY is non-nil."
 (use-package midnight
   :config
   (midnight-mode 1)
-  (push #'is-buffer-protected-from-killing
+  (push #'user/is-buf-protected
         clean-buffer-list-kill-never-regexps)
   :demand t)
 
@@ -260,7 +247,7 @@ NO-HISTORY is non-nil."
 
 ;;-------------------------------------------------------------------------------
 
-(defun pavel/compile-buf-name-advice (orig &rest args)
+(defun user/compile-buf-name (orig &rest args)
   "it advices `compile' to prettify name of a compilation buffer and
 make it more informative"
 
@@ -283,7 +270,7 @@ make it more informative"
       (add-to-list 'compilation-error-regexp-alist-alist cell)
       (add-to-list 'compilation-error-regexp-alist (car cell))))
 
-  (advice-add 'compile :around #'pavel/compile-buf-name-advice))
+  (advice-add 'compile :around #'user/compile-buf-name))
 
 ;;-------------------------------------------------------------------------------
 
