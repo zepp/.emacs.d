@@ -1,8 +1,8 @@
 ;; my Org-mode configuration and helper functions -*- lexical-binding: t; -*-
 
 (require 'user-compat)
+(require 'user-common)
 (require 'pavel-text-conf)
-(require 'pavel-aux)
 
 (use-package org-agenda
   :bind (("C-x C-a" . org-agenda)
@@ -194,7 +194,7 @@ default and archive files path relative to one."
       (with-current-buffer buffer
         (if (buffer-modified-p)
             (message "%s is modified, so skipping it" (current-buffer))
-          (pavel/upcase-buffer-uuids)
+          (user/upcase-uuids buffer)
           (when (buffer-modified-p)
             (basic-save-buffer)
             (setq counter (1+ counter))))))

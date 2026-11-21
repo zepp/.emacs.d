@@ -1,6 +1,7 @@
 ;; file management and shells  -*- lexical-binding: t; -*-
 
 (require 'user-compat)
+(require 'user-common)
 
 (use-package dired
   :bind (("C-x C-d" . dired)
@@ -9,7 +10,7 @@
          (:map dired-mode-map
                ("c")
 
-               ("$" . pavel/eshell-jump)
+               ("$" . user/eshell-jump)
                ("M-$" . shell)
 
                ;; approach that is similar to one that is employed by Magit and
@@ -36,71 +37,29 @@
   (add-to-list 'dired-compress-files-alist
                '("\\.7z$" . "7z a %o %i")))
 
-(defun pavel/command-buf-name-advice (orig &rest args)
+(defun user/command-buf-name (orig &rest args)
   "Changes output buffer name to a command name"
 
   (let* ((command (nth 0 args))
          (shell-command-buffer-name-async (format "*async: %s*" command)))
     (apply orig args)))
 
-(advice-add 'async-shell-command :around #'pavel/command-buf-name-advice)
+(advice-add 'async-shell-command :around #'user/command-buf-name)
 
 (use-package shell
     :bind (:map shell-command-mode-map
                 ;; similar to compilation mode
-                ("C-c C-k" . pavel/kill-process))
+                ("C-c C-k" . user/kill-process))
     :hook
     (shell-mode-hook . shell-dirtrack-mode)
     (shell-command-mode-hook . read-only-mode))
 
-(defun pavel/eshell-buf-name (&optional directory)
-  "it forms a name of `eshell' buffer that includes name of
-DIRECTORY and a host name in case of a remote file
-editing. Format is simillar to `project-eshell'."
-
-  (let* ((dir (abbreviate-file-name (or directory default-directory)))
-         (dir-name (file-name-nondirectory (directory-file-name dir)))
-         (remote-host (file-remote-p dir 'host)))
-    (cond
-     ((and dir-name remote-host)
-      (format "*%s:%s-eshell*" remote-host dir-name))
-     ((or dir-name remote-host)
-      (format "*%s-eshell*" (or dir-name remote-host)))
-     (t "*eshell*"))))
-
-(defun pavel/eshell-jump (&optional directory)
-  "it starts `eshell' in a current directory or switches buffer to
-an existing one"
-  (interactive
-   (list default-directory))
-
-  ;; do a module autoload otherwise `eshell-buffer-name' is not defined
-  (autoload-do-load (symbol-function 'eshell))
-  (let* ((eshell-buffer-name (pavel/eshell-buf-name directory))
-         (buf (get-buffer eshell-buffer-name)))
-    (cond
-     (buf (display-buffer buf))
-     (directory
-      (let ((default-directory directory))
-        (eshell)))
-     (t (eshell)))))
-
-(defun pavel/rename-eshell-buf()
-  "hook that keeps eshell buffer name actual"
-
-  (let* ((name (pavel/eshell-buf-name))
-         (buf (get-buffer name)))
-    (if buf
-        ;; do not cause entry to the debugger
-        (user-error "failed to actualize Emacs shell buffer name")
-      (rename-buffer name))))
-
 (use-package eshell
   ;; '$' is a last part of eshell prompt. It is similar to Magit keybinding that
   ;; shows git command history.
-  :bind ("C-x $" . pavel/eshell-jump)
+  :bind ("C-x $" . user/eshell-jump)
   :hook
-  (eshell-directory-change-hook . pavel/rename-eshell-buf))
+  (eshell-directory-change-hook . user/rename-eshell-buf))
 
 (use-package urgrep
   :bind (:map search-map

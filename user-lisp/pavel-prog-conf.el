@@ -2,8 +2,8 @@
 
 ;;-------------------------------------------------------------------------------
 
+(require 'user-common)
 (require 'pavel-text-conf)
-(require 'pavel-fm-conf)
 
 (add-to-list 'display-buffer-alist
              '((derived-mode . prog-mode)
@@ -13,9 +13,6 @@
                 display-buffer-pop-up-window)
                (mode . prog-mode)
                (inhibit-switch-frame . t)))
-
-(defun user/is-prog-mode-p ()
-  (derived-mode-p '(prog-mode sgml-mode nxml-mode)))
 
 (use-package super-save
   :config
@@ -64,7 +61,7 @@
   "Starts `eshell' in a project's root directory."
   (interactive)
 
-  (pavel/eshell-jump (projectile-project-root)))
+  (user/eshell-jump (projectile-project-root)))
 
 (use-package projectile
   :bind-keymap ("C-x p" . projectile-command-map)
