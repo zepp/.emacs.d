@@ -1,18 +1,18 @@
 ;; various compatibility commands and functions -*- lexical-binding: t; -*-
 
-(defun user/sys-win-p ()
+(defun u-sys-win-p ()
   (string= system-type "windows-nt"))
 
-(defun user/sys-linux-p ()
+(defun u-sys-linux-p ()
   (string= system-type "gnu/linux"))
 
-(defun user/sys-darwin-p ()
+(defun u-sys-darwin-p ()
   (string= system-type "darwin"))
 
-(defun user/emacs-30-p ()
+(defun u-emacs-30-p ()
   (string-match "30\\.[0-9]+" emacs-version))
 
-(defun user/setup-features (&optional dir)
+(defun u-setup-features (&optional dir)
   (let* ((default-directory
           (expand-file-name (or dir "user-lisp/") user-emacs-directory))
          (paths (delete ".." (directory-files default-directory)))
@@ -20,8 +20,8 @@
     (normal-top-level-add-to-load-path dirs)
     (loaddefs-generate dirs ".user-lisp-autoloads.el")))
 
-(when (user/emacs-30-p)
-  (user/setup-features)
+(when (u-emacs-30-p)
+  (u-setup-features)
   (require '.user-lisp-autoloads))
 
 (provide 'user-compat)

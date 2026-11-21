@@ -10,7 +10,7 @@
          (:map dired-mode-map
                ("c")
 
-               ("$" . user/eshell-jump)
+               ("$" . u-eshell-jump)
                ("M-$" . shell)
 
                ;; approach that is similar to one that is employed by Magit and
@@ -28,7 +28,7 @@
 
   :config
   (cond
-   ((user/sys-linux-p)
+   ((u-sys-linux-p)
     (add-to-list 'dired-guess-shell-alist-user '("\\.pdf$" "xdg-open"))
     (add-to-list 'dired-guess-shell-alist-user '("\\.odt$" "xdg-open")))))
 
@@ -37,19 +37,19 @@
   (add-to-list 'dired-compress-files-alist
                '("\\.7z$" . "7z a %o %i")))
 
-(defun user/command-buf-name (orig &rest args)
+(defun u-command-buf-name (orig &rest args)
   "Changes output buffer name to a command name"
 
   (let* ((command (nth 0 args))
          (shell-command-buffer-name-async (format "*async: %s*" command)))
     (apply orig args)))
 
-(advice-add 'async-shell-command :around #'user/command-buf-name)
+(advice-add 'async-shell-command :around #'u-command-buf-name)
 
 (use-package shell
     :bind (:map shell-command-mode-map
                 ;; similar to compilation mode
-                ("C-c C-k" . user/kill-process))
+                ("C-c C-k" . u-kill-process))
     :hook
     (shell-mode-hook . shell-dirtrack-mode)
     (shell-command-mode-hook . read-only-mode))
@@ -57,9 +57,9 @@
 (use-package eshell
   ;; '$' is a last part of eshell prompt. It is similar to Magit keybinding that
   ;; shows git command history.
-  :bind ("C-x $" . user/eshell-jump)
+  :bind ("C-x $" . u-eshell-jump)
   :hook
-  (eshell-directory-change-hook . user/rename-eshell-buf))
+  (eshell-directory-change-hook . u-rename-eshell-buf))
 
 (use-package urgrep
   :bind (:map search-map

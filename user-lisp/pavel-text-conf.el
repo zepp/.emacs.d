@@ -1,6 +1,7 @@
 ;; my configuration of text modes -*- lexical-binding: t; -*-
 
 (require 'user-compat)
+(require 'user-common)
 (require 'typography-mode)
 
 (use-package whitespace
@@ -22,13 +23,7 @@
 
   :ensure t)
 
-(defun pavel/touch-file (path)
-  (unless (file-exists-p path)
-    ;; If START is a string, then output that string to the file instead of any
-    ;; buffer contents. END is ignored.
-    (write-region "" nil path nil 0)))
-
-(defun user/hunpsell-dicts(directory)
+(defun u-hunpsell-dicts(directory)
   "builds dictionary path alist for hunspell"
 
   (let ((root (expand-file-name directory)))
@@ -42,14 +37,14 @@
 
 (use-package ispell
   :init
-  (when (user/sys-win-p)
+  (when (u-sys-win-p)
     ;; make `hunspell' work
     (let ((root (expand-file-name ".dicts"
                                   (or (getenv "HOME")
                                       (getenv "HOMEPATH")))))
       (setenv "DICPATH" root)
       (setenv "DICTIONARY" "en_US")
-      (setopt ispell-hunspell-dict-paths-alist (user/hunpsell-dicts root))))
+      (setopt ispell-hunspell-dict-paths-alist (u-hunpsell-dicts root))))
   (setopt
    ispell-program-name "hunspell"
    ispell-dictionary "ru_RU,en_US"
@@ -58,7 +53,7 @@
   :config
   (ispell-set-spellchecker-params)
   (ispell-hunspell-add-multi-dic "ru_RU,en_US")
-  (pavel/touch-file ispell-personal-dictionary))
+  (u-touch-file ispell-personal-dictionary))
 
 (use-package text-mode
   :bind (:map text-mode-map
@@ -67,9 +62,9 @@
   :hook
   (text-mode-hook . visual-line-mode)
   (text-mode-hook . whitespace-mode)
-  (text-mode-hook . pavel/minor-text-modes))
+  (text-mode-hook . u-minor-text-modes))
 
-(defun pavel/minor-text-modes ()
+(defun u-minor-text-modes ()
   "checks current buffer major mode then enables additional minor modes
 usefull for text editing"
 

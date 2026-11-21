@@ -19,12 +19,12 @@
   (setopt auto-save-default nil
           super-save-auto-save-when-idle t
           super-save-silent t)
-  (add-to-list 'super-save-predicates #'user/is-prog-mode-p)
+  (add-to-list 'super-save-predicates #'u-prog-mode-p)
   (super-save-mode 1)
   :ensure t
   :demand t)
 
-(defun pavel/preserve-case ()
+(defun u-prog-preserve-case ()
   (setq-local case-fold-search nil
               case-replace t))
 
@@ -32,7 +32,7 @@
   :bind (:map prog-mode-map
               ("C-c C-q" . fill-paragraph))
   :hook
-  (prog-mode-hook . pavel/preserve-case)
+  (prog-mode-hook . u-prog-preserve-case)
   (prog-mode-hook . visual-line-mode)
   (prog-mode-hook . whitespace-mode)
   (prog-mode-hook . auto-revert-mode))
@@ -57,16 +57,16 @@
 (use-package rg
   :ensure t)
 
-(defun pavel/projectile-eshell ()
+(defun u-projectile-eshell ()
   "Starts `eshell' in a project's root directory."
   (interactive)
 
-  (user/eshell-jump (projectile-project-root)))
+  (u-eshell-jump (projectile-project-root)))
 
 (use-package projectile
   :bind-keymap ("C-x p" . projectile-command-map)
   :bind ((:map projectile-command-map
-               ("$" . pavel/projectile-eshell)
+               ("$" . u-projectile-eshell)
                ("g" . projectile-ag)
                ("F" . projectile-find-file-dwim)))
   :init

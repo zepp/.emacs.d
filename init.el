@@ -31,7 +31,7 @@
 (setopt  use-package-always-defer t
          use-package-hook-name-suffix nil
          use-package-compute-statistics t)
-(when (user/sys-win-p)
+(when (u-sys-win-p)
   (setopt package-gnupghome-dir nil))
 (add-to-list
  'package-archives
@@ -103,7 +103,7 @@
 (define-key ctl-x-map (kbd "M-b") #'switch-to-buffer-other-window)
 (define-key ctl-x-map (kbd "M-f") #'find-file-other-window)
 
-(defun user/kill-window (&optional no-history)
+(defun u-kill-window (&optional no-history)
   "Deletes a selected window and buries one's history unless
 NO-HISTORY is non-nil."
   (interactive "P")
@@ -116,7 +116,7 @@ NO-HISTORY is non-nil."
     (seq-do #'bury-buffer backlog)
     (when (length> backlog 1)
       (message "%i buries are buried" (length backlog)))))
-(define-key ctl-x-map (kbd "k") #'user/kill-window)
+(define-key ctl-x-map (kbd "k") #'u-kill-window)
 
 (use-package transient
   :config
@@ -128,7 +128,7 @@ NO-HISTORY is non-nil."
   :demand t
   :ensure t)
 
-(defun user/is-buf-protected (buffer)
+(defun u-is-buf-protected (buffer)
   (with-current-buffer buffer
     (or (derived-mode-p 'org-mode)
         (derived-mode-p 'org-agenda-mode)
@@ -137,7 +137,7 @@ NO-HISTORY is non-nil."
 (use-package midnight
   :config
   (midnight-mode 1)
-  (push #'user/is-buf-protected
+  (push #'u-is-buf-protected
         clean-buffer-list-kill-never-regexps)
   :demand t)
 
@@ -247,7 +247,7 @@ NO-HISTORY is non-nil."
 
 ;;-------------------------------------------------------------------------------
 
-(defun user/compile-buf-name (orig &rest args)
+(defun u-compile-buf-name (orig &rest args)
   "it advices `compile' to prettify name of a compilation buffer and
 make it more informative"
 
@@ -270,7 +270,7 @@ make it more informative"
       (add-to-list 'compilation-error-regexp-alist-alist cell)
       (add-to-list 'compilation-error-regexp-alist (car cell))))
 
-  (advice-add 'compile :around #'user/compile-buf-name))
+  (advice-add 'compile :around #'u-compile-buf-name))
 
 ;;-------------------------------------------------------------------------------
 
@@ -299,7 +299,7 @@ make it more informative"
 
 (cond
 
- ((user/sys-win-p)
+ ((u-sys-win-p)
   ;; it looks ugly
   (menu-bar-mode -1)
 
@@ -320,7 +320,7 @@ make it more informative"
     (push choco-bin exec-path)
     (setenv "PATH" (concat  (convert-standard-filename choco-bin) ";" path))))
 
- ((user/sys-darwin-p)
+ ((u-sys-darwin-p)
   (setopt
    mac-command-modifier 'meta
    mac-option-modifier 'alt

@@ -125,9 +125,9 @@
   (setopt
    org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
    org-id-uuid-program
-   (cond ((user/sys-linux-p)
+   (cond ((u-sys-linux-p)
           "uuidgen | awk '{print toupper($0)}'")
-         ((user/sys-win-p) "guidgen /u")
+         ((u-sys-win-p) "guidgen /u")
          (t "uuidgen")))
   :demand t)
 
@@ -172,7 +172,7 @@
                '("–" . "&#x2013;")))
 
 ;;;###autoload
-(defun pavel/set-org-dir-files (directory &rest dirs)
+(defun u-org-set-agenda-dir (directory &rest dirs)
   "Sets Org-mode's default directory to DIRECTORY then expands
 default and archive files path relative to one."
   (interactive "D")
@@ -184,7 +184,7 @@ default and archive files path relative to one."
    org-archive-location (expand-file-name "archive.org::" directory)))
 
 ;;;###autoload
-(defun pavel/org-agenda-upcase-uuids ()
+(defun u-org-agenda-upcase-uuids ()
   "upcases UUIDs in all Org-mode agenda files"
   (interactive)
 
@@ -194,7 +194,7 @@ default and archive files path relative to one."
       (with-current-buffer buffer
         (if (buffer-modified-p)
             (message "%s is modified, so skipping it" (current-buffer))
-          (user/upcase-uuids buffer)
+          (u-upcase-uuids buffer)
           (when (buffer-modified-p)
             (basic-save-buffer)
             (setq counter (1+ counter))))))

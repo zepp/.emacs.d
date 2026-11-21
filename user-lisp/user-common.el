@@ -1,6 +1,12 @@
 ;; various auxiliary commands and common functions -*- lexical-binding: t; -*-
 
-(defun user/kill-process (&optional buffer)
+(defun u-touch-file (path)
+  (unless (file-exists-p path)
+    ;; If START is a string, then output that string to the file instead of any
+    ;; buffer contents. END is ignored.
+    (write-region "" nil path nil 0)))
+
+(defun u-kill-process (&optional buffer)
   "Kills the BUFFER process. BUFFER is the current buffer by
 default."
 
@@ -12,7 +18,7 @@ default."
         (interrupt-process proc)
       (user-error "Buffer '%s' has no running process" buffer))))
 
-(defun user/upcase-uuids (&optional buffer)
+(defun u-upcase-uuids (&optional buffer)
   "upcases all UUID in the BUFFER"
 
   (interactive (list (current-buffer)))
@@ -32,7 +38,7 @@ default."
         (while (re-search-forward uuid-re nil t)
           (replace-match (upcase (match-string 0)) t))))))
 
-(defun user/eshell-buf-name (&optional directory)
+(defun u-eshell-buf-name (&optional directory)
   "it forms a name of `eshell' buffer that includes name of
 DIRECTORY and a host name in case of a remote file
 editing. Format is simillar to `project-eshell'."
@@ -47,7 +53,7 @@ editing. Format is simillar to `project-eshell'."
       (format "*%s-eshell*" (or dir-name remote-host)))
      (t "*eshell*"))))
 
-(defun user/rename-eshell-buf(&optional buffer)
+(defun u-rename-eshell-buf(&optional buffer)
   "renames eshell buffer name according to `default-directory'"
 
   (with-current-buffer (or buffer (current-buffer))
@@ -55,9 +61,9 @@ editing. Format is simillar to `project-eshell'."
     (unless (derived-mode-p 'eshell-mode)
       (user-error "buffer %s is not a eshell buffer" (buffer-name)))
 
-    (rename-buffer (user/eshell-buf-name) t)))
+    (rename-buffer (u-eshell-buf-name) t)))
 
-(defun user/eshell-jump (&optional directory)
+(defun u-eshell-jump (&optional directory)
   "it starts `eshell' in a current directory or switches buffer to
 an existing one"
   (interactive
@@ -65,7 +71,7 @@ an existing one"
 
   ;; do a module autoload otherwise `eshell-buffer-name' is not defined
   (autoload-do-load (symbol-function 'eshell))
-  (let* ((eshell-buffer-name (user/eshell-buf-name directory))
+  (let* ((eshell-buffer-name (u-eshell-buf-name directory))
          (buf (get-buffer eshell-buffer-name)))
     (cond
      (buf (display-buffer buf '(display-buffer-same-window
@@ -76,7 +82,7 @@ an existing one"
         (eshell)))
      (t (eshell)))))
 
-(defun user/is-prog-mode-p ()
+(defun u-prog-mode-p ()
   (derived-mode-p '(prog-mode sgml-mode nxml-mode)))
 
 (provide 'user-common)

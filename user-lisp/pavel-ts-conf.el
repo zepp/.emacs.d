@@ -9,7 +9,7 @@
   :ensure t)
 
 ;;;###autoload
-(defun pavel/install-ts-grammars ()
+(defun u-install-ts-grammars ()
   "installs tree-sitter language grammars"
 
   (interactive)
