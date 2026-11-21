@@ -27,16 +27,7 @@
 (require 'user-compat
          (expand-file-name "user-lisp/user-compat" user-emacs-directory))
 
-(require 'package)
-(setopt  use-package-always-defer t
-         use-package-hook-name-suffix nil
-         use-package-compute-statistics t)
-(when (u-sys-win-p)
-  (setopt package-gnupghome-dir nil))
-(add-to-list
- 'package-archives
- '("melpa" . "https://stable.melpa.org/packages/")
- t)
+(require 'user-common)
 
 ;;-------------------------------------------------------------------------------
 ;; UI related

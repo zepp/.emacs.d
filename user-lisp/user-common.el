@@ -1,5 +1,18 @@
 ;; various auxiliary commands and common functions -*- lexical-binding: t; -*-
 
+(require 'user-compat)
+
+(require 'package)
+(setopt  use-package-always-defer t
+         use-package-hook-name-suffix nil
+         use-package-compute-statistics t)
+(when (u-sys-win-p)
+  (setopt package-gnupghome-dir nil))
+(add-to-list
+ 'package-archives
+ '("melpa" . "https://stable.melpa.org/packages/")
+ t)
+
 (defun u-touch-file (path)
   (unless (file-exists-p path)
     ;; If START is a string, then output that string to the file instead of any
