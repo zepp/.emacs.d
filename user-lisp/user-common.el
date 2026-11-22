@@ -1,11 +1,11 @@
 ;; various auxiliary commands and common functions -*- lexical-binding: t; -*-
 
 (require 'user-compat)
+(require 'eshell)
 
 (require 'package)
 (setopt  use-package-always-defer t
-         use-package-hook-name-suffix nil
-         use-package-compute-statistics t)
+         use-package-hook-name-suffix nil)
 (when (u-sys-win-p)
   (setopt package-gnupghome-dir nil))
 (add-to-list
@@ -82,18 +82,15 @@ an existing one"
   (interactive
    (list default-directory))
 
-  ;; do a module autoload otherwise `eshell-buffer-name' is not defined
-  (autoload-do-load (symbol-function 'eshell))
-  (let* ((eshell-buffer-name (u-eshell-buf-name directory))
-         (buf (get-buffer eshell-buffer-name)))
-    (cond
-     (buf (display-buffer buf '(display-buffer-same-window
-                                display-buffer-use-some-window
-                                display-buffer-pop-up-window)))
-     (directory
-      (let ((default-directory directory))
-        (eshell)))
-     (t (eshell)))))
+  (let* ((default-directory directory)
+         (eshell-buffer-name (u-eshell-buf-name directory))
+         (buf (get-buffer eshell-buffer-name))
+         (action '(display-buffer-same-window
+                   display-buffer-use-some-window
+                   display-buffer-pop-up-window)))
+    (if buf
+        (select-window (display-buffer buf action))
+      (eshell))))
 
 (defun u-prog-mode-p ()
   (derived-mode-p '(prog-mode sgml-mode nxml-mode)))
