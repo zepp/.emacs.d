@@ -65,10 +65,10 @@
 
 (use-package projectile
   :bind-keymap ("C-x p" . projectile-command-map)
-  :bind ((:map projectile-command-map
-               ("$" . u-projectile-eshell)
-               ("g" . projectile-ag)
-               ("F" . projectile-find-file-dwim)))
+  :bind (:map projectile-command-map
+              ("$" . u-projectile-eshell)
+              ("g" . projectile-search)
+              ("F" . projectile-find-file-dwim))
   :init
   (setopt
    projectile-indexing-method 'hybrid
