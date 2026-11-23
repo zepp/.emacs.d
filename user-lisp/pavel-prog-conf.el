@@ -121,18 +121,19 @@
                ("C-M-f" . magit-section-forward-sibling)
                ("C-M-b" . magit-section-backward-sibling)))
 
-  :init
+  :config
   (setopt
    magit-define-global-key-bindings nil
    magit-display-buffer-function
    'magit-display-buffer-fullframe-status-v1)
 
-  :config
   ;; append to end of hook list
   (add-hook 'git-commit-setup-hook 'turn-off-auto-fill t)
   (add-hook 'git-commit-setup-hook #'text/ws-long-lines)
   (add-to-list 'ido-ignore-buffers "^magit-process: .*")
   (add-to-list 'ido-ignore-buffers ".*\\.~[[:alnum:]]+~$")
+  ;; to avoid a garbage in a process buffer
+  (push "FORCE_COLOR=0" magit-git-environment)
 
   (add-to-list 'display-buffer-alist
                '((derived-mode . magit-log-mode)

@@ -252,6 +252,9 @@ make it more informative"
 
 (use-package compile
   :config
+  ;; to avoid a garabe in output since some CLI tools do not repsect TERM
+  ;; environment variable
+  (push "FORCE_COLOR=0" compilation-environment)
   (let ((alist
          '((tsl
             "^\\[tsl\\]\\s-+ERROR in \\([^(\r\n]+\\)(\\([0-9]+\\),\\([0-9]+\\))?$" 1 2 3)
