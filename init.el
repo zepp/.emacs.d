@@ -54,10 +54,6 @@
               ("<left>" . windmove-left))
   :demand t)
 
-;; It is a common keybinding to switch between application's windows on macOS
-;; and Gnome
-(global-set-key (kbd "M-`") #'other-window)
-
 (use-package tab-bar
   :bind (:map tab-prefix-map
               ("t" . tab-new)
