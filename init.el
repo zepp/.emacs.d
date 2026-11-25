@@ -40,6 +40,17 @@
 
 (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
 
+(setopt
+ mode-line-right-align-edge 'right-fringe
+ mode-line-format
+ '("%e" mode-line-front-space mode-line-modified
+   mode-line-remote mode-line-client mode-line-window-dedicated " "
+   mode-line-buffer-identification "   " mode-line-position "  "
+   ;; if `project-mode-line' is non-nil then additional information is printed
+   (project-mode-line project-mode-line-format) "  "
+   mode-line-misc-info
+   mode-line-format-right-align mode-line-mule-info mode-line-end-spaces))
+
 ;; to handle a case when Emacs is built without a graphic display support
 (when (display-graphic-p)
   (tool-bar-mode -1)
