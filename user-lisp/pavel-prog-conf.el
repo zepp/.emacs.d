@@ -69,19 +69,24 @@
               ("$" . u-projectile-eshell)
               ("g" . projectile-search)
               ("F" . projectile-find-file-dwim))
+
   :init
+  (projectile-mode 1)
+  (recentf-mode 1)
+  (editorconfig-mode 1)
+
+  :config
   (setopt
    projectile-indexing-method 'hybrid
    projectile-git-use-fd t
    projectile-mode-line-prefix " "
    projectile-completion-system 'default
    projectile-search-backend 'ripgrep)
-  (projectile-mode 1)
-  (recentf-mode 1)
-  :config
+
   (push ".angular" projectile-globally-ignored-directories)
   (push ".husky" projectile-globally-ignored-directories)
   (push ".nx" projectile-globally-ignored-directories)
+
   :ensure t)
 
 ;;-------------------------------------------------------------------------------
