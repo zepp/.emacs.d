@@ -66,16 +66,17 @@
   :demand t)
 
 (use-package tab-bar
-  :bind (:map tab-prefix-map
-              ("t" . tab-new)
-              ("M-t" . other-tab-prefix)
-              ("k" . tab-close)
-              ("o" . tab-recent)
-              ("C-j" . tab-switch)
-              ("<left>" . tab-previous)
-              ("<right>" . tab-next)
-              ("M-<left>" . tab-bar-move-tab-backward)
-              ("M-<right>" . tab-bar-move-tab))
+  :bind ((:map tab-bar-mode-map
+               ([(control tab)] . tab-recent))
+         (:map tab-prefix-map
+               ("t" . tab-new)
+               ("k" . tab-close)
+               ("o" . tab-recent)
+               ("C-j" . tab-switch)
+               ("<left>" . tab-previous)
+               ("<right>" . tab-next)
+               ("M-<left>" . tab-bar-move-tab-backward)
+               ("M-<right>" . tab-bar-move-tab)))
 
   :config
   (setopt tab-bar-new-tab-choice "*scratch*")
