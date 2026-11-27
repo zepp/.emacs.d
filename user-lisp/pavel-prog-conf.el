@@ -25,9 +25,14 @@
   :demand t)
 
 (use-package flycheck
+  :bind (:map flycheck-command-map
+              ("b" . flycheck-buffer))
   :init
   ;; customize `flycheck-global-modes' to exclude modes
   (global-flycheck-mode t)
+  :config
+  (setopt flycheck-global-modes '(not lisp-interaction-mode)
+          flycheck-keymap-prefix (kbd "C-c c"))
   :ensure t)
 
 (defun u-prog-preserve-case ()
