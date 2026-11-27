@@ -7,6 +7,7 @@
 (use-package org-agenda
   :bind (("C-x C-a" . org-agenda)
          (:map org-agenda-mode-map
+               ("C-x C-w")
                ("C-x C-n" . org-agenda-capture)
                ("C-c C-w") ;; org-agenda-refile
 

@@ -68,7 +68,8 @@
 (use-package tab-bar
   :bind ((:map ctl-x-map
                (("C-o" . tab-recent) ;; originally `delete-blank-lines'
-                ("C-t" . tab-new)))  ;; originally `transpose-lines'
+                ("C-t" . tab-new))   ;; originally `transpose-lines'
+                ("C-w" . tab-close)) ;; originally `write-file'
          (:map tab-prefix-map
                ("k" . tab-close)
                ("C-j" . tab-switch)
