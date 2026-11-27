@@ -66,15 +66,6 @@
                ("C-c C-x C-r" . org-reveal)))
 
   :init
-  (setopt
-   org-hide-emphasis-markers t
-   org-tags-column 0
-   org-log-into-drawer t
-   org-log-done 'time
-   org-fold-catch-invisible-edits 'show-and-error
-   org-timestamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
-   org-goto-auto-isearch nil)
-
   (add-to-list 'completion-preview-commands 'org-self-insert-command)
 
   (add-to-list 'display-buffer-alist
@@ -107,6 +98,15 @@
                  (window-height . 5)))
 
   :config
+  (setopt
+   org-hide-emphasis-markers t
+   org-tags-column 0
+   org-log-into-drawer t
+   org-log-done 'time
+   org-fold-catch-invisible-edits 'show-and-error
+   org-timestamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
+   org-goto-auto-isearch nil)
+
   (add-to-list 'org-latex-packages-alist '("AUTO" "babel" t ("pdflatex")))
   (add-to-list 'org-latex-packages-alist '("" "tabularx"))
   (add-to-list 'org-latex-packages-alist '("" "spverbatim"))
