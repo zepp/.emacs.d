@@ -203,7 +203,7 @@ NO-HISTORY is non-nil."
   :demand t)
 
 (use-package ibuffer
-  :bind (:map ctl-x-map ("C-b" . ibuffer-other-window)))
+  :bind (:map ctl-x-map ("C-b" . ibuffer)))
 
 (use-package which-key
   :init (setopt which-key-idle-delay 2.0)
