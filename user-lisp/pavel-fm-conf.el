@@ -19,7 +19,8 @@
                ("<backtab>" . dired-hide-all)
 
                ("Z" . dired-do-compress-to) ;; dired-do-compress
-               ("M-*" . dired-mark-files-regexp)))
+               ("M-*" . dired-mark-files-regexp)
+               ("* n" . dired-mark-files-regexp)))
 
   :init
   ;; -l is mandatory

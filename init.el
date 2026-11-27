@@ -200,7 +200,14 @@ NO-HISTORY is non-nil."
   :demand t)
 
 (use-package ibuffer
-  :bind (:map ctl-x-map ("C-b" . ibuffer)))
+  :bind ((:map ctl-x-map ("C-b" . ibuffer))
+         (:map ibuffer-mode-map
+               (("M-*" . ibuffer-mark-by-name-regexp)
+                ("* n" . ibuffer-mark-by-name-regexp)
+                ("* m" . ibuffer-mark-by-mode)
+                ("* M" . ibuffer-mark-by-mode-regexp)
+                ("* f" . ibuffer-mark-by-file-name-regexp)
+                ("* !" . ibuffer-unmark-all-marks)))))
 
 (use-package which-key
   :init (setopt which-key-idle-delay 2.0)
