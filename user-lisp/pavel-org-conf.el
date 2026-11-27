@@ -75,6 +75,8 @@
    org-timestamp-custom-formats '("<%a %d %b %Y>" . "<%a %H:%M %d %b %Y>")
    org-goto-auto-isearch nil)
 
+  (add-to-list 'completion-preview-commands 'org-self-insert-command)
+
   (add-to-list 'display-buffer-alist
                '((or
                   ;; there is a whitespace at the beginning of the buffer name

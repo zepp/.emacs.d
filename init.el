@@ -167,10 +167,6 @@ NO-HISTORY is non-nil."
                 ("M-p" . completion-preview-prev-candidate)
                 ("M-n" . completion-preview-next-candidate)
                 ("M-i" . completion-preview-insert))
-    :config
-    ;; TODO: refile to `pavel-org-conf' after a full migration to Emacs 3X
-    (add-to-list 'completion-preview-commands 'org-self-insert-command)
-
     :hook
     (comint-mode-hook . completion-preview-mode)
     (eshell-mode-hook . completion-preview-mode)
