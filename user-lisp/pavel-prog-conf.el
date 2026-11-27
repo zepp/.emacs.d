@@ -24,6 +24,12 @@
   :ensure t
   :demand t)
 
+(use-package flycheck
+  :init
+  ;; customize `flycheck-global-modes' to exclude modes
+  (global-flycheck-mode t)
+  :ensure t)
+
 (defun u-prog-preserve-case ()
   (setq-local case-fold-search nil
               case-replace t))
