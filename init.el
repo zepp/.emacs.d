@@ -66,12 +66,11 @@
   :demand t)
 
 (use-package tab-bar
-  :bind ((:map tab-bar-mode-map
-               ([(control tab)] . tab-recent))
+  :bind ((:map ctl-x-map
+               (("C-o" . tab-recent) ;; originally `delete-blank-lines'
+                ("C-t" . tab-new)))  ;; originally `transpose-lines'
          (:map tab-prefix-map
-               ("t" . tab-new)
                ("k" . tab-close)
-               ("o" . tab-recent)
                ("C-j" . tab-switch)
                ("<left>" . tab-previous)
                ("<right>" . tab-next)
